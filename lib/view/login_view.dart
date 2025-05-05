@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trailmate_mobile_app_assignment/view/signup_view.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -14,13 +15,8 @@ class LoginView extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Image.asset(
-          //   'login_page.png',
-          //   fit: BoxFit.cover,
-          // ),
-          Container(
-            color: Colors.grey
-          ),
+          Image.asset('assets/images/login_page.png', fit: BoxFit.cover) ,
+          Container(color: Colors.grey),
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80),
             child: Form(
@@ -66,7 +62,10 @@ class LoginView extends StatelessWidget {
                       filled: true,
                       fillColor: Colors.indigo.shade900.withOpacity(0.8),
                       prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                      suffixIcon: const Icon(Icons.visibility, color: Colors.white),
+                      suffixIcon: const Icon(
+                        Icons.visibility,
+                        color: Colors.white,
+                      ),
                       labelText: "Password",
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
@@ -104,7 +103,7 @@ class LoginView extends StatelessWidget {
                           "Forgot Password?",
                           style: TextStyle(color: Colors.greenAccent),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -145,12 +144,14 @@ class LoginView extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignupView())) ;
+                        },
                         child: const Text(
                           "Sign up",
                           style: TextStyle(color: Colors.greenAccent),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],
