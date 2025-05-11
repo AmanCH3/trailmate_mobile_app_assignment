@@ -1,24 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:trailmate_mobile_app_assignment/view/signup_view.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final myKey = GlobalKey<FormState>();
-    bool rememberMe = false;
+  State<LoginView> createState() => _LoginViewState();
+}
 
+class _LoginViewState extends State<LoginView> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final myKey = GlobalKey<FormState>();
+  bool rememberMe = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/login_page.png', fit: BoxFit.cover) ,
-          Container(color: Colors.grey),
+          Image.asset(
+            'assets/images/login_page.png',
+            fit: BoxFit.cover,
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.3), // overlay for readability
+          ),
           SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 300),
             child: Form(
               key: myKey,
               child: Column(
@@ -38,12 +48,13 @@ class LoginView extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.indigo.shade900.withOpacity(0.8),
+                      fillColor: Colors.black38,
                       prefixIcon: const Icon(Icons.person, color: Colors.white),
                       labelText: "Username",
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     validator: (value) {
@@ -60,16 +71,14 @@ class LoginView extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.indigo.shade900.withOpacity(0.8),
+                      fillColor: Colors.black38 ,
                       prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                      suffixIcon: const Icon(
-                        Icons.visibility,
-                        color: Colors.white,
-                      ),
+                      suffixIcon: const Icon(Icons.visibility, color: Colors.white),
                       labelText: "Password",
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     validator: (value) {
@@ -87,7 +96,9 @@ class LoginView extends StatelessWidget {
                       Checkbox(
                         value: rememberMe,
                         onChanged: (val) {
-                          // In a StatefulWidget, you'd use setState
+                          setState(() {
+                            rememberMe = val ?? false;
+                          });
                         },
                         checkColor: Colors.black,
                         activeColor: Colors.white,
@@ -111,7 +122,7 @@ class LoginView extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.green.shade500,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -119,7 +130,6 @@ class LoginView extends StatelessWidget {
                       ),
                       onPressed: () {
                         if (myKey.currentState!.validate()) {
-                          // login logic
                           var email = emailController.text;
                           var password = passwordController.text;
                           debugPrint("Email: $email, Password: $password");
@@ -140,12 +150,17 @@ class LoginView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "Don't have an account?",
+                        "Don't have a account?",
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignupView())) ;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignupView(),
+                            ),
+                          );
                         },
                         child: const Text(
                           "Sign up",
