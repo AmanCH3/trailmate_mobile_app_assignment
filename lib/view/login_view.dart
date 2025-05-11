@@ -25,7 +25,7 @@ class _LoginViewState extends State<LoginView> {
             fit: BoxFit.cover,
           ),
           Container(
-            color: Colors.black.withOpacity(0.3), // overlay for readability
+            color: Colors.black.withOpacity(0.7), // overlay for readability
           ),
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 300),
@@ -50,7 +50,7 @@ class _LoginViewState extends State<LoginView> {
                       filled: true,
                       fillColor: Colors.black38,
                       prefixIcon: const Icon(Icons.person, color: Colors.white),
-                      labelText: "Username",
+                      labelText: "Email Address",
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -59,7 +59,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Please enter your username";
+                        return "Please enter your Email Address";
                       }
                       return null;
                     },
@@ -74,6 +74,7 @@ class _LoginViewState extends State<LoginView> {
                       fillColor: Colors.black38 ,
                       prefixIcon: const Icon(Icons.lock, color: Colors.white),
                       suffixIcon: const Icon(Icons.visibility, color: Colors.white),
+
                       labelText: "Password",
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
@@ -112,7 +113,7 @@ class _LoginViewState extends State<LoginView> {
                         onPressed: () {},
                         child: const Text(
                           "Forgot Password?",
-                          style: TextStyle(color: Colors.greenAccent),
+                          style: TextStyle(color: Color(0x8889C158)),
                         ),
                       ),
                     ],
@@ -122,7 +123,7 @@ class _LoginViewState extends State<LoginView> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade500,
+                        backgroundColor: Color(0x8889C158),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -141,6 +142,7 @@ class _LoginViewState extends State<LoginView> {
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           fontSize: 16,
+                          color:  Colors.white
                         ),
                       ),
                     ),
@@ -153,6 +155,7 @@ class _LoginViewState extends State<LoginView> {
                         "Don't have a account?",
                         style: TextStyle(color: Colors.white),
                       ),
+
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -164,7 +167,7 @@ class _LoginViewState extends State<LoginView> {
                         },
                         child: const Text(
                           "Sign up",
-                          style: TextStyle(color: Colors.greenAccent),
+                          style: TextStyle(color: Color(0x8889C158)),
                         ),
                       ),
                     ],
