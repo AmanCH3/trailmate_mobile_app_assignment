@@ -86,6 +86,7 @@ class _SignupViewState extends State<SignupView> {
                     TextFormField(
                       controller: emailController,
                       style: const TextStyle(color: Colors.white),
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.black38,
@@ -145,6 +146,7 @@ class _SignupViewState extends State<SignupView> {
                     TextFormField(
                       controller: phoneNumberController,
                       style: const TextStyle(color: Colors.white),
+                      keyboardType: TextInputType.phone,
                       
                       
                       decoration: InputDecoration(
@@ -152,6 +154,8 @@ class _SignupViewState extends State<SignupView> {
                         fillColor: Colors.black38 ,
                         labelStyle: const TextStyle(color: Colors.white),
                         prefixIcon: Icon(Icons.phone , color: Colors.white,),
+                        
+
                         labelText: "Contact no" ,
                         border:  OutlineInputBorder(
                           borderRadius:  BorderRadius.circular(8) ,

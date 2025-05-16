@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/signup_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -20,10 +21,7 @@ class _LoginViewState extends State<LoginView> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/login_page.png',
-            fit: BoxFit.cover,
-          ),
+          Image.asset('assets/images/login_page.png', fit: BoxFit.cover),
           Container(
             color: Colors.black.withOpacity(0.7), // overlay for readability
           ),
@@ -71,9 +69,12 @@ class _LoginViewState extends State<LoginView> {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.black38 ,
+                      fillColor: Colors.black38,
                       prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                      suffixIcon: const Icon(Icons.visibility, color: Colors.white),
+                      suffixIcon: const Icon(
+                        Icons.visibility,
+                        color: Colors.white,
+                      ),
 
                       labelText: "Password",
                       labelStyle: const TextStyle(color: Colors.white),
@@ -134,6 +135,16 @@ class _LoginViewState extends State<LoginView> {
                           var email = emailController.text;
                           var password = passwordController.text;
                           debugPrint("Email: $email, Password: $password");
+
+                          if (email == "admin@gmail.com" &&
+                              password == "admin123") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const DashboardView(),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: const Text(
@@ -142,7 +153,7 @@ class _LoginViewState extends State<LoginView> {
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           fontSize: 16,
-                          color:  Colors.white
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -172,6 +183,8 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ],
                   ),
+
+                  SizedBox(height: 20),
                 ],
               ),
             ),
