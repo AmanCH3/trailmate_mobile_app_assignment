@@ -1,7 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:trailmate_mobile_app_assignment/view/on_boarding_screen.dart';
-import 'package:trailmate_mobile_app_assignment/view/screen_1.dart';
 
 class SplashScreenView extends StatefulWidget {
   const SplashScreenView({super.key});
