@@ -22,6 +22,8 @@ class _SignupViewState extends State<SignupView> {
 
   final myKey = GlobalKey<FormState>();
 
+  bool _obscurePassword = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +92,7 @@ class _SignupViewState extends State<SignupView> {
                   ),
                   SizedBox(height: 18),
                   TextFormField(
-                    obscureText: true,
+                    obscureText: _obscurePassword,
                     controller: passwordController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -115,8 +117,23 @@ class _SignupViewState extends State<SignupView> {
                       filled: true,
                       fillColor: Colors.black38,
                       prefixIcon: Icon(Icons.lock, color: Colors.white),
-                      suffixIcon: Icon(Icons.visibility, color: Colors.white),
+                      // suffixIcon: Icon(Icons.visibility, color: Colors.white),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword:
+                            !_obscurePassword;
+                          });
+                        },
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.white,
+                        ),
+                      ),
                       labelText: 'Confirm password',
+
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),

@@ -14,6 +14,7 @@ class _LoginViewState extends State<LoginView> {
   final passwordController = TextEditingController();
   final myKey = GlobalKey<FormState>();
   bool rememberMe = false;
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +66,28 @@ class _LoginViewState extends State<LoginView> {
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: passwordController,
-                    obscureText: true,
+                    obscureText: _obscurePassword,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.black38,
                       prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                      suffixIcon: const Icon(
-                        Icons.visibility,
-                        color: Colors.white,
+                      // suffixIcon: const Icon(
+                      //   Icons.visibility,
+                      //   color: Colors.white,
+                      // ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                       ),
 
                       labelText: "Password",

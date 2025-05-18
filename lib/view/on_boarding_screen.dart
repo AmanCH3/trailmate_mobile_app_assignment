@@ -57,91 +57,119 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 100),
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: _onboardingData.length,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                final item = _onboardingData[index];
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Image.asset(item['image']!, height: 300),
-                      const SizedBox(height: 50),
-                      Text(
-                        item['title']!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: height * 0.05),
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _onboardingData.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final item = _onboardingData[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width * 0.08,
+                      vertical: height * 0.02,
+                    ),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          child: Image.asset(
+                            item['image']!,
+                            height: height * 0.35,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(item['description1']!, textAlign: TextAlign.center),
-                      Text(item['description2']!, textAlign: TextAlign.center),
-                    ],
-                  ),
-                );
-              },
+                        SizedBox(height: height * 0.05),
+                        Text(
+                          item['title']!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: width > 600 ? 24 : 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: height * 0.02),
+                        Text(
+                          item['description1']!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: width > 600 ? 18 : 14),
+                        ),
+                        Text(
+                          item['description2']!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: width > 600 ? 18 : 14),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _onboardingData.length,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentIndex == index ? Colors.black : Colors.grey,
+            SizedBox(height: height * 0.02),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _onboardingData.length,
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentIndex == index ? Colors.black : Colors.grey,
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 100),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton(
+            SizedBox(height: height * 0.04),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: width * 0.08,
+                vertical: 10,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
                     onPressed: _onSkipPressed,
                     child: const Text(
                       'Skip',
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
-                ),
-                Spacer(),
-
-                ElevatedButton(
-                  onPressed: _onNextPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF89C158),
+                  ElevatedButton(
+                    onPressed: _onNextPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF89C158),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.06,
+                        vertical: height * 0.015,
+                      ),
+                    ),
+                    child: Text(
+                      _currentIndex == _onboardingData.length - 1
+                          ? 'Get Started'
+                          : 'Next',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
-
-                  child: Text(
-                    _currentIndex == _onboardingData.length - 1
-                        ? 'Get Started'
-                        : 'Next',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: height * 0.03),
+          ],
+        ),
       ),
     );
   }
