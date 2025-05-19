@@ -24,6 +24,9 @@ class _SignupViewState extends State<SignupView> {
 
   bool _obscurePassword = true;
 
+  // Simple email validation regex
+  final RegExp _emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +74,14 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Email is required";
+                      } else if (!_emailRegExp.hasMatch(value)) {
+                        return "Enter a valid email";
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 18),
                   TextFormField(
@@ -107,6 +118,15 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 charcters";
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 18),
                   TextFormField(
@@ -140,6 +160,14 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 charcters";
+                      }
+                      return null;
+                    },
                   ),
 
                   SizedBox(height: 18),
@@ -161,6 +189,15 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Phone number is required';
+                      } else if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                        return 'Enter a valid 10-digit number';
+                      }
+                      return null;
+                    },
                   ),
 
                   SizedBox(height: 25),
