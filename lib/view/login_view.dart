@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trailmate_mobile_app_assignment/common/common_textform_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/signup_view.dart';
 
@@ -42,27 +43,36 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  TextFormField(
+                  CommonTextformView(
                     controller: emailController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.black38,
-                      prefixIcon: const Icon(Icons.person, color: Colors.white),
-                      labelText: "Email Address",
-                      labelStyle: const TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter your Email Address";
-                      }
-                      return null;
-                    },
+                    label: "Email Address",
+                    hint: "Enter  your password",
+                    validatorMsg: "Please enter your Email address",
+                    icon: Icons.email,
+                    fillColor: Colors.black38,
+                    textColor: Colors.white,
                   ),
+                  // TextFormField(
+                  //   controller: emailController,
+                  //   style: const TextStyle(color: Colors.white),
+                  //   decoration: InputDecoration(
+                  //     filled: true,
+                  //     fillColor: Colors.black38,
+                  //     prefixIcon: const Icon(Icons.person, color: Colors.white),
+                  //     labelText: "Email Address",
+                  //     labelStyle: const TextStyle(color: Colors.white),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //       borderSide: BorderSide.none,
+                  //     ),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return "Please enter your Email Address";
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: passwordController,
