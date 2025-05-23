@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trailmate_mobile_app_assignment/common/common_textform_view.dart';
 
 import 'login_view.dart';
 
@@ -23,6 +24,9 @@ class _SignupViewState extends State<SignupView> {
   final myKey = GlobalKey<FormState>();
 
   bool _obscurePassword = true;
+
+  // Simple email validation regex
+  final RegExp _emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   @override
   Widget build(BuildContext context) {
@@ -56,39 +60,62 @@ class _SignupViewState extends State<SignupView> {
                   ),
                   SizedBox(height: 20),
 
-                  TextFormField(
+                  // TextFormField(
+                  //   controller: fullNameController,
+                  //   style: const TextStyle(color: Colors.white),
+                  //   decoration: InputDecoration(
+                  //     filled: true,
+                  //     fillColor: Colors.black38,
+                  //     prefixIcon: Icon(Icons.person, color: Colors.white),
+                  //     labelStyle: const TextStyle(color: Colors.white),
+                  //
+                  //     labelText: 'Fullname',
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //       borderSide: BorderSide.none,
+                  //     ),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return "Email is required";
+                  //     } else if (!_emailRegExp.hasMatch(value)) {
+                  //       return "Enter a valid email";
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  CommonTextformView(
                     controller: fullNameController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.black38,
-                      prefixIcon: Icon(Icons.person, color: Colors.white),
-                      labelStyle: const TextStyle(color: Colors.white),
-
-                      labelText: 'Fullname',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
+                    label: 'Fullname',
+                    hint: "Provide your full name",
+                    validatorMsg: "Please enter your name",
+                    icon: Icons.person,
                   ),
-                  SizedBox(height: 18),
-                  TextFormField(
-                    controller: emailController,
-                    style: const TextStyle(color: Colors.white),
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.black38,
-                      prefixIcon: Icon(Icons.email, color: Colors.white),
 
-                      labelText: 'Email address',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
+                  SizedBox(height: 18),
+                  // TextFormField(
+                  //   controller: emailController,
+                  //   style: const TextStyle(color: Colors.white),
+                  //   keyboardType: TextInputType.emailAddress,
+                  //   decoration: InputDecoration(
+                  //     filled: true,
+                  //     fillColor: Colors.black38,
+                  //     prefixIcon: Icon(Icons.email, color: Colors.white),
+                  //
+                  //     labelText: 'Email address',
+                  //     labelStyle: const TextStyle(color: Colors.white),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(8),
+                  //       borderSide: BorderSide.none,
+                  //     ),
+                  //   ),
+                  // ),
+                  CommonTextformView(
+                    controller: emailController,
+                    label: "Email address",
+                    hint: "abc@gmail.com",
+                    validatorMsg: "Please provide your valid email address",
+                    icon: Icons.email,
                   ),
                   SizedBox(height: 18),
                   TextFormField(
@@ -107,6 +134,15 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 charcters";
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 18),
                   TextFormField(
@@ -140,6 +176,14 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 charcters";
+                      }
+                      return null;
+                    },
                   ),
 
                   SizedBox(height: 18),
@@ -161,6 +205,15 @@ class _SignupViewState extends State<SignupView> {
                         borderSide: BorderSide.none,
                       ),
                     ),
+
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Phone number is required';
+                      } else if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                        return 'Enter a valid 10-digit number';
+                      }
+                      return null;
+                    },
                   ),
 
                   SizedBox(height: 25),
@@ -176,7 +229,19 @@ class _SignupViewState extends State<SignupView> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (myKey.currentState!.validate()) {
+                          var fullName = fullNameController.text;
+                          var email = emailController.text;
+                          var password = passwordController.text;
+                          var confirmPassword = confirmPasswordController.text;
+                          var phone = phoneNumberController.text;
+
+                          debugPrint(
+                            'fullname : $fullName ,email : $email , password   : $password , confirmpassword : $confirmPassword , phone : $phone',
+                          );
+                        }
+                      },
                       child: Text(
                         "Sign in",
                         style: TextStyle(
