@@ -11,9 +11,9 @@ class CommonTextformView extends StatelessWidget {
 
   final IconData icon;
 
-  final Color fillColor;
+  final Color? fillColor;
 
-  final Color textColor;
+  final Color? textColor;
 
   const CommonTextformView({
     super.key,
@@ -22,21 +22,21 @@ class CommonTextformView extends StatelessWidget {
     required this.hint,
     required this.validatorMsg,
     required this.icon,
-    required this.fillColor,
-    required this.textColor,
+    this.fillColor,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      style: TextStyle(color: textColor),
+      style: TextStyle(color: textColor ?? Colors.white),
       decoration: InputDecoration(
         filled: true,
-        fillColor: fillColor,
-        prefixIcon: Icon(icon, color: textColor),
+        fillColor: fillColor ?? Colors.black38,
+        prefixIcon: Icon(icon, color: textColor ?? Colors.white),
         labelText: label,
-        labelStyle: TextStyle(color: textColor),
+        labelStyle: TextStyle(color: textColor ?? Colors.white),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
