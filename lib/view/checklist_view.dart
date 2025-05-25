@@ -10,6 +10,6 @@ class ChecklistView extends StatefulWidget {
 class _ChecklistViewState extends State<ChecklistView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text("Checklist")));
+    return const Center(child: Text("Check list"));
   }
 }

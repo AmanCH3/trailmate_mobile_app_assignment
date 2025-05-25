@@ -10,6 +10,6 @@ class TrailView extends StatefulWidget {
 class _TrailViewState extends State<TrailView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text("Trails")));
+    return const Center(child: const Text("Trails "));
   }
 }

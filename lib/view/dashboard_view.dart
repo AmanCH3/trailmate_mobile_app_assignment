@@ -15,7 +15,7 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
+  final List<Widget> screens = [
     HomeView(),
     const TrailView(),
     const GroupView(),
@@ -26,8 +26,10 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      appBar: AppBar(title: const Text("Dashboard")),
+      body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        // type: BottomNavigationBarType.shifting,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.grey,

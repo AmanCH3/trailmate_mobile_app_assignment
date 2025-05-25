@@ -48,7 +48,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Trail Mate")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
@@ -59,22 +58,12 @@ class _HomeViewState extends State<HomeView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text(
-                      "Good Morning",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("Good Morning", style: TextStyle(fontSize: 20)),
                     SizedBox(height: 4),
-                    Text(
-                      "Aman",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("Aman", style: TextStyle(fontSize: 18)),
                   ],
                 ),
                 Row(
