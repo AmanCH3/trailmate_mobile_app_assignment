@@ -4,6 +4,7 @@ ThemeData getApplicationTheme() {
   return ThemeData(
     useMaterial3: false,
     primarySwatch: Colors.green,
+    fontFamily: 'Lato regular',
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
