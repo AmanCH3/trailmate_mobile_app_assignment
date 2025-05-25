@@ -213,14 +213,21 @@ class _HomeViewState extends State<HomeView> {
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
+
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: () {},
-                icon: const Icon(Icons.add_location_alt_outlined),
-                label: const Text("Plan a New Hike"),
+                icon: const Icon(
+                  Icons.add_location_alt_outlined,
+                  color: Colors.white,
+                ),
+                label: const Text(
+                  "Plan a New Hike",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
 
