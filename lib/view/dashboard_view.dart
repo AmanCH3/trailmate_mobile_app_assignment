@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trailmate_mobile_app_assignment/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/home_view.dart';
@@ -6,16 +7,28 @@ import 'package:trailmate_mobile_app_assignment/view/profile_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/trail_view.dart';
 
 class DashboardView extends StatefulWidget {
-  const DashboardView({Key? key}) : super(key: key);
+  final bool showSnackbar;
+
+  const DashboardView({Key? key, this.showSnackbar = false}) : super(key: key);
 
   @override
   State<DashboardView> createState() => _DashboardViewState();
 }
 
 class _DashboardViewState extends State<DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.showSnackbar) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showMySnackbar(context: context, content: "Login Successful !");
+      });
+    }
+  }
+
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
+  final List<Widget> screens = [
     HomeView(),
     const TrailView(),
     const GroupView(),
@@ -26,8 +39,10 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      appBar: AppBar(title: const Text("Dashboard")),
+      body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        // type: BottomNavigationBarType.shifting,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.grey,

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../common/button_tab_button.dart';
+
 class HomeView extends StatefulWidget {
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
+  int selectedTab = 0;
+
   final List<Map<String, dynamic>> featuredTrails = [
     {
       'title': 'Mountain Vista Trail',
@@ -30,8 +34,7 @@ class _HomeViewState extends State<HomeView> {
       'title': 'Shivapuri Hills Trails',
       'difficulty': 'Easy',
       'distance': 4.5,
-      'imageUrl':
-          'https://www.alltrails.com/_next/image?url=https%3A%2F%2Fimages.alltrails.com%2FeyJidWNrZXQiOiJhc3NldHMuYWxsdHJhaWxzLmNvbSIsImtleSI6InVwbG9hZHMvcGhvdG8vaW1hZ2UvODgzOTE5MTUvNjgwZDU5ZDU4ODgzN2MzOTM3MTg4M2M3ZjBmNmU1N2UuanBnIiwiZWRpdHMiOnsidG9Gb3JtYXQiOiJ3ZWJwIiwicmVzaXplIjp7IndpZHRoIjoxMDgwLCJoZWlnaHQiOjcwMCwiZml0IjoiY292ZXIifSwicm90YXRlIjpudWxsLCJqcGVnIjp7InRyZWxsaXNRdWFudGlzYXRpb24iOnRydWUsIm92ZXJzaG9vdERlcmluZ2luZyI6dHJ1ZSwib3B0aW1pc2VTY2FucyI6dHJ1ZSwicXVhbnRpc2F0aW9uVGFibGUiOjN9fX0%3D&w=3840&q=90',
+      'imageUrl': 'https://picsum.photos/id/1025/200/150',
     },
   ];
 
@@ -45,36 +48,82 @@ class _HomeViewState extends State<HomeView> {
     },
   ];
 
+  Widget getBottomContent() {
+    switch (selectedTab) {
+      case 0:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:
+              upcomingHikes.map((hike) {
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      hike['title'],
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      '${hike['date']} • ${hike['distance']} km • ${hike['duration']}',
+                    ),
+                    leading: Icon(Icons.route),
+                    trailing: Icon(Icons.error, color: Colors.red),
+                  ),
+                );
+              }).toList(),
+        );
+      case 1:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Hiking Tips",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "• Stay hydrated\n• Pack light but essential gear\n• Wear proper hiking boots",
+            ),
+          ],
+        );
+      case 2:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Challenges",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "• Complete 3 hikes in a month\n• Hike 20km in a week\n• Join a community hike",
+            ),
+          ],
+        );
+      default:
+        return Container();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Trail Mate")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Greeting and weather
+            // Greeting
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text(
-                      "Good Morning",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("Good Morning", style: TextStyle(fontSize: 20)),
                     SizedBox(height: 4),
-                    Text(
-                      "Aman",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("Aman", style: TextStyle(fontSize: 18)),
                   ],
                 ),
                 Row(
@@ -112,7 +161,7 @@ class _HomeViewState extends State<HomeView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
+                            borderRadius: BorderRadius.vertical(
                               top: Radius.circular(12),
                             ),
                             child: Image.network(
@@ -129,9 +178,7 @@ class _HomeViewState extends State<HomeView> {
                               children: [
                                 Text(
                                   trail['title'],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
                                 Row(
@@ -159,10 +206,10 @@ class _HomeViewState extends State<HomeView> {
                                         ),
                                       ),
                                     ),
-                                    const Spacer(),
+                                    Spacer(),
                                     Text(
                                       "${trail['distance']} km",
-                                      style: const TextStyle(fontSize: 12),
+                                      style: TextStyle(fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -179,33 +226,59 @@ class _HomeViewState extends State<HomeView> {
 
             const SizedBox(height: 20),
             const Text(
-              "Upcoming Hikes",
+              "Explore More",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
-            ...upcomingHikes.map((hike) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  title: Text(
-                    hike['title'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+
+            // Toggle Buttons
+            Container(
+              color: Colors.white70,
+              height: 60,
+              alignment: Alignment.center,
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                children: [
+                  ButtonTabButton(
+                    title: "Upcoming",
+                    index: 0,
+                    selectedTab: selectedTab,
+                    onTabSelected: (i) {
+                      setState(() {
+                        selectedTab = i;
+                      });
+                    },
                   ),
-                  subtitle: Text(
-                    '${hike['date']} • ${hike['distance']} km • ${hike['duration']}',
+                  ButtonTabButton(
+                    title: "Tips",
+                    index: 1,
+                    selectedTab: selectedTab,
+                    onTabSelected: (i) {
+                      setState(() {
+                        selectedTab = i;
+                      });
+                    },
                   ),
-                  leading: const Icon(Icons.route),
-                  trailing: const Icon(
-                    Icons.warning,
-                    color: Colors.red,
-                    size: 40,
+                  ButtonTabButton(
+                    title: "Challenges",
+                    index: 2,
+                    selectedTab: selectedTab,
+                    onTabSelected: (i) {
+                      setState(() {
+                        selectedTab = i;
+                      });
+                    },
                   ),
-                ),
-              );
-            }),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 18),
+
+            // Dynamic Bottom Section
+            getBottomContent(),
 
             const SizedBox(height: 20),
             SizedBox(
@@ -219,11 +292,16 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
                 onPressed: () {},
-                icon: const Icon(Icons.add_location_alt_outlined),
-                label: const Text("Plan a New Hike"),
+                icon: const Icon(
+                  Icons.add_location_alt_outlined,
+                  color: Colors.white,
+                ),
+                label: const Text(
+                  "Plan a New Hike",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
-
             const SizedBox(height: 20),
           ],
         ),

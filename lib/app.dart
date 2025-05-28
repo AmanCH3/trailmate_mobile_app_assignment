@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trailmate_mobile_app_assignment/theme/theme_data.dart';
 import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
-// import 'package:trailmate_mobile_app_assignment/view/splash_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -9,7 +9,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Splash Screen",
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: getApplicationTheme(),
       home: DashboardView(),
       debugShowCheckedModeBanner: false,
     );

@@ -10,6 +10,6 @@ class GroupView extends StatefulWidget {
 class _GroupViewState extends State<GroupView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text("Group List")));
+    return const Center(child: const Text("Group View"));
   }
 }

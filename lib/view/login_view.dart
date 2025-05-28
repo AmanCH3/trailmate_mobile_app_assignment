@@ -165,7 +165,9 @@ class _LoginViewState extends State<LoginView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const DashboardView(),
+                                builder:
+                                    (context) =>
+                                        const DashboardView(showSnackbar: true),
                               ),
                             );
                           }
@@ -211,32 +213,36 @@ class _LoginViewState extends State<LoginView> {
                   SizedBox(height: 20),
                   Container(
                     width: double.infinity,
-                    child: Center(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 100,
-                            vertical: 20,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          backgroundColor: Colors.white,
-                        ),
-                        icon: Image.asset(
-                          "assets/images/google_image.png",
-                          height: 24,
-                          width: 24,
-                          fit: BoxFit.contain,
-                        ),
+                    child: Row(
+                      children: [
+                        Center(
+                          child: ElevatedButton.icon(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              side: const BorderSide(color: Colors.white),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 85,
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: Colors.white,
+                            ),
+                            icon: Image.asset(
+                              "assets/images/google_image.png",
+                              height: 24,
+                              width: 20,
+                              fit: BoxFit.contain,
+                            ),
 
-                        label: const Text(
-                          "Sign in with Google",
-                          style: TextStyle(color: Colors.black),
+                            label: const Text(
+                              "Sign in with Google",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
