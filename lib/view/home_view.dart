@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../common/button_tab_button.dart';
+import 'package:trailmate_mobile_app_assignment/common/tab_button.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -74,32 +73,43 @@ class _HomeViewState extends State<HomeView> {
               }).toList(),
         );
       case 1:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Hiking Tips",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "• Stay hydrated\n• Pack light but essential gear\n• Wear proper hiking boots",
-            ),
-          ],
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Hiking Tips",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "• Stay hydrated\n• Pack light but essential gear\n• Wear proper hiking boots",
+              ),
+            ],
+          ),
         );
       case 2:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Challenges",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "• Complete 3 hikes in a month\n• Hike 20km in a week\n• Join a community hike",
-            ),
-          ],
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Challenges",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "• Complete 3 hikes in a month\n• Hike 20km in a week\n• Join a community hike",
+              ),
+            ],
+          ),
         );
       default:
         return Container();
@@ -110,7 +120,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -121,9 +131,12 @@ class _HomeViewState extends State<HomeView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    Text("Good Morning", style: TextStyle(fontSize: 20)),
+                    Text("Good Morning", style: TextStyle(fontSize: 18)),
                     SizedBox(height: 4),
-                    Text("Aman", style: TextStyle(fontSize: 18)),
+                    Text(
+                      "Aman",
+                      style: TextStyle(fontSize: 23, fontFamily: 'Lato black'),
+                    ),
                   ],
                 ),
                 Row(
@@ -136,12 +149,12 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
             const Text(
               "Featured Trails",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
             SizedBox(
               height: 190,
@@ -162,7 +175,7 @@ class _HomeViewState extends State<HomeView> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(12),
+                              top: Radius.circular(10),
                             ),
                             child: Image.network(
                               trail['imageUrl'],
@@ -180,12 +193,12 @@ class _HomeViewState extends State<HomeView> {
                                   trail['title'],
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 8),
                                 Row(
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
+                                        horizontal: 8,
                                         vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
@@ -229,7 +242,7 @@ class _HomeViewState extends State<HomeView> {
               "Explore More",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
             // Toggle Buttons
             Container(
@@ -237,50 +250,57 @@ class _HomeViewState extends State<HomeView> {
               height: 60,
               alignment: Alignment.center,
 
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-
-                children: [
-                  ButtonTabButton(
-                    title: "Upcoming",
-                    index: 0,
-                    selectedTab: selectedTab,
-                    onTabSelected: (i) {
-                      setState(() {
-                        selectedTab = i;
-                      });
-                    },
-                  ),
-                  ButtonTabButton(
-                    title: "Tips",
-                    index: 1,
-                    selectedTab: selectedTab,
-                    onTabSelected: (i) {
-                      setState(() {
-                        selectedTab = i;
-                      });
-                    },
-                  ),
-                  ButtonTabButton(
-                    title: "Challenges",
-                    index: 2,
-                    selectedTab: selectedTab,
-                    onTabSelected: (i) {
-                      setState(() {
-                        selectedTab = i;
-                      });
-                    },
-                  ),
-                ],
+              // child: Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //
+              //   children: [
+              //     ButtonTabButton(
+              //       title: "Upcoming",
+              //       index: 0,
+              //       selectedTab: selectedTab,
+              //       onTabSelected: (i) {
+              //         setState(() {
+              //           selectedTab = i;
+              //         });
+              //       },
+              //     ),
+              //     ButtonTabButton(
+              //       title: "Tips",
+              //       index: 1,
+              //       selectedTab: selectedTab,
+              //       onTabSelected: (i) {
+              //         setState(() {
+              //           selectedTab = i;
+              //         });
+              //       },
+              //     ),
+              //     ButtonTabButton(
+              //       title: "Challenges",
+              //       index: 2,
+              //       selectedTab: selectedTab,
+              //       onTabSelected: (i) {
+              //         setState(() {
+              //           selectedTab = i;
+              //         });
+              //       },
+              //     ),
+              //   ],
+              // ),
+              child: TabButton(
+                // selectedTab: selectedTab,
+                // onTabSelected: (index) {
+                //   setState(() {
+                //     selectedTab = index;
+                //   });
+                // },
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
 
             // Dynamic Bottom Section
             getBottomContent(),
-
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
