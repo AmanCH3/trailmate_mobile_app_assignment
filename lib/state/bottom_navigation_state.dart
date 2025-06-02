@@ -1,16 +1,22 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
+import 'package:trailmate_mobile_app_assignment/view/home_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/profile_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/trail_view.dart';
 
 class BottomNavigationState {
-  final List<Widget> _screens = [
-    DashboardView(),
-    TrailView(),
-    ChecklistView(),
-    GroupView(),
-    ProfileView(),
-  ];
+  final int currentIndex;
+  final List<Widget> screens;
+
+  BottomNavigationState({required this.currentIndex})
+    : screens = [
+        HomeView(),
+        TrailView(),
+        ChecklistView(),
+        GroupView(),
+        ProfileView(),
+      ];
+
+  Widget get currentScreen => screens[currentIndex];
 }

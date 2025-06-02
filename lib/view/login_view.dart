@@ -167,7 +167,7 @@ class _LoginViewState extends State<LoginView> {
                               MaterialPageRoute(
                                 builder:
                                     (context) =>
-                                        const DashboardView(showSnackbar: true),
+                                        DashboardView(showSnackbar: true),
                               ),
                             );
                           }
