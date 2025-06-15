@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trailmate_mobile_app_assignment/common/common_textform_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_event.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
+import '../../../../core/common/common_textform_view.dart';
 import 'login_view.dart';
 
 class SignupView extends StatefulWidget {
@@ -287,7 +290,19 @@ class _SignupViewState extends State<SignupView> {
                       children: [
                         Center(
                           child: ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              if (myKey.currentState!.validate()) {
+                                context.read<RegisterViewModel>().add(
+                                  RegisterUserEvent(
+                                    context: context,
+                                    name: fullNameController.text,
+                                    password: passwordController.text,
+                                    phone: phoneNumberController.text,
+                                    email: emailController.text,
+                                  ),
+                                );
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                               side: const BorderSide(color: Colors.white),
                               padding: const EdgeInsets.symmetric(

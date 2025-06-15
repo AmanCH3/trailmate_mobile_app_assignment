@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trailmate_mobile_app_assignment/common/my_snackbar.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
 
 import '../state/bottom_navigation_state.dart';
@@ -8,13 +8,14 @@ import '../state/bottom_navigation_state.dart';
 class DashboardView extends StatelessWidget {
   final bool showSnackbar;
 
-  DashboardView({Key? key, this.showSnackbar = false}) : super(key: key);
+  const DashboardView({Key? key, this.showSnackbar = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (showSnackbar) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showMySnackbar(context: context, content: "Login Successful!");
+        // showMySnackbar(context: context, message : "Login Successful!");
+        showMySnackBar(context: context, message: "Login Successful !");
       });
     }
 

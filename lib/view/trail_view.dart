@@ -8,75 +8,59 @@ class TrailView extends StatefulWidget {
 }
 
 class _TrailViewState extends State<TrailView> {
+  int _selectedIndex = 1; // Trails tab is selected
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   final SearchController _searchController = SearchController();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Row(
+    return Scaffold(
+      body: Column(
         children: [
-          Expanded(
-            child: SearchAnchor(
-              searchController: _searchController,
-              builder: (BuildContext context, SearchController controller) {
-                return SearchBar(
-                  controller: controller,
-                  hintText: 'Search trails...',
-                  padding: const WidgetStatePropertyAll<EdgeInsets>(
-                    EdgeInsets.symmetric(horizontal: 16.0),
-                  ),
-                  // onTap: controller.openView,
-                  onChanged: (context) => controller.openView(),
-                  leading: const Icon(Icons.search),
-                );
-              },
-              suggestionsBuilder: (
-                BuildContext context,
-                SearchController controller,
-              ) {
-                return List<ListTile>.generate(5, (int index) {
-                  final String item = 'Trail $index';
-                  return ListTile(
-                    title: Text(item),
-                    onTap: () {
-                      setState(() {
-                        controller.closeView(item);
-                      });
-                    },
-                  );
-                });
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.green,
-            ),
-
-            child: IconButton(
-              icon: const Icon(Icons.filter_alt_outlined),
-              tooltip: 'Filter Trails',
-
-              onPressed: () {
-                // Add filter functionality here
-                showDialog(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: const Text('Filter Options'),
-                        content: const Text('Filter logic goes here...'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Close'),
-                          ),
-                        ],
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search trails...',
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide.none, // No border
                       ),
-                );
-              },
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      // Light grey background
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 0,
+                        horizontal: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF66BB6A),
+                    // Green background for filter button
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.tune, color: Colors.white),
+                    onPressed: () {
+                      // Handle filter button action
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -84,3 +68,23 @@ class _TrailViewState extends State<TrailView> {
     );
   }
 }
+
+// class TrailCard extends StatelessWidget {
+//   final String imagePath;
+//   final String trailName;
+//   final String location;
+//   final int durationHrs;
+//   final int elevationM;
+//   final String difficulty;
+//   final double rating;
+//
+//   const TrailCard({
+//     super.key,
+//     required this.imagePath,
+//     required this.trailName,
+//     required this.location,
+//     required this.durationHrs,
+//     required this.elevationM,
+//     required this.difficulty,
+//     required this.rating,
+//   });

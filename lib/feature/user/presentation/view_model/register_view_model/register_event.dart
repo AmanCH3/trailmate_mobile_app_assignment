@@ -1,0 +1,21 @@
+import 'package:flutter/cupertino.dart';
+
+@immutable
+sealed class RegisterEvent {}
+
+class RegisterUserEvent extends RegisterEvent {
+  final BuildContext context;
+
+  final String name;
+  final String password;
+  final String email;
+  final String phone;
+
+  RegisterUserEvent({
+    required this.context,
+    required this.name,
+    required this.password,
+    required this.phone,
+    required this.email,
+  });
+}

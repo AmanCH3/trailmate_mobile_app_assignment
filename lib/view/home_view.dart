@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trailmate_mobile_app_assignment/common/tab_button.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/tab_button.dart';
 
 class HomeView extends StatefulWidget {
   @override

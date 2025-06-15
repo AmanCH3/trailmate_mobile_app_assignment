@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:trailmate_mobile_app_assignment/common/common_textform_view.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/signup_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/signup_view.dart';
+
+import '../../../../core/common/common_textform_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -170,6 +171,12 @@ class _LoginViewState extends State<LoginView> {
                                         DashboardView(showSnackbar: true),
                               ),
                             );
+                            // context.read<LoginViewModel>().add(
+                            //   NavigateToHomeView(
+                            //     context: context,
+                            //     destination: DashboardView(),
+                            //   ),
+                            // );
                           }
                         }
                       },
