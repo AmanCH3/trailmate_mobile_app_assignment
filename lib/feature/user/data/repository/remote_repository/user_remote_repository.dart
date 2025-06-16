@@ -39,4 +39,16 @@ class UserRemoteRepository implements IUserRepository {
       return Left(ApiFailure(statusCode: 500, message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> registerUser(UserEntity user) {
+    // TODO: implement registerUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, String>> loginUser(String email, String password) {
+    // TODO: implement loginUser
+    throw UnimplementedError();
+  }
 }

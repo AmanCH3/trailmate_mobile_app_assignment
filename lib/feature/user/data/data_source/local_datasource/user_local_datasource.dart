@@ -38,4 +38,28 @@ class UserLocalDataSource implements IUserDataSource {
       throw Exception(e);
     }
   }
+
+  @override
+  Future<String> loginUser(String email, String password) async {
+    try {
+      final userData = await _hiveService.login(email, password);
+      if (userData != null && userData.password == password) {
+        return "Login successful";
+      } else {
+        throw Exception('Invalid username or password');
+      }
+    } catch (e) {
+      throw Exception('Login Failed : $e');
+    }
+  }
+
+  @override
+  Future<void> registerUser(UserEntity entity) async {
+    try {
+      final userHiveModel = UserHiveModel.fromEntity(entity);
+      await _hiveService.register(userHiveModel);
+    } catch (e) {
+      throw Exception("Registration Failed : $e");
+    }
+  }
 }
