@@ -234,14 +234,14 @@ class _SignupViewState extends State<SignupView> {
                       ),
                       onPressed: () {
                         if (myKey.currentState!.validate()) {
-                          var fullName = fullNameController.text;
-                          var email = emailController.text;
-                          var password = passwordController.text;
-                          var confirmPassword = confirmPasswordController.text;
-                          var phone = phoneNumberController.text;
-
-                          debugPrint(
-                            'fullname : $fullName ,email : $email , password   : $password , confirmpassword : $confirmPassword , phone : $phone',
+                          context.read<RegisterViewModel>().add(
+                            RegisterUserEvent(
+                              context: context,
+                              name: fullNameController.text,
+                              password: passwordController.text,
+                              phone: phoneNumberController.text,
+                              email: emailController.text,
+                            ),
                           );
                         }
                       },

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/signup_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_event.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
 
 import '../../../../core/common/common_textform_view.dart';
 
@@ -157,27 +159,34 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       onPressed: () {
                         if (myKey.currentState!.validate()) {
-                          var email = emailController.text;
-                          var password = passwordController.text;
-                          debugPrint("Email: $email, Password: $password");
-
-                          if (email == "admin@gmail.com" &&
-                              password == "admin123") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        DashboardView(showSnackbar: true),
-                              ),
-                            );
-                            // context.read<LoginViewModel>().add(
-                            //   NavigateToHomeView(
-                            //     context: context,
-                            //     destination: DashboardView(),
-                            //   ),
-                            // );
-                          }
+                          // var email = emailController.text;
+                          // var password = passwordController.text;
+                          // debugPrint("Email: $email, Password: $password");
+                          //
+                          // if (email == "admin@gmail.com" &&
+                          //     password == "admin123") {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder:
+                          //           (context) =>
+                          //               DashboardView(showSnackbar: true),
+                          //     ),
+                          //   );
+                          // context.read<LoginViewModel>().add(
+                          //   NavigateToHomeView(
+                          //     context: context,
+                          //     destination: DashboardView(),
+                          //   ),
+                          // );
+                          // }
+                          context.read<LoginViewModel>().add(
+                            LoginWithEmailAndPassword(
+                              context: context,
+                              email: emailController.text,
+                              password: passwordController.text,
+                            ),
+                          );
                         }
                       },
                       child: const Text(

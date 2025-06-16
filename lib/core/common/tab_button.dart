@@ -1,59 +1,35 @@
 import 'package:flutter/material.dart';
 
 class TabButton extends StatelessWidget {
-  const TabButton({super.key});
+  final int selectedTab;
+  final Function(int) onTabSelected;
+
+  const TabButton({required this.selectedTab, required this.onTabSelected});
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 1,
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          bottom: const TabBar(
-            tabs: [
-              Tab(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.location_on_outlined),
-                    SizedBox(width: 6),
-                    Text("Upcoming"),
-                  ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        for (int i = 0; i < 3; i++)
+          GestureDetector(
+            onTap: () => onTabSelected(i),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: selectedTab == i ? Colors.green : Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                ['Upcoming', 'Tips', 'Challenges'][i],
+                style: TextStyle(
+                  color: selectedTab == i ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Tab(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.tips_and_updates_outlined),
-                    SizedBox(width: 6),
-                    Text("Tips"),
-                  ],
-                ),
-              ),
-              Tab(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.difference_outlined),
-                    SizedBox(width: 6),
-                    Text("Challenges"),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-
-        body: const TabBarView(
-          children: [
-            Center(child: Text('Upcoming')),
-            Center(child: Text("Tips")),
-            Center(child: Text("Challenges")),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }

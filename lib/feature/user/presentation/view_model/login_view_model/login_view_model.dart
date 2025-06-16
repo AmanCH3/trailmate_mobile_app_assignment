@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 
 import '../../../../../app/service_locator/service_locator.dart';
+import '../../../../home/presentation/view_model/home_view_model.dart';
 import '../register_view_model/register_view_model.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginViewModel extends Bloc<LoginEvent, LoginState> {
-  LoginViewModel() : super(LoginState.initial()) {
+  final UserLoginUseCase _userLoginUseCase;
+
+  LoginViewModel(this._userLoginUseCase) : super(LoginState.initial()) {
     on<NavigateToRegisterView>(_onNavigateToRegisterView);
     on<NavigateToHomeView>(_onNavigateToHomeView);
     on<LoginWithEmailAndPassword>(_onLoginWithEmailAndPassword);
@@ -36,17 +40,18 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) {
     // Logic to navigate to Home View
-    // if (event.context.mounted) {
-    //   Navigator.pushReplacement(
-    //     event.context,
-    //     MaterialPageRoute(
-    //       builder: (context) => BlocProvider.value(
-    //         value: serviceLocator<HomeViewModel>(),
-    //         child: event.destination,
-    //       ),
-    //     ),
-    //   );
-    // }
+    if (event.context.mounted) {
+      Navigator.pushReplacement(
+        event.context,
+        MaterialPageRoute(
+          builder:
+              (context) => BlocProvider.value(
+                value: serviceLocator<HomeViewModel>(),
+                child: event.destination,
+              ),
+        ),
+      );
+    }
   }
 
   void _onLoginWithEmailAndPassword(
