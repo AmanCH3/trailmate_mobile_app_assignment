@@ -33,6 +33,7 @@ class _SignupViewState extends State<SignupView> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<RegisterViewModel>();
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -223,7 +224,6 @@ class _SignupViewState extends State<SignupView> {
 
                   Container(
                     width: double.infinity,
-
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0x8889C158),
@@ -234,7 +234,7 @@ class _SignupViewState extends State<SignupView> {
                       ),
                       onPressed: () {
                         if (myKey.currentState!.validate()) {
-                          context.read<RegisterViewModel>().add(
+                          bloc.add(
                             RegisterUserEvent(
                               context: context,
                               name: fullNameController.text,

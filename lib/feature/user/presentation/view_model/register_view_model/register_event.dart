@@ -3,6 +3,12 @@ import 'package:flutter/cupertino.dart';
 @immutable
 sealed class RegisterEvent {}
 
+class NavigateToLoginEvent extends RegisterEvent {
+  final BuildContext context;
+
+  NavigateToLoginEvent({required this.context});
+}
+
 class RegisterUserEvent extends RegisterEvent {
   final BuildContext context;
 

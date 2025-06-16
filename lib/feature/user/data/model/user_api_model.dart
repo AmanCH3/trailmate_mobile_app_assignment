@@ -15,7 +15,7 @@ class UserApiModel extends Equatable {
 
   final String phone;
 
-  final String password;
+  final String? password;
 
   const UserApiModel({
     this.id,
@@ -35,7 +35,7 @@ class UserApiModel extends Equatable {
     return UserEntity(
       name: name,
       email: email,
-      password: password,
+      password: password ?? '',
       phone: phone,
       userId: id,
     );

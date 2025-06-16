@@ -5,16 +5,14 @@ sealed class LoginEvent {}
 
 class NavigateToRegisterView extends LoginEvent {
   final BuildContext context;
-  final Widget destination;
 
-  NavigateToRegisterView({required this.context, required this.destination});
+  NavigateToRegisterView({required this.context});
 }
 
 class NavigateToHomeView extends LoginEvent {
   final BuildContext context;
-  final Widget destination;
 
-  NavigateToHomeView({required this.context, required this.destination});
+  NavigateToHomeView({required this.context});
 }
 
 class LoginWithEmailAndPassword extends LoginEvent {

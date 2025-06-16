@@ -11,24 +11,6 @@ class UserLocalRepository implements IUserRepository {
     : _userLocalDataSource = userLocalDataSource;
 
   @override
-  Future<Either<Failure, void>> createUser(UserEntity user) {
-    // TODO: implement createUser
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, void>> deleteUser(String id) {
-    // TODO: implement deleteUser
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, List<UserEntity>>> getAllUser() {
-    // TODO: implement getAllUser
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Either<Failure, String>> loginUser(
     String email,
     String password,

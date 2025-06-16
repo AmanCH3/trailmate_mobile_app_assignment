@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/app_flush.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/signup_view.dart';
+import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
 
 import '../../../../../app/service_locator/service_locator.dart';
-import '../../../../home/presentation/view_model/home_view_model.dart';
 import '../register_view_model/register_view_model.dart';
 import 'login_event.dart';
 import 'login_state.dart';
@@ -28,7 +31,7 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
           builder:
               (_) => BlocProvider.value(
                 value: serviceLocator<RegisterViewModel>(),
-                child: event.destination,
+                child: const SignupView(),
               ),
         ),
       );
@@ -38,24 +41,45 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
   void _onNavigateToHomeView(
     NavigateToHomeView event,
     Emitter<LoginState> emit,
-  ) {
-    // Logic to navigate to Home View
-    if (event.context.mounted) {
-      Navigator.pushReplacement(
-        event.context,
-        MaterialPageRoute(
-          builder:
-              (context) => BlocProvider.value(
-                value: serviceLocator<HomeViewModel>(),
-                child: event.destination,
-              ),
-        ),
-      );
-    }
+  ) async {
+    Navigator.pushAndRemoveUntil(
+      event.context,
+      MaterialPageRoute(builder: (_) => const DashboardView()),
+      (route) => false,
+    );
+    await AppFlushbar.show(
+      context: event.context,
+      message: "Login successful!",
+      backgroundColor: Colors.green,
+      icon: const Icon(Icons.check_circle, color: Colors.white),
+    );
   }
 
   void _onLoginWithEmailAndPassword(
     LoginWithEmailAndPassword event,
     Emitter<LoginState> emit,
-  ) {}
+  ) async {
+    emit(state.copyWith(isLoading: true));
+    final result = await _userLoginUseCase(
+      LoginParams(email: event.email, password: event.password),
+    );
+
+    result.fold(
+      (failure) {
+        // Handle failure case
+        emit(state.copyWith(isLoading: false, isSuccess: false));
+
+        showMySnackBar(
+          context: event.context,
+          message: 'Invalid credentials. Please try again.',
+          color: Colors.red,
+        );
+      },
+      (email) {
+        // Handle success case
+        emit(state.copyWith(isLoading: false, isSuccess: true));
+        add(NavigateToHomeView(context: event.context));
+      },
+    );
+  }
 }

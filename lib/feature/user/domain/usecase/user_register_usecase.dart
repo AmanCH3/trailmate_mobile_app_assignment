@@ -46,6 +46,6 @@ class UserRegisterUseCase
       phone: params.phone,
     );
 
-    return _userRepository.createUser(userEntity);
+    return _userRepository.registerUser(userEntity);
   }
 }

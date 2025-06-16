@@ -6,10 +6,9 @@ import 'core/network/local/hive_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initDependencies();
   // init Hive service
   await HiveService().init();
-  // Delete database
-  // await HiveService().clearAll();
+  await initDependencies();
+  
   runApp(App());
 }

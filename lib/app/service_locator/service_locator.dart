@@ -1,9 +1,7 @@
 import 'package:get_it/get_it.dart';
-import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/local_datasource/user_local_datasource.dart';
-import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/local_repository/user_local_repository.dart';
-import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_register_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
@@ -18,6 +16,7 @@ Future initDependencies() async {
   await _initHiveService();
   await _initAuthModule();
   await _initSplashModule();
+  await _initHomeModule();
 }
 
 Future<void> _initSplashModule() async {
@@ -34,10 +33,6 @@ Future<void> _initAuthModule() async {
     () => UserLocalDataSource(hiveService: serviceLocator<HiveService>()),
   );
 
-  serviceLocator.registerFactory(
-    () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()),
-  );
-
   // ===================== Repository ====================
 
   serviceLocator.registerFactory(
@@ -47,34 +42,19 @@ Future<void> _initAuthModule() async {
   );
 
   serviceLocator.registerFactory(
-    () => UserRemoteRepository(
-      userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
-    ),
+    () =>
+        UserLoginUseCase(userRepository: serviceLocator<UserLocalRepository>()),
   );
-
-  // ===================== Usecases ====================
-
-  // serviceLocator.registerFactory(
-  //       () => UserLoginUseCase(
-  //     userRepository: serviceLocator<UserRemoteRepository>(),
-  //   ),
-  // );
 
   serviceLocator.registerFactory(
     () => UserRegisterUseCase(
-      userRepository: serviceLocator<UserRemoteRepository>(),
+      userRepository: serviceLocator<UserLocalRepository>(),
     ),
   );
 
-  // serviceLocator.registerFactory(
-  //       () => StudentGetCurrentUsecase(
-  //     studentRepository: serviceLocator<StudentRemoteRepository>(),
-  //   ),
-  // );
-
   // ===================== ViewModels ====================
 
-  serviceLocator.registerFactory(
+  serviceLocator.registerFactory<RegisterViewModel>(
     () => RegisterViewModel(serviceLocator<UserRegisterUseCase>()),
   );
 
@@ -84,24 +64,8 @@ Future<void> _initAuthModule() async {
   );
 }
 
-//
-// Future _initUserModule() async {
-//   //Data Source
-//   serviceLocator.registerFactory(
-//     () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()),
-//   );
-//
-//   // Repository
-//   serviceLocator.registerLazySingleton<UserRemoteRepository>(
-//     () => UserRemoteRepository(
-//       userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
-//     ),
-//   );
-//
-//   // usecase
-//   serviceLocator.registerFactory(
-//     () => UserRegisterUseCase(
-//       userRepository: serviceLocator<UserRemoteRepository>(),
-//     ),
-//   );
-// }
+Future<void> _initHomeModule() async {
+  serviceLocator.registerFactory(
+    () => HomeViewModel(loginViewModel: serviceLocator<LoginViewModel>()),
+  );
+}
