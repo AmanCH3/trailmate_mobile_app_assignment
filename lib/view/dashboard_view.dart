@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
 
+import '../feature/home/presentation/view_model/home_view_model.dart';
 import '../state/bottom_navigation_state.dart';
 
 class DashboardView extends StatelessWidget {
@@ -21,7 +22,24 @@ class DashboardView extends StatelessWidget {
     return BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(title: const Text("Dashboard")),
+          appBar: AppBar(
+            title: const Text("Dashboard"),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  // Logout code
+                  showMySnackBar(
+                    context: context,
+                    message: 'Logging out...',
+                    color: Colors.red,
+                  );
+
+                  context.read<HomeViewModel>().logout(context);
+                },
+              ),
+            ],
+          ),
           body: state.currentScreen,
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: state.currentIndex,
