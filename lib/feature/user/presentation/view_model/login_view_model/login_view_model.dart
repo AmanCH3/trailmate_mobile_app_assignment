@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trailmate_mobile_app_assignment/core/common/app_flush.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
+import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/signup_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
@@ -44,14 +44,14 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
   ) async {
     Navigator.pushAndRemoveUntil(
       event.context,
-      MaterialPageRoute(builder: (_) => const DashboardView()),
+      MaterialPageRoute(
+        builder:
+            (_) => BlocProvider(
+              create: (_) => BottomNavigationCubit(),
+              child: DashboardView(showSnackbar: true),
+            ),
+      ),
       (route) => false,
-    );
-    await AppFlushbar.show(
-      context: event.context,
-      message: "Login successful!",
-      backgroundColor: Colors.green,
-      icon: const Icon(Icons.check_circle, color: Colors.white),
     );
   }
 

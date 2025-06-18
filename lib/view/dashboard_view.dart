@@ -14,7 +14,6 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (showSnackbar) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // showMySnackbar(context: context, message : "Login Successful!");
         showMySnackBar(context: context, message: "Login Successful !");
       });
     }
