@@ -7,9 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trailmate_mobile_app_assignment/app.dart';
-
-import 'package:trailmate_mobile_app_assignment/main.dart';
+import 'package:trailmate_mobile_app_assignment/app/app.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

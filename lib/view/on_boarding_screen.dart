@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'login_view.dart';
+import '../feature/user/presentation/view/login_view.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

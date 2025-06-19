@@ -1,65 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:trailmate_mobile_app_assignment/common/my_snackbar.dart';
-import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/home_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/profile_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/trail_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
+import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
 
-class DashboardView extends StatefulWidget {
+import '../feature/home/presentation/view_model/home_view_model.dart';
+import '../state/bottom_navigation_state.dart';
+
+class DashboardView extends StatelessWidget {
   final bool showSnackbar;
 
   const DashboardView({Key? key, this.showSnackbar = false}) : super(key: key);
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
-}
-
-class _DashboardViewState extends State<DashboardView> {
-  @override
-  void initState() {
-    super.initState();
-    if (widget.showSnackbar) {
+  Widget build(BuildContext context) {
+    if (showSnackbar) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showMySnackbar(context: context, content: "Login Successful !");
+        showMySnackBar(context: context, message: "Login Successful !");
       });
     }
-  }
 
-  int _currentIndex = 0;
+    return BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Dashboard"),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  // Logout code
+                  showMySnackBar(
+                    context: context,
+                    message: 'Logging out...',
+                    color: Colors.red,
+                  );
 
-  final List<Widget> screens = [
-    HomeView(),
-    const TrailView(),
-    const GroupView(),
-    const ChecklistView(),
-    const ProfileView(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Dashboard")),
-      body: screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        // type: BottomNavigationBarType.shifting,
-        currentIndex: _currentIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Trails'),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Groups'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.checklist),
-            label: 'Checklist',
+                  context.read<HomeViewModel>().logout(context);
+                },
+              ),
+            ],
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+          body: state.currentScreen,
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: state.currentIndex,
+            selectedItemColor: Colors.green,
+            unselectedItemColor: Colors.grey,
+            onTap: (index) {
+              context.read<BottomNavigationCubit>().updateIndex(index);
+            },
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Trails'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.checklist),
+                label: 'Checklist',
+              ),
+              BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Groups'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

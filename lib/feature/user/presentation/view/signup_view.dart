@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trailmate_mobile_app_assignment/common/common_textform_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_event.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
+import '../../../../core/common/common_textform_view.dart';
 import 'login_view.dart';
 
 class SignupView extends StatefulWidget {
@@ -30,6 +33,7 @@ class _SignupViewState extends State<SignupView> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<RegisterViewModel>();
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -220,7 +224,6 @@ class _SignupViewState extends State<SignupView> {
 
                   Container(
                     width: double.infinity,
-
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0x8889C158),
@@ -231,14 +234,14 @@ class _SignupViewState extends State<SignupView> {
                       ),
                       onPressed: () {
                         if (myKey.currentState!.validate()) {
-                          var fullName = fullNameController.text;
-                          var email = emailController.text;
-                          var password = passwordController.text;
-                          var confirmPassword = confirmPasswordController.text;
-                          var phone = phoneNumberController.text;
-
-                          debugPrint(
-                            'fullname : $fullName ,email : $email , password   : $password , confirmpassword : $confirmPassword , phone : $phone',
+                          bloc.add(
+                            RegisterUserEvent(
+                              context: context,
+                              name: fullNameController.text,
+                              password: passwordController.text,
+                              phone: phoneNumberController.text,
+                              email: emailController.text,
+                            ),
                           );
                         }
                       },
@@ -287,7 +290,19 @@ class _SignupViewState extends State<SignupView> {
                       children: [
                         Center(
                           child: ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              if (myKey.currentState!.validate()) {
+                                context.read<RegisterViewModel>().add(
+                                  RegisterUserEvent(
+                                    context: context,
+                                    name: fullNameController.text,
+                                    password: passwordController.text,
+                                    phone: phoneNumberController.text,
+                                    email: emailController.text,
+                                  ),
+                                );
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                               side: const BorderSide(color: Colors.white),
                               padding: const EdgeInsets.symmetric(
