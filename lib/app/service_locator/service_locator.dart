@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
@@ -10,12 +11,14 @@ import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
 import '../../feature/splash/view_model/splash_view_model.dart';
+import '../shared_pref/token_shared_prefs.dart';
 
 final serviceLocator = GetIt.instance;
 
 Future initDependencies() async {
   // await _initHiveService();
   await _initAuthModule();
+  await _initSharedPrefs();
   await _initSplashModule();
   await _initHomeModule();
   await _initApiService();
@@ -31,6 +34,17 @@ Future<void> _initSplashModule() async {
 
 Future _initApiService() async {
   serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
+}
+
+Future<void> _initSharedPrefs() async {
+  // Initialize Shared Preferences if needed
+  final sharedPrefs = await SharedPreferences.getInstance();
+  serviceLocator.registerLazySingleton(() => sharedPrefs);
+  serviceLocator.registerLazySingleton(
+    () => TokenSharedPrefs(
+      sharedPreferences: serviceLocator<SharedPreferences>(),
+    ),
+  );
 }
 
 Future<void> _initAuthModule() async {
