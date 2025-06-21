@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_entity.dart';
+
 part 'trail_api_model.g.dart';
 
+@JsonSerializable()
 class TrailApiModel extends Equatable {
   @JsonKey(name: "_id")
   final String? trailId;
