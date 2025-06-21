@@ -25,13 +25,6 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    // Print submitted data
-    print('📝 Submitted Data:');
-    print('name: ${event.name}');
-    print('Email: ${event.email}');
-    print('Password: ${event.password}');
-    print('phone: ${event.phone}');
-
     final result = await _userRegisterUseCase(
       RegisterUserParams(
         email: event.email,
@@ -42,20 +35,19 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     );
 
     result.fold(
-      (l) async {
+      (r) async {
         emit(state.copyWith(isLoading: false));
 
         if (event.context.mounted) {
           await AppFlushbar.show(
             context: event.context,
             message: "Something went wrong!",
-
             icon: const Icon(Icons.error, color: Colors.white),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.red, // Change this line
           );
         }
       },
-      (r) async {
+      (l) async {
         emit(state.copyWith(isLoading: false, isSuccess: true));
 
         if (event.context.mounted) {

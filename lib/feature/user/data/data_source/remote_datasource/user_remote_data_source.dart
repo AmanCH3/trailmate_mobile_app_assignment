@@ -54,7 +54,7 @@ class UserRemoteDataSource implements IUserDataSource {
         return str;
       } else {
         throw Exception(
-          "Failed to registerr student : ${response.statusMessage}",
+          "Failed to register student : ${response.statusMessage}",
         );
       }
     } on DioException catch (e) {
