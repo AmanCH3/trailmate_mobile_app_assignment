@@ -56,6 +56,9 @@ class TrailApiModel extends Equatable {
     return trail;
   }
 
+  static List<TrailEnitiy> toEntityList(List<TrailApiModel> models) =>
+      models.map((model) => model.toEntity()).toList();
+
   @override
   // TODO: implement props
   List<Object?> get props => [
