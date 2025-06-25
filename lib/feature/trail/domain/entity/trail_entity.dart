@@ -4,19 +4,19 @@ class TrailEnitiy extends Equatable {
   final String? trailId;
   final String name;
   final String location;
-  final double durationHours;
-  final int elevationMeters;
+  final double duration;
+  final double elevation;
   final String difficulty;
-  final String imageUrl;
+  final String images;
 
   TrailEnitiy({
     this.trailId,
     required this.name,
     required this.location,
-    required this.durationHours,
-    required this.elevationMeters,
+    required this.duration,
+    required this.elevation,
     required this.difficulty,
-    required this.imageUrl,
+    required this.images,
   });
 
   @override
@@ -25,9 +25,9 @@ class TrailEnitiy extends Equatable {
     trailId,
     name,
     location,
-    durationHours,
-    elevationMeters,
+    duration,
+    elevation,
     difficulty,
-    imageUrl,
+    images,
   ];
 }

@@ -10,19 +10,19 @@ class TrailApiModel extends Equatable {
   final String? trailId;
   final String name;
   final String location;
-  final double durationHours;
-  final int elevationMeters;
+  final double duration;
+  final double elevation;
   final String difficulty;
-  final String imageUrl;
+  final String images;
 
   TrailApiModel({
     this.trailId,
     required this.name,
     required this.location,
-    required this.durationHours,
-    required this.elevationMeters,
+    required this.duration,
+    required this.elevation,
     required this.difficulty,
-    required this.imageUrl,
+    required this.images,
   });
 
   factory TrailApiModel.fromJson(Map<String, dynamic> json) =>
@@ -36,10 +36,10 @@ class TrailApiModel extends Equatable {
       trailId: trailId,
       name: name,
       location: location,
-      durationHours: durationHours,
-      elevationMeters: elevationMeters,
+      duration: duration,
+      elevation: elevation,
       difficulty: difficulty,
-      imageUrl: imageUrl,
+      images: images,
     );
   }
 
@@ -48,10 +48,10 @@ class TrailApiModel extends Equatable {
     final trail = TrailApiModel(
       name: entity.name,
       location: entity.location,
-      durationHours: entity.durationHours,
-      elevationMeters: entity.elevationMeters,
+      duration: entity.duration,
+      elevation: entity.elevation,
       difficulty: entity.difficulty,
-      imageUrl: entity.imageUrl,
+      images: entity.images,
     );
     return trail;
   }
@@ -62,9 +62,9 @@ class TrailApiModel extends Equatable {
     trailId,
     name,
     location,
-    durationHours,
-    elevationMeters,
+    duration,
+    elevation,
     difficulty,
-    imageUrl,
+    images,
   ];
 }
