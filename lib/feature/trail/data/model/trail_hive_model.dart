@@ -1,6 +1,7 @@
 import 'package:hive_flutter/adapters.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_entity.dart';
 import 'package:uuid/uuid.dart';
+
 part 'trail_hive_model.g.dart';
 
 @HiveType(typeId: 1)
@@ -36,6 +37,15 @@ class TrailHiveModel extends HiveObject {
     required this.images,
   }) : trailId = trailId ?? const Uuid().v4();
 
+  TrailHiveModel.initial()
+    : trailId = "",
+      name = "",
+      location = "",
+      duration = 0,
+      elevation = 0,
+      difficulty = 'moderate',
+      images = '';
+
   TrailEnitiy toEntity() => TrailEnitiy(
     trailId: trailId,
     name: name,
@@ -55,4 +65,17 @@ class TrailHiveModel extends HiveObject {
     difficulty: entity.difficulty,
     images: entity.images,
   );
+
+  static List<TrailEnitiy> toEntityList(List<TrailHiveModel> models) =>
+      models.map((model) => model.toEntity()).toList();
+
+  List<Object?> get props => [
+    trailId,
+    name,
+    location,
+    duration,
+    elevation,
+    difficulty,
+    images,
+  ];
 }

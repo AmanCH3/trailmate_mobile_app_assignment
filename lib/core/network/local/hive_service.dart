@@ -1,6 +1,7 @@
 import 'package:hive_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:trailmate_mobile_app_assignment/app/constant/hive/hive_table_constant.dart';
+import 'package:trailmate_mobile_app_assignment/feature/trail/data/model/trail_hive_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/model/user_hive_model.dart';
 
 class HiveService {
@@ -47,5 +48,13 @@ class HiveService {
   Future<void> clearAll() async {
     await Hive.deleteFromDisk();
     await Hive.deleteBoxFromDisk(HiveTableConstant.userBox);
+  }
+
+  // get all trils
+  Future<List<TrailHiveModel?>> getTrail() async {
+    var box = await Hive.openBox<TrailHiveModel>(HiveTableConstant.trailBox);
+    // where type filters out the not null values
+    final nonNullValues = box.values.whereType<TrailHiveModel>().toList();
+    return nonNullValues;
   }
 }
