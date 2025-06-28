@@ -17,6 +17,7 @@ class TrailRemoteDataSource implements ITrailDataSource {
   Future<List<TrailEnitiy>> getTrails() async {
     try {
       final response = await _apiService.dio.get(ApiEndpoints.getAllTrails);
+    
       if (response.statusCode == 200) {
         GetAllTrailDto getAllTrailDto = GetAllTrailDto.fromJson(response.data);
         return TrailApiModel.toEntityList(getAllTrailDto.data);

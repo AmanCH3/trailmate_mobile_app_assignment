@@ -6,19 +6,17 @@ part 'get_all_trail_dto.g.dart';
 @JsonSerializable()
 class GetAllTrailDto {
   final bool success;
-
-  final int count;
-
+  final String message;
   final List<TrailApiModel> data;
 
-  const GetAllTrailDto({
+  GetAllTrailDto({
     required this.success,
-    required this.count,
+    required this.message,
     required this.data,
   });
 
-  Map<String, dynamic> toJson() => _$GetAllTrailDtoToJson(this);
-
   factory GetAllTrailDto.fromJson(Map<String, dynamic> json) =>
       _$GetAllTrailDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetAllTrailDtoToJson(this);
 }

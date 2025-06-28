@@ -6,15 +6,29 @@ part of 'trail_api_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+DurationApiModel _$DurationApiModelFromJson(Map<String, dynamic> json) =>
+    DurationApiModel(
+      min: (json['min'] as num).toInt(),
+      max: (json['max'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$DurationApiModelToJson(DurationApiModel instance) =>
+    <String, dynamic>{
+      'min': instance.min,
+      'max': instance.max,
+    };
+
 TrailApiModel _$TrailApiModelFromJson(Map<String, dynamic> json) =>
     TrailApiModel(
-      trailId: json['_id'] as String?,
+      trailId: json['_id'] as String,
       name: json['name'] as String,
       location: json['location'] as String,
-      duration: (json['duration'] as num).toDouble(),
+      duration:
+          DurationApiModel.fromJson(json['duration'] as Map<String, dynamic>),
       elevation: (json['elevation'] as num).toDouble(),
-      difficulty: json['difficulty'] as String,
-      images: json['images'] as String,
+      difficulty: json['difficult'] as String,
+      images:
+          (json['images'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$TrailApiModelToJson(TrailApiModel instance) =>
@@ -22,8 +36,8 @@ Map<String, dynamic> _$TrailApiModelToJson(TrailApiModel instance) =>
       '_id': instance.trailId,
       'name': instance.name,
       'location': instance.location,
-      'duration': instance.duration,
       'elevation': instance.elevation,
-      'difficulty': instance.difficulty,
+      'duration': instance.duration.toJson(),
+      'difficult': instance.difficulty,
       'images': instance.images,
     };

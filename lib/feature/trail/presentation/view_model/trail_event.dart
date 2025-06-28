@@ -1,54 +1,46 @@
 import 'package:equatable/equatable.dart';
-import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_query.dart';
 
 abstract class TrailEvent extends Equatable {
   const TrailEvent();
 
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
-class LoadTrails extends TrailEvent {
-  final TrailQuery query;
-
-  const LoadTrails(this.query);
+class LoadAllTrailsEvent extends TrailEvent {
+  const LoadAllTrailsEvent();
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [query];
+  List<Object?> get props => [];
 }
 
-class LoadMoreTrail extends TrailEvent {}
-
-class RefreshTrails extends TrailEvent {}
-
-class SearchTrails extends TrailEvent {
-  final String searchTerms;
-
-  const SearchTrails(this.searchTerms);
+class RefreshTrailsEvent extends TrailEvent {
+  const RefreshTrailsEvent();
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [searchTerms];
+  List<Object?> get props => [];
 }
 
-class FilterTrails extends TrailEvent {
-  final TrailQuery query;
+class SearchTrailsEvent extends TrailEvent {
+  final String searchTerm;
 
-  const FilterTrails(this.query);
+  const SearchTrailsEvent(this.searchTerm);
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [query];
+  List<Object?> get props => [searchTerm];
 }
 
-class LoadTrailDetails extends TrailEvent {
-  final String trailId;
+class FilterTrailsEvent extends TrailEvent {
+  final String? difficulty;
+  final double? maxDuration;
+  final double? maxElevation;
 
-  const LoadTrailDetails(this.trailId);
+  const FilterTrailsEvent({
+    this.difficulty,
+    this.maxDuration,
+    this.maxElevation,
+  });
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [trailId];
+  List<Object?> get props => [difficulty, maxDuration, maxElevation];
 }

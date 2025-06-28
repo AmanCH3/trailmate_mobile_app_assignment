@@ -1,22 +1,43 @@
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_entity.dart';
 
 part 'trail_api_model.g.dart';
 
+// HELPER MODEL: This class perfectly matches the nested "duration" JSON object.
 @JsonSerializable()
-class TrailApiModel extends Equatable {
-  @JsonKey(name: "_id")
-  final String? trailId;
+class DurationApiModel {
+  final int min;
+  final int max;
+
+  DurationApiModel({required this.min, required this.max});
+
+  factory DurationApiModel.fromJson(Map<String, dynamic> json) =>
+      _$DurationApiModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DurationApiModelToJson(this);
+}
+
+// CORRECTED MAIN MODEL
+@JsonSerializable(
+  explicitToJson: true,
+) // Added explicitToJson for nested object
+class TrailApiModel {
+  @JsonKey(name: '_id')
+  final String trailId;
+
   final String name;
   final String location;
-  final double duration;
   final double elevation;
+  final DurationApiModel duration;
+
+  @JsonKey(name: 'difficult')
   final String difficulty;
-  final String images;
+
+  // THIS IS THE FIX for images
+  final List<String> images;
 
   TrailApiModel({
-    this.trailId,
+    required this.trailId,
     required this.name,
     required this.location,
     required this.duration,
@@ -30,44 +51,18 @@ class TrailApiModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$TrailApiModelToJson(this);
 
-  //To entity
   TrailEnitiy toEntity() {
     return TrailEnitiy(
       trailId: trailId,
       name: name,
       location: location,
-      duration: duration,
+      duration: duration.max.toDouble(),
       elevation: elevation,
       difficulty: difficulty,
-      images: images,
+      images: images.isNotEmpty ? images.first : '', // Fallback for empty list
     );
-  }
-
-  // From entity
-  factory TrailApiModel.fromEntity(TrailEnitiy entity) {
-    final trail = TrailApiModel(
-      name: entity.name,
-      location: entity.location,
-      duration: entity.duration,
-      elevation: entity.elevation,
-      difficulty: entity.difficulty,
-      images: entity.images,
-    );
-    return trail;
   }
 
   static List<TrailEnitiy> toEntityList(List<TrailApiModel> models) =>
       models.map((model) => model.toEntity()).toList();
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [
-    trailId,
-    name,
-    location,
-    duration,
-    elevation,
-    difficulty,
-    images,
-  ];
 }

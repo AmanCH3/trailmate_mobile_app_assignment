@@ -9,7 +9,7 @@ part of 'get_all_trail_dto.dart';
 GetAllTrailDto _$GetAllTrailDtoFromJson(Map<String, dynamic> json) =>
     GetAllTrailDto(
       success: json['success'] as bool,
-      count: (json['count'] as num).toInt(),
+      message: json['message'] as String,
       data: (json['data'] as List<dynamic>)
           .map((e) => TrailApiModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -18,6 +18,6 @@ GetAllTrailDto _$GetAllTrailDtoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GetAllTrailDtoToJson(GetAllTrailDto instance) =>
     <String, dynamic>{
       'success': instance.success,
-      'count': instance.count,
+      'message': instance.message,
       'data': instance.data,
     };
