@@ -45,7 +45,6 @@ class UserRegisterUseCase
       password: params.password,
       phone: params.phone,
     );
-
     return _userRepository.registerUser(userEntity);
   }
 }

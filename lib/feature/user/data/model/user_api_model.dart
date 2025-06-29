@@ -10,11 +10,8 @@ class UserApiModel extends Equatable {
   final String? id;
 
   final String name;
-
   final String email;
-
   final String phone;
-
   final String? password;
 
   const UserApiModel({

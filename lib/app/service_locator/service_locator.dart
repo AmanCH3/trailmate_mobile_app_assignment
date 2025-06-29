@@ -1,54 +1,85 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
-import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/local_datasource/user_local_datasource.dart';
-import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/local_repository/user_local_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_register_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
-import '../../core/network/local/hive_service.dart';
 import '../../feature/splash/view_model/splash_view_model.dart';
+import '../shared_pref/token_shared_prefs.dart';
 
 final serviceLocator = GetIt.instance;
 
 Future initDependencies() async {
-  await _initHiveService();
+  // await _initHiveService();
   await _initAuthModule();
+  await _initSharedPrefs();
   await _initSplashModule();
   await _initHomeModule();
+  await _initApiService();
 }
 
 Future<void> _initSplashModule() async {
   serviceLocator.registerFactory(() => SplashViewModel());
 }
 
-Future _initHiveService() async {
-  serviceLocator.registerLazySingleton<HiveService>(() => HiveService());
+// Future _initHiveService() async {
+//   serviceLocator.registerLazySingleton<HiveService>(() => HiveService());
+// }
+
+Future _initApiService() async {
+  serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
+}
+
+Future<void> _initSharedPrefs() async {
+  // Initialize Shared Preferences if needed
+  final sharedPrefs = await SharedPreferences.getInstance();
+  serviceLocator.registerLazySingleton(() => sharedPrefs);
+  serviceLocator.registerLazySingleton(
+    () => TokenSharedPrefs(
+      sharedPreferences: serviceLocator<SharedPreferences>(),
+    ),
+  );
 }
 
 Future<void> _initAuthModule() async {
   // ===================== Data Source ====================
+  // serviceLocator.registerFactory(
+  //   () => UserLocalDataSource(hiveService: serviceLocator<HiveService>()),
+  // );
+
   serviceLocator.registerFactory(
-    () => UserLocalDataSource(hiveService: serviceLocator<HiveService>()),
+    () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()),
   );
 
   // ===================== Repository ====================
 
+  // serviceLocator.registerFactory(
+  //   () => UserLocalRepository(
+  //     userLocalDataSource: serviceLocator<UserLocalDataSource>(),
+  //   ),
+  // );
+
   serviceLocator.registerFactory(
-    () => UserLocalRepository(
-      userLocalDataSource: serviceLocator<UserLocalDataSource>(),
+    () => UserRemoteRepository(
+      userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
     ),
   );
 
   serviceLocator.registerFactory(
-    () =>
-        UserLoginUseCase(userRepository: serviceLocator<UserLocalRepository>()),
+    () => UserLoginUseCase(
+      userRepository: serviceLocator<UserRemoteRepository>(),
+    ),
   );
 
   serviceLocator.registerFactory(
     () => UserRegisterUseCase(
-      userRepository: serviceLocator<UserLocalRepository>(),
+      userRepository: serviceLocator<UserRemoteRepository>(),
     ),
   );
 

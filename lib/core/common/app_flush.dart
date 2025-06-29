@@ -12,7 +12,7 @@ class AppFlushbar {
     return Flushbar(
       message: message,
       messageColor: Colors.white,
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.lightGreen,
       duration: duration,
       borderRadius: BorderRadius.circular(15),
       margin: const EdgeInsets.all(12),

@@ -54,6 +54,7 @@ dependencies:
   json_serializable: 6.9.0
   another_flushbar: ^1.12.30
   lottie: ^3.3.1
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +85,7 @@ flutter:
     - assets/images/get_screen_2.png
     - assets/images/get_screen_3.png
     - assets/images/splash_screen.png
+    - assets/images/Trail_Mate_Logo.png
     - assets/images/
 
 
@@ -151,3 +153,9 @@ flutter:
 
 
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/Trail_Mate_Logo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
