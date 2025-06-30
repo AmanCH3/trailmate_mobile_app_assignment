@@ -172,6 +172,10 @@ class UserApiModel extends Equatable {
     );
   }
 
+  // Convert API List to Entity List
+  static List<UserEntity> toEntityList(List<UserApiModel> models) =>
+      models.map((model) => model.toEntity()).toList();
+
   @override
   // Correctly implement props for Equatable
   List<Object?> get props => [
