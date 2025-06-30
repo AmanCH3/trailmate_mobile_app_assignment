@@ -19,10 +19,9 @@ class GroupRepositoryImpl implements IGroupRepository {
   Future<Either<Failure, List<GroupEntity>>> getAllGroups() async {
     try {
       final result = await remoteDataSource.getAllGroups();
-      print(result);
       return Right(result);
     } on ApiFailure catch (e) {
-      return Left(ApiFailure(message: e.message, statusCode: e.statusCode));
+      return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));
     }
   }
 
@@ -35,7 +34,7 @@ class GroupRepositoryImpl implements IGroupRepository {
       final result = await remoteDataSource.createGroup(params, token);
       return Right(result);
     } on ApiFailure catch (e) {
-      return Left(ApiFailure(message: e.message, statusCode: e.statusCode));
+      return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));
     }
   }
 
@@ -48,7 +47,7 @@ class GroupRepositoryImpl implements IGroupRepository {
       await remoteDataSource.deleteGroup(groupId, token);
       return const Right(null);
     } on ApiFailure catch (e) {
-      return Left(ApiFailure(message: e.message, statusCode: e.statusCode));
+      return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));
     }
   }
 
@@ -67,7 +66,7 @@ class GroupRepositoryImpl implements IGroupRepository {
       );
       return const Right(null);
     } on ApiFailure catch (e) {
-      return Left(ApiFailure(message: e.message, statusCode: e.statusCode));
+      return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));
     }
   }
 

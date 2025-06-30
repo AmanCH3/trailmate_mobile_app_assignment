@@ -38,7 +38,6 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
   ) async {
     emit(GroupLoading());
     final result = await _getAllGroupsUseCase();
-    print(result);
     result.fold(
       (failure) => emit(GroupFailure(message: failure.message)),
       (groups) => emit(GroupsLoaded(groups: groups)),

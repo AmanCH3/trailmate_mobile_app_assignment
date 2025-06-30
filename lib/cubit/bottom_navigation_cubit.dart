@@ -25,8 +25,9 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
     const ChecklistView(),
     BlocProvider<GroupViewModel>.value(
       value: serviceLocator<GroupViewModel>(),
-      child: const GroupView(), // <-- USE THE CORRECT VIEW
+      child: const GroupView(),
     ),
+    const GroupView(),
     const ProfileView(),
   ];
 

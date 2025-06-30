@@ -33,8 +33,6 @@ class DashboardView extends StatelessWidget {
                   icon: const Icon(Icons.add_circle_outline),
                   tooltip: 'Create Group',
                   onPressed: () {
-                    // Navigate to the CreateGroupPage, passing the existing
-                    // GroupViewModel instance.
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder:
@@ -65,7 +63,6 @@ class DashboardView extends StatelessWidget {
             currentIndex: state.currentIndex,
             selectedItemColor: Colors.green,
             unselectedItemColor: Colors.grey,
-            // Use 'fixed' to ensure all labels are always visible
             type: BottomNavigationBarType.fixed,
             onTap: (index) {
               context.read<BottomNavigationCubit>().updateIndex(index);
