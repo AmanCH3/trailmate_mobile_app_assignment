@@ -14,6 +14,11 @@ class ApiEndpoints {
   static const String login = "auth/login";
   static const String register = "auth/register";
 
+  //  =================user ================
+  static const String getUser = "auth/me";
+  static const String updateUser = "auth/me";
+  static const String deleteUser = 'auth/me';
+
   // ========== trails =======
   static const String getAllTrails = "/trail";
   static const String createTrail = '/trail';

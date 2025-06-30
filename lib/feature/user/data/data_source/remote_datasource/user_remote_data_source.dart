@@ -86,4 +86,31 @@ class UserRemoteDataSource implements IUserDataSource {
       throw Exception('Registration Failed  : $e');
     }
   }
+
+  @override
+  Future<void> deleteUser(String userId) async {
+    try {
+      await _apiService.dio.delete(ApiEndpoints.deleteUser);
+    } catch (e) {
+      throw Exception('Deletation of User failed : $e');
+    }
+  }
+
+  @override
+  Future<UserEntity> getUser(String userId) {
+    // try {
+    //   final response = await _apiService.dio.get(ApiEndpoints.getUser);
+    //   if(response.statusCode == 200)
+    // } catch (e) {
+    //   throw Exception('Failed to fetch user : $e');
+    // }
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<UserEntity> updateUser(UserEntity user) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
 }
