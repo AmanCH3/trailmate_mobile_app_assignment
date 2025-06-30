@@ -17,4 +17,24 @@ class ApiEndpoints {
   // ========== trails =======
   static const String getAllTrails = "/trail";
   static const String createTrail = '/trail';
+
+  // ===groups ===============
+
+  // Group Endpoints
+  static const String groups = "$baseUrl/group";
+  static const String createGroup = "$groups/create";
+
+  // Dynamic Endpoints
+  static String groupById(String groupId) => "$groups/$groupId";
+
+  static String requestToJoin(String groupId) =>
+      "$groups/$groupId/request-join";
+
+  // Admin-only endpoints - good to have them defined anyway
+  static String approveRequest(String groupId, String requestId) =>
+      "$groups/$groupId/requests/$requestId/approve";
+
+  static String denyRequest(String groupId, String requestId) =>
+      "$groups/$groupId/requests/$requestId/deny";
+  static String pendingRequests = "$groups/requests/pending";
 }

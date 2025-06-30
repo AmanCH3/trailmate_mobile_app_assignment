@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
-
-import '../feature/home/presentation/view_model/home_view_model.dart';
-import '../state/bottom_navigation_state.dart';
+// --- ADD THESE IMPORTS ---
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view/create_group_page.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
 
 class DashboardView extends StatelessWidget {
   final bool showSnackbar;
@@ -19,22 +21,41 @@ class DashboardView extends StatelessWidget {
       });
     }
 
+    // BlocBuilder will rebuild the Scaffold whenever the BottomNavigationState changes
     return BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Dashboard"),
+            title: Text(state.appBarTitle),
             actions: [
+              if (state.currentIndex == 3)
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
+                  tooltip: 'Create Group',
+                  onPressed: () {
+                    // Navigate to the CreateGroupPage, passing the existing
+                    // GroupViewModel instance.
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (_) => BlocProvider.value(
+                              value: BlocProvider.of<GroupViewModel>(context),
+                              child: const CreateGroupPage(),
+                            ),
+                      ),
+                    );
+                  },
+                ),
+
+              // The Logout button is always visible
               IconButton(
                 icon: const Icon(Icons.logout),
                 onPressed: () {
-                  // Logout code
                   showMySnackBar(
                     context: context,
                     message: 'Logging out...',
                     color: Colors.red,
                   );
-
                   context.read<HomeViewModel>().logout(context);
                 },
               ),
@@ -45,6 +66,8 @@ class DashboardView extends StatelessWidget {
             currentIndex: state.currentIndex,
             selectedItemColor: Colors.green,
             unselectedItemColor: Colors.grey,
+            // Use 'fixed' to ensure all labels are always visible
+            type: BottomNavigationBarType.fixed,
             onTap: (index) {
               context.read<BottomNavigationCubit>().updateIndex(index);
             },

@@ -3,7 +3,6 @@ import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trai
 
 part 'trail_api_model.g.dart';
 
-// HELPER MODEL: This class perfectly matches the nested "duration" JSON object.
 @JsonSerializable()
 class DurationApiModel {
   final int min;
@@ -17,14 +16,10 @@ class DurationApiModel {
   Map<String, dynamic> toJson() => _$DurationApiModelToJson(this);
 }
 
-// CORRECTED MAIN MODEL
-@JsonSerializable(
-  explicitToJson: true,
-) // Added explicitToJson for nested object
+@JsonSerializable(explicitToJson: true)
 class TrailApiModel {
   @JsonKey(name: '_id')
   final String trailId;
-
   final String name;
   final String location;
   final double elevation;
@@ -33,7 +28,6 @@ class TrailApiModel {
   @JsonKey(name: 'difficult')
   final String difficulty;
 
-  // THIS IS THE FIX for images
   final List<String> images;
 
   TrailApiModel({
@@ -59,7 +53,7 @@ class TrailApiModel {
       duration: duration.max.toDouble(),
       elevation: elevation,
       difficulty: difficulty,
-      images: images.isNotEmpty ? images.first : '', // Fallback for empty list
+      images: images.isNotEmpty ? images.first : '',
     );
   }
 

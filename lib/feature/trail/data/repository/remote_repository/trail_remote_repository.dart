@@ -15,7 +15,7 @@ class TrailRemoteRepository implements ITrailRepository {
       final trail = await trailRemoteDataSource.getTrails();
       return Right(trail);
     } catch (e) {
-      return Left(ApiFailure(statusCode: 500, message: 'Server error'));
+      return Left(ApiFailure(statusCode: null, message: e.toString()));
     }
   }
 }

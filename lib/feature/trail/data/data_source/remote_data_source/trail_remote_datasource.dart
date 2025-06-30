@@ -17,7 +17,6 @@ class TrailRemoteDataSource implements ITrailDataSource {
   Future<List<TrailEnitiy>> getTrails() async {
     try {
       final response = await _apiService.dio.get(ApiEndpoints.getAllTrails);
-    
       if (response.statusCode == 200) {
         GetAllTrailDto getAllTrailDto = GetAllTrailDto.fromJson(response.data);
         return TrailApiModel.toEntityList(getAllTrailDto.data);
@@ -27,7 +26,7 @@ class TrailRemoteDataSource implements ITrailDataSource {
     } on DioException catch (e) {
       throw Exception('Failed to fetch trails : ${e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occured : $e');
+      throw Exception('An unexpected error occurred : $e');
     }
   }
 }

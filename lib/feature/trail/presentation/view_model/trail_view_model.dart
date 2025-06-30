@@ -21,9 +21,7 @@ class TrailViewModel extends Bloc<TrailEvent, TrailState> {
     Emitter<TrailState> emit,
   ) async {
     emit(const TrailLoadingState());
-
     final result = await getAllTrailUseCase();
-
     result.fold(
       (failure) => emit(TrailErrorState(failure.message)),
       (trails) =>
