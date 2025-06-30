@@ -13,6 +13,7 @@ import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
+import '../../cubit/bottom_navigation_cubit.dart';
 import '../../feature/grouplist/data/data_source/group_data_source.dart';
 import '../../feature/grouplist/data/data_source/remote_data_source/group_remote_data_source.dart';
 import '../../feature/grouplist/data/repository/remote_repository/group_remote_repository.dart';
@@ -28,14 +29,25 @@ import '../shared_pref/token_shared_prefs.dart';
 final serviceLocator = GetIt.instance;
 
 Future initDependencies() async {
-  // await _initHiveService();
-  await _initAuthModule();
-  await _initSharedPrefs();
-  await _initSplashModule();
-  await _initHomeModule();
-  await _initTrailModule();
+  // 1. Core Services (Network & Storage) - MUST be first
+  // These have no dependencies on other parts of our app.
   await _initApiService();
+  await _initSharedPrefs();
+
+  // 2. Feature Modules that depend on Core Services
+  // These modules require ApiService and/or TokenSharedPrefs to be registered.
+  await _initAuthModule();
+  await _initTrailModule();
   await _initGroupModule();
+
+  // 3. ViewModels/Modules that depend on other Feature Modules
+  // HomeViewModel depends on LoginViewModel, which is registered in _initAuthModule.
+  await _initHomeModule();
+
+  // 4. Other independent UI modules
+  await _initSplashModule();
+  await _initDashboardModules();
+  ;
 }
 
 Future<void> _initSplashModule() async {
@@ -149,6 +161,10 @@ Future<void> _initTrailModule() async {
       getAllTrailUseCase: serviceLocator<GetAllTrailUseCase>(),
     ),
   );
+}
+
+Future<void> _initDashboardModules() async {
+  serviceLocator.registerFactory(() => BottomNavigationCubit());
 }
 
 // At the end of your service_locator.dart file, before the closing brace...

@@ -47,7 +47,6 @@ class DashboardView extends StatelessWidget {
                   },
                 ),
 
-              // The Logout button is always visible
               IconButton(
                 icon: const Icon(Icons.logout),
                 onPressed: () {

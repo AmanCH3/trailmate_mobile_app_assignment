@@ -12,7 +12,6 @@ class GetAllGroupsUseCase implements UseCaseWithoutParams<List<GroupEntity>> {
 
   @override
   Future<Either<Failure, List<GroupEntity>>> call() async {
-    // Delegates the call directly to the repository
     return await groupRepository.getAllGroups();
   }
 }

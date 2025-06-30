@@ -54,8 +54,6 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
     final result = await _createGroupUseCase(event.params);
     result.fold(
       (failure) => emit(GroupFailure(message: failure.message)),
-      // On success, we emit an action success state. The UI can listen to this
-      // and then dispatch a FetchAllGroupsEvent to refresh the list.
       (_) => emit(
         const GroupActionSuccess(message: 'Group created successfully!'),
       ),
