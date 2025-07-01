@@ -6,10 +6,10 @@ import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view/h
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_list_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/profile_view.dart';
 import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
 import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
-import 'package:trailmate_mobile_app_assignment/view/profile_view.dart';
 
 class BottomNavigationCubit extends Cubit<BottomNavigationState> {
   // Define the screens and titles once, as final lists inside the cubit.

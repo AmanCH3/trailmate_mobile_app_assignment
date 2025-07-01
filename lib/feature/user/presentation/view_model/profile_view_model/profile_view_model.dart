@@ -21,7 +21,7 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
        super(ProfileState.initial()) {
     on<LoadProfileEvent>(_onProfileLoad);
     on<DeleteProfileEvent>(_onProfileDelete);
-    // on<UpdateProfileEvent>(_onProfileUpdate);
+    on<UpdateProfileEvent>(_onProfileUpdate);
 
     add(LoadProfileEvent());
   }
@@ -54,6 +54,22 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
           emit(state.copyWith(isLoading: false, onError: failure.message)),
       (_) {
         emit(state.copyWith(isLoading: false));
+        add(LoadProfileEvent());
+      },
+    );
+  }
+
+  Future<void> _onProfileUpdate(
+    UpdateProfileEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    final result = await _userUpdateUsecase(event.userEntity);
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(isLoading: false, onError: failure.message)),
+      (_) {
+        emit(state.copyWith(isLoading: false));
+
         add(LoadProfileEvent());
       },
     );

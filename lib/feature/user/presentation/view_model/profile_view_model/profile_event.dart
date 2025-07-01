@@ -14,7 +14,7 @@ class LoadProfileEvent extends ProfileEvent {}
 class UpdateProfileEvent extends ProfileEvent {
   final UserEntity userEntity;
 
-  UpdateProfileEvent({required this.userEntity});
+  const UpdateProfileEvent({required this.userEntity});
 
   @override
   // TODO: implement props
