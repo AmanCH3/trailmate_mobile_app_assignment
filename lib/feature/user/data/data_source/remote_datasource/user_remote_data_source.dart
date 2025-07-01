@@ -66,6 +66,7 @@ class UserRemoteDataSource implements IUserDataSource {
         ApiEndpoints.getUser,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
+
       if (response.statusCode == 200) {
         // Assuming the API returns the user object directly or nested under a 'data' key
         final userJson = response.data['data'] ?? response.data;

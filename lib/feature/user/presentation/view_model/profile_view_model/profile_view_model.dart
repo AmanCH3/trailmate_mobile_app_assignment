@@ -8,7 +8,6 @@ import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_m
 class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
   final UserGetUseCase _userGetUseCase;
   final UserUpdateUsecase _userUpdateUsecase;
-
   final UserDeleteUsecase _userDeleteUsecase;
 
   ProfileViewModel({
@@ -22,6 +21,7 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
     on<LoadProfileEvent>(_onProfileLoad);
     on<DeleteProfileEvent>(_onProfileDelete);
     on<UpdateProfileEvent>(_onProfileUpdate);
+    on<ToggleEditModeEvent>(_onToggleEditMode);
 
     add(LoadProfileEvent());
   }
@@ -36,11 +36,23 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
     result.fold(
       (failure) =>
           emit(state.copyWith(isLoading: false, onError: failure.message)),
-      (_) {
-        emit(state.copyWith(isLoading: false));
-        add(LoadProfileEvent());
+      (user) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            userEntity: user,
+            isEditing: false, // Reset editing mode when loading profile
+          ),
+        );
       },
     );
+  }
+
+  void _onToggleEditMode(
+    ToggleEditModeEvent event,
+    Emitter<ProfileState> emit,
+  ) {
+    emit(state.copyWith(isEditing: !(state.isEditing ?? false)));
   }
 
   Future<void> _onProfileDelete(
@@ -53,8 +65,13 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
       (failure) =>
           emit(state.copyWith(isLoading: false, onError: failure.message)),
       (_) {
-        emit(state.copyWith(isLoading: false));
-        add(LoadProfileEvent());
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isProfileDeleted: true,
+            userEntity: null,
+          ),
+        );
       },
     );
   }
@@ -63,14 +80,19 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
     UpdateProfileEvent event,
     Emitter<ProfileState> emit,
   ) async {
+    emit(state.copyWith(isLoading: true));
     final result = await _userUpdateUsecase(event.userEntity);
     result.fold(
       (failure) =>
           emit(state.copyWith(isLoading: false, onError: failure.message)),
-      (_) {
-        emit(state.copyWith(isLoading: false));
-
-        add(LoadProfileEvent());
+      (updatedUser) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            userEntity: updatedUser,
+            isEditing: false, // Exit editing mode after successful update
+          ),
+        );
       },
     );
   }

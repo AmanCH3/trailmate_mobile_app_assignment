@@ -5,11 +5,15 @@ sealed class ProfileEvent extends Equatable {
   const ProfileEvent();
 
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
 class LoadProfileEvent extends ProfileEvent {}
+
+class ToggleEditModeEvent extends ProfileEvent {
+  @override
+  List<Object?> get props => [];
+}
 
 class UpdateProfileEvent extends ProfileEvent {
   final UserEntity userEntity;
@@ -17,7 +21,6 @@ class UpdateProfileEvent extends ProfileEvent {
   const UpdateProfileEvent({required this.userEntity});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [userEntity];
 }
 

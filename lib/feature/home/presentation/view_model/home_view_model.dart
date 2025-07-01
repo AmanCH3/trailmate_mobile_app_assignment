@@ -20,13 +20,6 @@ class HomeViewModel extends Cubit<HomeState> {
       if (context.mounted) {
         Navigator.pushReplacement(
           context,
-          // MaterialPageRoute(
-          //   builder:
-          //       (context) => BlocProvider.value(
-          //         value: loginViewModel,
-          //         child: LoginView(),
-          //       ),
-          // ),
           MaterialPageRoute(
             builder:
                 (context) => BlocProvider.value(
