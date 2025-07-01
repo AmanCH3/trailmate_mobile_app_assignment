@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
+
 // --- ADD THESE IMPORTS ---
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view/create_group_page.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
@@ -33,15 +34,15 @@ class DashboardView extends StatelessWidget {
                   icon: const Icon(Icons.add_circle_outline),
                   tooltip: 'Create Group',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (_) => BlocProvider.value(
-                              value: BlocProvider.of<GroupViewModel>(context),
-                              child: const CreateGroupPage(),
-                            ),
-                      ),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder:
+                    //         (_) => BlocProvider.value(
+                    //           value: BlocProvider.of<GroupViewModel>(context),
+                    //           child: const CreateGroupPage(),
+                    //         ),
+                    //   ),
+                    // );
                   },
                 ),
 

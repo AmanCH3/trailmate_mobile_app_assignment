@@ -1,3 +1,5 @@
+// lib/cubit/bottom_navigation_cubit.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
@@ -7,6 +9,7 @@ import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_list_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/profile_view.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
 import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
@@ -27,8 +30,11 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
       value: serviceLocator<GroupViewModel>(),
       child: const GroupView(),
     ),
-    const GroupView(),
-    const ProfileView(),
+    // Correctly provide the GroupViewModel to the ProfileView
+    BlocProvider<ProfileViewModel>.value(
+      value: serviceLocator<ProfileViewModel>(),
+      child: const ProfileView(),
+    ),
   ];
 
   final List<String> _appBarTitles = [
@@ -57,9 +63,13 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
                 const ChecklistView(),
                 BlocProvider<GroupViewModel>.value(
                   value: serviceLocator<GroupViewModel>(),
-                  child: GroupView(),
+                  child: const GroupView(),
                 ),
-                const ProfileView(),
+                // Also provide it here for the initial state
+                BlocProvider<ProfileViewModel>.value(
+                  value: serviceLocator<ProfileViewModel>(),
+                  child: const ProfileView(),
+                ),
               ][0],
           appBarTitle:
               const ['Home', 'Trails', 'Checklist', 'Groups', 'Profile'][0],

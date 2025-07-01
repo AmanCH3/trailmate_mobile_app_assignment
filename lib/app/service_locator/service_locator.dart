@@ -8,9 +8,13 @@ import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/tra
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_delete_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_register_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_update_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
 import '../../cubit/bottom_navigation_cubit.dart';
@@ -110,6 +114,25 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  serviceLocator.registerFactory(
+    () => UserGetUseCase(
+      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => UserUpdateUsecase(
+      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => UserDeleteUsecase(
+      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
   // ===================== ViewModels ====================
 
   serviceLocator.registerFactory<RegisterViewModel>(
@@ -119,6 +142,14 @@ Future<void> _initAuthModule() async {
   // Register LoginViewModel WITHOUT HomeViewModel to avoid circular dependency
   serviceLocator.registerFactory(
     () => LoginViewModel(serviceLocator<UserLoginUseCase>()),
+  );
+
+  serviceLocator.registerFactory(
+    () => ProfileViewModel(
+      userGetUseCase: serviceLocator<UserGetUseCase>(),
+      userUpdateUseCase: serviceLocator<UserUpdateUsecase>(),
+      userDeleteUsecase: serviceLocator<UserDeleteUsecase>(),
+    ),
   );
 }
 
