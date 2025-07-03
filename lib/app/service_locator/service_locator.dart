@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/group_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/data_source/remote_data_source/trail_remote_datasource.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/repository/remote_repository/trail_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/trail_getall_usecase.dart';
@@ -18,13 +19,12 @@ import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
 import '../../cubit/bottom_navigation_cubit.dart';
-import '../../feature/grouplist/data/data_source/group_data_source.dart';
 import '../../feature/grouplist/data/data_source/remote_data_source/group_remote_data_source.dart';
-import '../../feature/grouplist/data/repository/remote_repository/group_remote_repository.dart';
 import '../../feature/grouplist/domain/repository/group_repository.dart';
 import '../../feature/grouplist/domain/usecase/GetAll_group_usecase.dart';
 import '../../feature/grouplist/domain/usecase/create_group_usecase.dart';
 import '../../feature/grouplist/domain/usecase/request_to_join_usecase.dart';
+import '../../feature/grouplist/presentation/view_model/group_event.dart';
 import '../../feature/grouplist/presentation/view_model/group_view_model.dart';
 import '../../feature/home/presentation/view_model/home_view_model.dart';
 import '../../feature/splash/view_model/splash_view_model.dart';
@@ -196,6 +196,14 @@ Future<void> _initTrailModule() async {
 
 Future<void> _initDashboardModules() async {
   serviceLocator.registerFactory(() => BottomNavigationCubit());
+
+  // serviceLocator.registerFactory(
+  //   () => ProfileViewModel(
+  //     userGetUseCase: serviceLocator<UserGetUseCase>(),
+  //     userUpdateUseCase: serviceLocator<UserUpdateUsecase>(),
+  //     userDeleteUsecase: serviceLocator<UserDeleteUsecase>(),
+  //   ),
+  // );
 }
 
 // At the end of your service_locator.dart file, before the closing brace...
@@ -203,7 +211,7 @@ Future<void> _initDashboardModules() async {
 Future<void> _initGroupModule() async {
   // ===================== Data Source ====================
   // Register the remote data source, which depends on ApiService.
-  serviceLocator.registerFactory<IGroupDataSource>(
+  serviceLocator.registerFactory<GroupRemoteDataSource>(
     () => GroupRemoteDataSource(apiService: serviceLocator<ApiService>()),
   );
 
@@ -211,7 +219,7 @@ Future<void> _initGroupModule() async {
   // Register the repository implementation, which depends on the data source interface.
   serviceLocator.registerFactory<IGroupRepository>(
     () => GroupRepositoryImpl(
-      remoteDataSource: serviceLocator<IGroupDataSource>(),
+      remoteDataSource: serviceLocator<GroupRemoteDataSource>(),
     ),
   );
 
@@ -244,11 +252,11 @@ Future<void> _initGroupModule() async {
   // ===================== ViewModel (BLoC) ====================
   // Register the GroupViewModel, which depends on all the use cases.
   // Using registerFactory means a new instance is created every time it's requested.
-  serviceLocator.registerFactory<GroupViewModel>(
+  serviceLocator.registerLazySingleton<GroupViewModel>(
     () => GroupViewModel(
       getAllGroupsUseCase: serviceLocator<GetAllGroupsUseCase>(),
       createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
       requestToJoinGroupUseCase: serviceLocator<RequestToJoinGroupUseCase>(),
-    ),
+    )..add(FetchAllGroupsEvent()), // <-- ADD THE TRIGGER HERE!
   );
 }

@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-// THE FIX #1: Depend on the abstraction (the interface).
-import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/group_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/remote_data_source/group_remote_data_source.dart';
 
 import '../../../../../core/error/failure.dart';
 import '../../../domain/entity/group_entity.dart';
@@ -9,9 +8,7 @@ import '../../../domain/usecase/create_group_usecase.dart';
 import '../../../domain/usecase/request_to_join_usecase.dart';
 
 class GroupRepositoryImpl implements IGroupRepository {
-  // The dependency is now on the interface `IGroupDataSource`.
-  // This decouples your repository from the remote implementation.
-  final IGroupDataSource remoteDataSource;
+  final GroupRemoteDataSource remoteDataSource;
 
   GroupRepositoryImpl({required this.remoteDataSource});
 
@@ -19,6 +16,7 @@ class GroupRepositoryImpl implements IGroupRepository {
   Future<Either<Failure, List<GroupEntity>>> getAllGroups() async {
     try {
       final result = await remoteDataSource.getAllGroups();
+      print('Checking the repons of remote repository $result');
       return Right(result);
     } on ApiFailure catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));

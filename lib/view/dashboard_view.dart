@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
-import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
-
-// --- ADD THESE IMPORTS ---
-import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view/create_group_page.dart';
-import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';// import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view/create_group_page.dart';
+// import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
 
@@ -26,39 +23,43 @@ class DashboardView extends StatelessWidget {
     return BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(state.appBarTitle),
-            actions: [
-              if (state.currentIndex == 3)
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  tooltip: 'Create Group',
-                  onPressed: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder:
-                    //         (_) => BlocProvider.value(
-                    //           value: BlocProvider.of<GroupViewModel>(context),
-                    //           child: const CreateGroupPage(),
-                    //         ),
-                    //   ),
-                    // );
-                  },
-                ),
+          // Only show AppBar when not on Profile tab (index 4)
+          appBar:
+              state.currentIndex != 4
+                  ? AppBar(
+                    title: Text(state.appBarTitle),
+                    actions: [
+                      if (state.currentIndex == 3)
+                        IconButton(
+                          icon: const Icon(Icons.add_circle_outline),
+                          tooltip: 'Create Group',
+                          onPressed: () {
+                            // Navigator.of(context).push(
+                            //   MaterialPageRoute(
+                            //     builder:
+                            //         (_) => BlocProvider.value(
+                            //           value: BlocProvider.of<GroupViewModel>(context),
+                            //           child: const CreateGroupPage(),
+                            //         ),
+                            //   ),
+                            // );
+                          },
+                        ),
 
-              IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () {
-                  showMySnackBar(
-                    context: context,
-                    message: 'Logging out...',
-                    color: Colors.red,
-                  );
-                  context.read<HomeViewModel>().logout(context);
-                },
-              ),
-            ],
-          ),
+                      IconButton(
+                        icon: const Icon(Icons.logout),
+                        onPressed: () {
+                          showMySnackBar(
+                            context: context,
+                            message: 'Logging out...',
+                            color: Colors.red,
+                          );
+                          context.read<HomeViewModel>().logout(context);
+                        },
+                      ),
+                    ],
+                  )
+                  : null, // No AppBar for Profile tab
           body: state.currentScreen,
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: state.currentIndex,

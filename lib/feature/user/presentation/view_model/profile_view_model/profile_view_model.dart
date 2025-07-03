@@ -38,11 +38,7 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
           emit(state.copyWith(isLoading: false, onError: failure.message)),
       (user) {
         emit(
-          state.copyWith(
-            isLoading: false,
-            userEntity: user,
-            isEditing: false, // Reset editing mode when loading profile
-          ),
+          state.copyWith(isLoading: false, userEntity: user, isEditing: false),
         );
       },
     );
@@ -83,14 +79,21 @@ class ProfileViewModel extends Bloc<ProfileEvent, ProfileState> {
     emit(state.copyWith(isLoading: true));
     final result = await _userUpdateUsecase(event.userEntity);
     result.fold(
-      (failure) =>
-          emit(state.copyWith(isLoading: false, onError: failure.message)),
+      (failure) {
+        emit(state.copyWith(isLoading: false, onError: failure.message));
+        // showMySnackBar(
+        //   context: event.context,
+        //   message: 'Invalid credentials. Please try again.',
+        //   color: Colors.red,
+        // );
+      },
+
       (updatedUser) {
         emit(
           state.copyWith(
             isLoading: false,
             userEntity: updatedUser,
-            isEditing: false, // Exit editing mode after successful update
+            isEditing: false,
           ),
         );
       },

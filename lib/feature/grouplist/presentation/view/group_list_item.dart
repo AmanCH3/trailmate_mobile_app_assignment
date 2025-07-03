@@ -72,7 +72,7 @@ class GroupListItem extends StatelessWidget {
                   children: [
                     Icon(Icons.person, size: 16, color: Colors.grey.shade600),
                     const SizedBox(width: 4),
-                    Text('Led by ${group.leader.name}'),
+                    Text('Led by ${group.leader?.name}'),
                     const Spacer(),
                     Icon(Icons.hiking, size: 16, color: Colors.grey.shade600),
                     const SizedBox(width: 4),

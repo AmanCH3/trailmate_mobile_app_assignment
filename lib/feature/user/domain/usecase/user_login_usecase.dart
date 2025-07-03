@@ -14,7 +14,6 @@ class LoginParams extends Equatable {
   const LoginParams({required this.email, required this.password});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [email, password];
 }
 

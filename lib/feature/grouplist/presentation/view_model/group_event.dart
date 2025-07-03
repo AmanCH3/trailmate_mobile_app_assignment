@@ -10,12 +10,9 @@ abstract class GroupEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Event triggered to fetch the list of all available groups.
 class FetchAllGroupsEvent extends GroupEvent {}
 
-/// Event triggered when the user submits the form to create a new group.
 class CreateGroupEvent extends GroupEvent {
-  // We pass the params object directly from the UI, keeping it clean.
   final CreateGroupParams params;
 
   const CreateGroupEvent({required this.params});
@@ -24,7 +21,6 @@ class CreateGroupEvent extends GroupEvent {
   List<Object?> get props => [params];
 }
 
-/// Event triggered when a user clicks the button to join a group.
 class RequestToJoinGroupEvent extends GroupEvent {
   final RequestToJoinGroupParams params;
 
@@ -34,7 +30,6 @@ class RequestToJoinGroupEvent extends GroupEvent {
   List<Object?> get props => [params];
 }
 
-/// Event triggered to delete a group.
 class DeleteGroupEvent extends GroupEvent {
   final String groupId;
 

@@ -14,6 +14,8 @@ import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.da
 import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
 
+import '../feature/grouplist/presentation/view_model/group_event.dart';
+
 class BottomNavigationCubit extends Cubit<BottomNavigationState> {
   // Define the screens and titles once, as final lists inside the cubit.
   final List<Widget> _screens = [
@@ -26,8 +28,10 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
       child: const TrailsListView(),
     ),
     const ChecklistView(),
-    BlocProvider<GroupViewModel>.value(
-      value: serviceLocator<GroupViewModel>(),
+    BlocProvider<GroupViewModel>(
+      create:
+          (context) =>
+              serviceLocator<GroupViewModel>()..add(FetchAllGroupsEvent()),
       child: const GroupView(),
     ),
     // Correctly provide the GroupViewModel to the ProfileView

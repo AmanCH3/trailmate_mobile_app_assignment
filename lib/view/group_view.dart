@@ -19,9 +19,6 @@ class GroupView extends StatefulWidget {
 class _GroupViewState extends State<GroupView> {
   @override
   Widget build(BuildContext context) {
-    // We use BlocConsumer directly as the root widget for this view.
-    // It will listen for state changes to show SnackBars and
-    // build the UI based on the current state (loading, loaded, error).
     return BlocConsumer<GroupViewModel, GroupState>(
       listener: (context, state) {
         if (state is GroupActionSuccess) {

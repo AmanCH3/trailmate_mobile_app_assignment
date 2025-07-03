@@ -5,7 +5,6 @@ import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/v
 import '../../domain/entity/group_entity.dart';
 import '../view_model/group_event.dart';
 import '../view_model/group_state.dart';
-import 'create_group_page.dart';
 import 'group_list_item.dart';
 
 class GroupListPage extends StatelessWidget {
@@ -14,29 +13,7 @@ class GroupListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hike Groups'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline),
-            tooltip: 'Create Group',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder:
-                      (_) => BlocProvider.value(
-                        value: BlocProvider.of<GroupViewModel>(context),
-                        child: const CreateGroupPage(),
-                      ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
       body: BlocConsumer<GroupViewModel, GroupState>(
-        // The listener handles one-time actions like showing SnackBars or dialogs.
-        // It's perfect for responding to success or failure actions.
         listener: (context, state) {
           if (state is GroupActionSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(

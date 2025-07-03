@@ -15,7 +15,6 @@ abstract interface class IGroupRepository {
     String token,
   );
 
-  // THE FIX: Token is non-nullable 'String', as the use case will always provide it.
   Future<Either<Failure, void>> requestToJoinGroup(
     RequestToJoinGroupParams params,
     String token,

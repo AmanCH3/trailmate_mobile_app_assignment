@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:trailmate_mobile_app_assignment/app/constant/remote/api_endpoints.dart'; // Your ApiEndpoints
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart'; // Your ApiService
 
@@ -17,15 +16,38 @@ class GroupRemoteDataSource implements IGroupDataSource {
     : _apiService = apiService;
 
   /// Fetches all groups from the remote API.
+  // @override
+  // Future<List<GroupEntity>> getAllGroups() async {
+  //   try {
+  //     final response = await _apiService.dio.get(ApiEndpoints.groups);
+  //     if (response.statusCode == 200) {
+  //       // Use the DTO to parse the entire response structure.
+  //       final getAllGroupsDto = GetAllGroupsDto.fromJson(response.data);
+  //       // Convert the list of API models to a list of domain entities.
+  //       return GroupApiModel.toEntityList(getAllGroupsDto.data);
+  //     } else {
+  //       throw ApiFailure(
+  //         message: 'Failed to fetch groups from the server.',
+  //         statusCode: null,
+  //       );
+  //     }
+  //   } on DioException catch (e) {
+  //     throw ApiFailure(
+  //       message: e.response?.data['message'] ?? 'A server error occurred.',
+  //       statusCode: null,
+  //     );
+  //   } catch (e) {
+  //     throw ApiFailure(
+  //       message: 'An unexpected error occurred: $e',
+  //       statusCode: null,
+  //     );
+  //   }
+  // }
+
   @override
   Future<List<GroupEntity>> getAllGroups() async {
     try {
-      // Use the injected ApiService to make the GET request.
       final response = await _apiService.dio.get(ApiEndpoints.groups);
-      if (kDebugMode) {
-        print('Group response $response');
-      }
-
       if (response.statusCode == 200) {
         // Use the DTO to parse the entire response structure.
         final getAllGroupsDto = GetAllGroupsDto.fromJson(response.data);
@@ -38,12 +60,38 @@ class GroupRemoteDataSource implements IGroupDataSource {
         );
       }
     } on DioException catch (e) {
-      // Extract a more specific error message from the DioException if available.
+      // --- THIS IS THE MOST IMPORTANT DEBUGGING STEP ---
+      print('--- DIO EXCEPTION in getAllGroups ---');
+      print('Request Path: ${e.requestOptions.path}');
+      print('Error Type: ${e.type}');
+      print('Error Message: ${e.message}');
+
+      // Check if there is a response from the server at all
+      if (e.response != null) {
+        print('Response StatusCode: ${e.response?.statusCode}');
+        print(
+          'Response Data: ${e.response?.data}',
+        ); // This will show you exactly what the server sent back
+      } else {
+        print(
+          'Error: No response received from server. This is likely a connection or timeout issue.',
+        );
+      }
+      print('--- END DIO EXCEPTION ---');
+      // --- END OF DEBUGGING STEP ---
+
       throw ApiFailure(
-        message: e.response?.data['message'] ?? 'A server error occurred.',
-        statusCode: null,
+        message:
+            e.response?.data['message'] ??
+            'A server error occurred. Check debug console for details.',
+        // Update message to be more helpful
+        statusCode: e.response?.statusCode, // Pass the status code
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('--- UNEXPECTED PARSING ERROR in getAllGroups ---');
+      print(e.toString());
+      print(stackTrace);
+      print('-------------------------------------------');
       throw ApiFailure(
         message: 'An unexpected error occurred: $e',
         statusCode: null,

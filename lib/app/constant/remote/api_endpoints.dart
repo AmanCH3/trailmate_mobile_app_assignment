@@ -24,9 +24,8 @@ class ApiEndpoints {
   static const String createTrail = '/trail';
 
   // ===groups ===============
-
   // Group Endpoints
-  static const String groups = "$baseUrl/group";
+  static const String groups = "/group";
   static const String createGroup = "$groups/create";
 
   // Dynamic Endpoints

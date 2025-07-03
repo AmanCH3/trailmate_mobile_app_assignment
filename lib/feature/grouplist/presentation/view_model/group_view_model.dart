@@ -38,6 +38,7 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
   ) async {
     emit(GroupLoading());
     final result = await _getAllGroupsUseCase();
+    print(result);
     result.fold(
       (failure) => emit(GroupFailure(message: failure.message)),
       (groups) => emit(GroupsLoaded(groups: groups)),
@@ -64,26 +65,10 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
     RequestToJoinGroupEvent event,
     Emitter<GroupState> emit,
   ) async {
-    // For quick actions, you might not want a full-screen loader.
-    // The UI can show a loading state on the button itself.
     final result = await _requestToJoinGroupUseCase(event.params);
     result.fold(
       (failure) => emit(GroupFailure(message: failure.message)),
       (_) => emit(const GroupActionSuccess(message: 'Join request sent!')),
     );
   }
-
-  /// Handler for deleting a group.
-  // Future<void> _onDeleteGroup(
-  //     DeleteGroupEvent event,
-  //     Emitter<GroupState> emit,
-  //     ) async {
-  //   emit(GroupLoading());
-  //   // Assuming you have a DeleteGroupUseCase that takes the groupId as a param.
-  //   final result = await _deleteGroupUseCase(event.groupId);
-  //   result.fold(
-  //         (failure) => emit(GroupFailure(message: failure.message)),
-  //         (_) => emit(const GroupActionSuccess(message: 'Group deleted successfully.')),
-  //   );
-  // }
 }
