@@ -5,7 +5,10 @@ class ApiEndpoints {
   static const connectionTimeout = Duration(seconds: 30);
   static const receiveTimeout = Duration(seconds: 30);
 
-  static const String serverAddress = "http://192.168.1.14:5050";
+  // http://10.0.2.2:3000 - for emulator
+  // http://192.168.1.14 - for device
+
+  static const String serverAddress = "http://192.168.1.11:5050";
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress/uploads/";

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:trailmate_mobile_app_assignment/app/constant/remote/api_endpoints.dart'; // Your ApiEndpoints
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart'; // Your ApiService
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/dto/get_groups_by_id_dto.dart';
 
 import '../../../../../core/error/failure.dart';
 import '../../../domain/entity/group_entity.dart';
@@ -219,6 +220,34 @@ class GroupRemoteDataSource implements IGroupDataSource {
         message: 'An unexpected error occurred: $e',
         statusCode: 500,
       );
+    }
+  }
+
+  @override
+  Future<GroupEntity> getGroupById(String groupId) async {
+    try {
+      final response = await _apiService.dio.post(
+        ApiEndpoints.groupById(groupId),
+      );
+      print('Checking the response of groupId : $response');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final groupByIdDto = GetGroupsByIdDto.fromJson(data);
+
+        final groupModel = GroupApiModel.fromJson(
+          groupByIdDto.data as Map<String, dynamic>,
+        );
+        return groupModel.toEntity();
+      } else {
+        // Handle unexpected status code
+        throw Exception('Failed to fetch courses: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      // Handle DioException
+      throw Exception('Failed to fetch courses: $e');
+    } catch (e) {
+      // Handle other exceptions
+      throw Exception('An unexpected error occurred: $e');
     }
   }
 }

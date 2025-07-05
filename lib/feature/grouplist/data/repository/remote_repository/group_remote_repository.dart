@@ -56,7 +56,6 @@ class GroupRepositoryImpl implements IGroupRepository {
     String token,
   ) async {
     try {
-      // The call to the data source is simple and clean.
       await remoteDataSource.requestToJoinGroup(
         groupId: params.groupId,
         message: params.message,
@@ -70,8 +69,11 @@ class GroupRepositoryImpl implements IGroupRepository {
 
   @override
   Future<Either<Failure, GroupEntity>> getGroupById(String groupId) async {
-    throw UnimplementedError(
-      'getGroupById not implemented in the remote data source yet.',
-    );
+    try {
+      final groups = await remoteDataSource.getGroupById(groupId);
+      return Right(groups);
+    } on ApiFailure catch (e) {
+      return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));
+    }
   }
 }
