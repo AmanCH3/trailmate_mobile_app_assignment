@@ -1,5 +1,7 @@
+// feature/user/data/data_source/user_remote_data_source.dart
 import 'package:dio/dio.dart';
 import 'package:trailmate_mobile_app_assignment/app/constant/remote/api_endpoints.dart';
+import 'package:trailmate_mobile_app_assignment/app/shared_pref/token_shared_prefs.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/user_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/model/user_api_model.dart';
@@ -7,42 +9,15 @@ import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_
 
 class UserRemoteDataSource implements IUserDataSource {
   final ApiService _apiService;
+  final TokenSharedPrefs tokenSharedPrefs;
 
-  UserRemoteDataSource({required ApiService apiService})
-    : _apiService = apiService;
+  UserRemoteDataSource({
+    required ApiService apiService,
+    required this.tokenSharedPrefs,
+  }) : _apiService = apiService;
 
   @override
-  // Future<void> createUser(UserEntity entity) async {
-  //   try {
-  //     final userApiModel = UserApiModel.fromEntity(entity);
-  //     final response = await _apiService.dio.post(
-  //       ApiEndpoints.register,
-  //       data: userApiModel.toJson(),
-  //     );
-  //     if (response.statusCode == 200) {
-  //       return;
-  //     } else {
-  //       throw Exception("Failed to register user : ${response.statusMessage}");
-  //     }
-  //   } on DioException catch (e) {
-  //     throw Exception("Failed to register user : ${e.message}");
-  //   } catch (e) {
-  //     throw Exception('Failed to register student : $e');
-  //   }
-  // }
-  // @override
-  // Future<void> deleteUser(String id) {
-  //   // TODO: implement deleteUser
-  //   throw UnimplementedError();
-  // }
-  //
-  // @override
-  // Future<List<UserEntity>> getAllUser() {
-  //   // TODO: implement getAllUser
-  //   throw UnimplementedError();
-  // }
-  @override
-  Future<void> loginUser(String email, String password) async {
+  Future<String> loginUser(String email, String password) async {
     try {
       final response = await _apiService.dio.post(
         ApiEndpoints.login,
@@ -50,17 +25,25 @@ class UserRemoteDataSource implements IUserDataSource {
       );
 
       if (response.statusCode == 200) {
-        final str = response.data['token'];
-        return str;
+        // Assuming the token is in response.data['token']
+        final String token = response.data['token'];
+
+        if (token.isNotEmpty) {
+          tokenSharedPrefs.saveToken(token);
+          return token;
+        } else {
+          throw Exception("Failed to login: Token is missing in response");
+        }
       } else {
-        throw Exception(
-          "Failed to register student : ${response.statusMessage}",
-        );
+        throw Exception("Failed to login: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      throw Exception("Failed to Login Student : ${e.message}");
+      // Provide more specific error from server response if available
+      throw Exception(
+        "Failed to login: ${e.response?.data['message'] ?? e.message}",
+      );
     } catch (e) {
-      throw Exception("failed to login user $e");
+      throw Exception("Failed to login: $e");
     }
   }
 
@@ -68,22 +51,87 @@ class UserRemoteDataSource implements IUserDataSource {
   Future<void> registerUser(UserEntity entity) async {
     try {
       final userApiModel = UserApiModel.fromEntity(entity);
-      final response = await _apiService.dio.post(
-        ApiEndpoints.register,
-        data: userApiModel.toJson(),
+      final data =
+          userApiModel.toJson()..removeWhere((key, value) => value == null);
+
+      await _apiService.dio.post(ApiEndpoints.register, data: data);
+    } on DioException catch (e) {
+      throw Exception(
+        "Failed to register user: ${e.response?.data['message'] ?? e.message}",
+      );
+    } catch (e) {
+      throw Exception('Registration failed: $e');
+    }
+  }
+
+  @override
+  Future<UserEntity> getUser(String? token) async {
+    try {
+      // An endpoint to get a specific user should include the token
+      final response = await _apiService.dio.get(
+        ApiEndpoints.getUser,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200) {
-        return;
+        // Assuming the API returns the user object directly or nested under a 'data' key
+        final userJson = response.data['data'] ?? response.data;
+        final userApiModel = UserApiModel.fromJson(userJson);
+        return userApiModel.toEntity();
       } else {
-        throw Exception(
-          'Failed to register student: ${response.statusMessage}',
-        );
+        throw Exception('Failed to fetch user');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to register student  ${e.message}');
+      throw Exception(
+        "Failed to fetch user: ${e.response?.data['message'] ?? e.message}",
+      );
     } catch (e) {
-      throw Exception('Registration Failed  : $e');
+      throw Exception('Failed to fetch user: $e');
+    }
+  }
+
+  @override
+  Future<UserEntity> updateUser(UserEntity user, String? token) async {
+    try {
+      final userApiModel = UserApiModel.fromEntity(user);
+      final data =
+          userApiModel.toJson()..removeWhere((key, value) => value == null);
+
+      final response = await _apiService.dio.put(
+        ApiEndpoints.updateUser,
+        data: data,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        final updatedUserJson = response.data['data'] ?? response.data;
+        final updatedUserApiModel = UserApiModel.fromJson(updatedUserJson);
+        return updatedUserApiModel.toEntity();
+      } else {
+        throw Exception("Failed to update user: ${response.statusMessage}");
+      }
+    } on DioException catch (e) {
+      throw Exception(
+        "Failed to update user: ${e.response?.data['message'] ?? e.message}",
+      );
+    } catch (e) {
+      throw Exception('Failed to update user: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteUser(String? token) async {
+    try {
+      await _apiService.dio.delete(
+        ApiEndpoints.deleteUser,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } on DioException catch (e) {
+      throw Exception(
+        "Deletion of user failed: ${e.response?.data['message'] ?? e.message}",
+      );
+    } catch (e) {
+      throw Exception('Deletion of user failed: $e');
     }
   }
 }

@@ -11,33 +11,6 @@ class UserRemoteRepository implements IUserRepository {
     : _userRemoteDataSource = userRemoteDataSource;
 
   @override
-  // Future<Either<Failure, void>> createUser(UserEntity user) async {
-  //   try {
-  //     await _userRemoteDataSource.createUser(user);
-  //     return const Right(null);
-  //   } catch (e) {
-  //     return Left(ApiFailure(message: e.toString(), statusCode: 500));
-  //   }
-  // }
-  // @override
-  // Future<Either<Failure, void>> deleteUser(String id) async {
-  //   try {
-  //     await _userRemoteDataSource.deleteUser(id);
-  //     return const Right(null);
-  //   } catch (e) {
-  //     return Left(ApiFailure(message: e.toString(), statusCode: 500));
-  //   }
-  // }
-  // @override
-  // Future<Either<Failure, List<UserEntity>>> getAllUser() async {
-  //   try {
-  //     final users = await _userRemoteDataSource.getAllUser();
-  //     return Right(users);
-  //   } catch (e) {
-  //     return Left(ApiFailure(statusCode: 500, message: e.toString()));
-  //   }
-  // }
-  @override
   Future<Either<Failure, void>> registerUser(UserEntity user) async {
     try {
       await _userRemoteDataSource.registerUser(user);
@@ -53,10 +26,43 @@ class UserRemoteRepository implements IUserRepository {
     String password,
   ) async {
     try {
-      final token = _userRemoteDataSource.loginUser(email, password) as String;
+      final token = await _userRemoteDataSource.loginUser(email, password);
       return Right(token);
     } catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: 500));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteUser(String? token) async {
+    try {
+      await _userRemoteDataSource.deleteUser(token);
+      return Right(null);
+    } catch (e) {
+      return Left(ApiFailure(statusCode: 500, message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> getUser(String? token) async {
+    try {
+      final user = await _userRemoteDataSource.getUser(token);
+      return Right(user);
+    } catch (e) {
+      return Left(ApiFailure(statusCode: null, message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> updateUser(
+    UserEntity user,
+    String? token,
+  ) async {
+    try {
+      final updateUser = await _userRemoteDataSource.updateUser(user, token);
+      return Right(updateUser);
+    } catch (e) {
+      return Left(ApiFailure(statusCode: 500, message: e.toString()));
     }
   }
 }

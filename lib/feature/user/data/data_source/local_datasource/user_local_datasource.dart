@@ -32,4 +32,22 @@ class UserLocalDataSource implements IUserDataSource {
       throw Exception("Registration Failed : $e");
     }
   }
+
+  @override
+  Future<void> deleteUser(String? token) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<UserEntity> getUser(String? token) {
+    // TODO: implement getUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<UserEntity> updateUser(UserEntity user, String? token) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
 }

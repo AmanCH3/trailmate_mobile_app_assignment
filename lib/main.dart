@@ -6,9 +6,10 @@ import 'core/network/local/hive_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initDependencies();
   // init Hive service
   await HiveService().init();
-  await initDependencies();
-  
+
+
   runApp(App());
 }

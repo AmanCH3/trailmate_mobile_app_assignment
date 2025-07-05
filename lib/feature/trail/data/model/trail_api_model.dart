@@ -1,28 +1,43 @@
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_entity.dart';
 
 part 'trail_api_model.g.dart';
 
 @JsonSerializable()
-class TrailApiModel extends Equatable {
-  @JsonKey(name: "_id")
-  final String? trailId;
+class DurationApiModel {
+  final int min;
+  final int max;
+
+  DurationApiModel({required this.min, required this.max});
+
+  factory DurationApiModel.fromJson(Map<String, dynamic> json) =>
+      _$DurationApiModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DurationApiModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class TrailApiModel {
+  @JsonKey(name: '_id')
+  final String trailId;
   final String name;
   final String location;
-  final double durationHours;
-  final int elevationMeters;
+  final double elevation;
+  final DurationApiModel duration;
+
+  @JsonKey(name: 'difficult')
   final String difficulty;
-  final String imageUrl;
+
+  final List<String>? images;
 
   TrailApiModel({
-    this.trailId,
+    required this.trailId,
     required this.name,
     required this.location,
-    required this.durationHours,
-    required this.elevationMeters,
+    required this.duration,
+    required this.elevation,
     required this.difficulty,
-    required this.imageUrl,
+    this.images,
   });
 
   factory TrailApiModel.fromJson(Map<String, dynamic> json) =>
@@ -30,41 +45,18 @@ class TrailApiModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$TrailApiModelToJson(this);
 
-  //To entity
   TrailEnitiy toEntity() {
     return TrailEnitiy(
       trailId: trailId,
       name: name,
       location: location,
-      durationHours: durationHours,
-      elevationMeters: elevationMeters,
+      duration: duration.max.toDouble(),
+      elevation: elevation,
       difficulty: difficulty,
-      imageUrl: imageUrl,
+      images: images?.isNotEmpty == true ? images!.first : '',
     );
   }
 
-  // From entity
-  factory TrailApiModel.fromEntity(TrailEnitiy entity) {
-    final trail = TrailApiModel(
-      name: entity.name,
-      location: entity.location,
-      durationHours: entity.durationHours,
-      elevationMeters: entity.elevationMeters,
-      difficulty: entity.difficulty,
-      imageUrl: entity.imageUrl,
-    );
-    return trail;
-  }
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [
-    trailId,
-    name,
-    location,
-    durationHours,
-    elevationMeters,
-    difficulty,
-    imageUrl,
-  ];
+  static List<TrailEnitiy> toEntityList(List<TrailApiModel> models) =>
+      models.map((model) => model.toEntity()).toList();
 }

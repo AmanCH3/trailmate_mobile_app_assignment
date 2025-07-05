@@ -4,4 +4,10 @@ abstract interface class IUserDataSource {
   Future<void> loginUser(String email, String password);
 
   Future<void> registerUser(UserEntity entity);
+
+  Future<UserEntity> getUser(String? token);
+
+  Future<UserEntity> updateUser(UserEntity user, String? token);
+
+  Future<void> deleteUser(String? token);
 }

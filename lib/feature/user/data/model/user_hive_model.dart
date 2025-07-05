@@ -10,7 +10,7 @@ class UserHiveModel extends HiveObject {
   final String userId;
 
   @HiveField(1)
-  final String name;
+  final String? name;
 
   @HiveField(2)
   final String email;
@@ -23,7 +23,7 @@ class UserHiveModel extends HiveObject {
 
   UserHiveModel({
     String? userId,
-    required this.name,
+    this.name,
     required this.email,
     required this.password,
     required this.phone,
