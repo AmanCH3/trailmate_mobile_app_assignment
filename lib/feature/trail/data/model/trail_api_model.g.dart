@@ -28,7 +28,7 @@ TrailApiModel _$TrailApiModelFromJson(Map<String, dynamic> json) =>
       elevation: (json['elevation'] as num).toDouble(),
       difficulty: json['difficult'] as String,
       images:
-          (json['images'] as List<dynamic>).map((e) => e as String).toList(),
+          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$TrailApiModelToJson(TrailApiModel instance) =>

@@ -24,7 +24,6 @@ import '../../feature/grouplist/domain/repository/group_repository.dart';
 import '../../feature/grouplist/domain/usecase/GetAll_group_usecase.dart';
 import '../../feature/grouplist/domain/usecase/create_group_usecase.dart';
 import '../../feature/grouplist/domain/usecase/request_to_join_usecase.dart';
-import '../../feature/grouplist/presentation/view_model/group_event.dart';
 import '../../feature/grouplist/presentation/view_model/group_view_model.dart';
 import '../../feature/home/presentation/view_model/home_view_model.dart';
 import '../../feature/splash/view_model/splash_view_model.dart';
@@ -84,7 +83,10 @@ Future<void> _initAuthModule() async {
   // );
 
   serviceLocator.registerFactory(
-    () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()),
+    () => UserRemoteDataSource(
+      apiService: serviceLocator<ApiService>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
   );
 
   // ===================== Repository ====================
@@ -252,11 +254,11 @@ Future<void> _initGroupModule() async {
   // ===================== ViewModel (BLoC) ====================
   // Register the GroupViewModel, which depends on all the use cases.
   // Using registerFactory means a new instance is created every time it's requested.
-  serviceLocator.registerLazySingleton<GroupViewModel>(
+  serviceLocator.registerFactory<GroupViewModel>(
     () => GroupViewModel(
       getAllGroupsUseCase: serviceLocator<GetAllGroupsUseCase>(),
       createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
       requestToJoinGroupUseCase: serviceLocator<RequestToJoinGroupUseCase>(),
-    )..add(FetchAllGroupsEvent()), // <-- ADD THE TRIGGER HERE!
+    ),
   );
 }

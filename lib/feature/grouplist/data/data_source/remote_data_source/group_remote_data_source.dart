@@ -51,6 +51,7 @@ class GroupRemoteDataSource implements IGroupDataSource {
       if (response.statusCode == 200) {
         // Use the DTO to parse the entire response structure.
         final getAllGroupsDto = GetAllGroupsDto.fromJson(response.data);
+
         // Convert the list of API models to a list of domain entities.
         return GroupApiModel.toEntityList(getAllGroupsDto.data);
       } else {

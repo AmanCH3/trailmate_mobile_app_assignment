@@ -14,11 +14,15 @@ class UserApiModel extends Equatable {
   @JsonKey(name: "_id")
   final String? id;
 
-  final String name;
+  @JsonKey(defaultValue: '')
+  final String? name;
+  @JsonKey(defaultValue: '')
   final String email;
+  @JsonKey(defaultValue: '')
   final String phone;
+  @JsonKey(defaultValue: '')
   final String password;
-
+  @JsonKey(defaultValue: '')
   final String? hikerType; // "new" or "experienced"
   final String? ageGroup; // "18-24", "24-35", etc.
   final EmergencyContactApiModel? emergencyContact;
@@ -38,7 +42,7 @@ class UserApiModel extends Equatable {
 
   const UserApiModel({
     this.id,
-    required this.name,
+    this.name,
     required this.phone,
     required this.email,
     required this.password,

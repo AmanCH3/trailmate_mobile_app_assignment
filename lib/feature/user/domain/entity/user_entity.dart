@@ -7,7 +7,7 @@ import 'stats_entity.dart';
 
 class UserEntity extends Equatable {
   final String? userId; // from mongo
-  final String name;
+  final String? name;
   final String email;
   final String phone;
   final String password;
@@ -29,17 +29,16 @@ class UserEntity extends Equatable {
 
   const UserEntity({
     this.userId,
-    required this.name,
+    this.name,
     required this.email,
     required this.phone,
     required this.password,
-
     this.hikerType,
     this.ageGroup,
     this.emergencyContact,
     this.bio,
     this.profileImage,
-     this.role,
+    this.role,
     this.subscription,
     this.active,
     this.stats,

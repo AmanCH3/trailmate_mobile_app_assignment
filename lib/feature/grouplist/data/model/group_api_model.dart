@@ -13,18 +13,16 @@ class GroupApiModel {
   @JsonKey(name: '_id')
   final String groupId;
   final String title;
-  final TrailApiModel? trail; // Nullable to handle populate failures
+  final TrailApiModel? trail;
   final DateTime date;
   final String? description;
   final int? maxSize;
-  final UserApiModel? leader; // Nullable to handle populate failures
+  final UserApiModel? leader;
   final List<ParticipantApiModel>? participants;
   final String? status;
   final Map<String, dynamic>? meetingPoint;
   final List<String>? requirements;
   final String? difficulty;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
   final List<String>? photos;
   final List<CommentApiModel>? comments;
 
@@ -41,30 +39,16 @@ class GroupApiModel {
     this.meetingPoint,
     this.requirements,
     this.difficulty,
-    this.createdAt,
-    this.updatedAt,
     this.photos,
     this.comments,
   });
 
   factory GroupApiModel.fromJson(Map<String, dynamic> json) {
-    print('Parsing GroupApiModel with trail data: ${json['trail']}');
     try {
       return _$GroupApiModelFromJson(json);
     } catch (e) {
       print('Error in GroupApiModel.fromJson: $e');
-      print('Trail data: ${json['trail']}');
       rethrow;
-    }
-  }
-
-  static TrailApiModel? _safeTrailFromJson(dynamic trailJson) {
-    try {
-      if (trailJson == null) return null;
-      return TrailApiModel.fromJson(trailJson as Map<String, dynamic>);
-    } catch (e) {
-      print('Error parsing trail: $e');
-      return null; // Return null if parsing fails
     }
   }
 
@@ -75,24 +59,20 @@ class GroupApiModel {
       id: groupId,
       title: title,
       trail: trail?.toEntity(),
-      // Safely convert nullable trail
       date: date,
       description: description ?? '',
       maxSize: maxSize ?? 0,
       leader: leader?.toEntity(),
-      // Safely convert nullable leader
       participants: participants?.map((p) => p.toEntity()).toList() ?? [],
       status: status ?? 'upcoming',
-      meetingPointDescription: meetingPoint?['description'] as String? ?? '',
+      meetingPointDescription: meetingPoint?['description']?.toString() ?? '',
       requirements: requirements ?? [],
-      difficulty: difficulty ?? 'Not specified',
-      createdAt: createdAt ?? DateTime.now(),
+      difficulty: difficulty ?? 'Moderate',
       photos: photos ?? [],
       comments: comments?.map((c) => c.toEntity()).toList() ?? [],
     );
   }
 
-  /// Helper method to convert a list of [GroupApiModel] to a list of [GroupEntity].
   static List<GroupEntity> toEntityList(List<GroupApiModel> models) =>
       models.map((model) => model.toEntity()).toList();
 }

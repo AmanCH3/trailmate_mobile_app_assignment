@@ -17,7 +17,6 @@ import 'package:trailmate_mobile_app_assignment/view/group_view.dart';
 import '../feature/grouplist/presentation/view_model/group_event.dart';
 
 class BottomNavigationCubit extends Cubit<BottomNavigationState> {
-  // Define the screens and titles once, as final lists inside the cubit.
   final List<Widget> _screens = [
     BlocProvider<HomeViewModel>.value(
       value: serviceLocator<HomeViewModel>(),
@@ -28,13 +27,10 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
       child: const TrailsListView(),
     ),
     const ChecklistView(),
-    BlocProvider<GroupViewModel>(
-      create:
-          (context) =>
-              serviceLocator<GroupViewModel>()..add(FetchAllGroupsEvent()),
+    BlocProvider<GroupViewModel>.value(
+      value: serviceLocator<GroupViewModel>(),
       child: const GroupView(),
     ),
-    // Correctly provide the GroupViewModel to the ProfileView
     BlocProvider<ProfileViewModel>.value(
       value: serviceLocator<ProfileViewModel>(),
       child: const ProfileView(),
@@ -51,37 +47,24 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
 
   BottomNavigationCubit()
     : super(
-        // Initialize with the state for the first tab (index 0)
         BottomNavigationState(
           currentIndex: 0,
-          currentScreen:
-              [
-                BlocProvider<HomeViewModel>.value(
-                  value: serviceLocator<HomeViewModel>(),
-                  child: HomeView(),
-                ),
-                BlocProvider<TrailViewModel>.value(
-                  value: serviceLocator<TrailViewModel>(),
-                  child: const TrailsListView(),
-                ),
-                const ChecklistView(),
-                BlocProvider<GroupViewModel>.value(
-                  value: serviceLocator<GroupViewModel>(),
-                  child: const GroupView(),
-                ),
-                // Also provide it here for the initial state
-                BlocProvider<ProfileViewModel>.value(
-                  value: serviceLocator<ProfileViewModel>(),
-                  child: const ProfileView(),
-                ),
-              ][0],
-          appBarTitle:
-              const ['Home', 'Trails', 'Checklist', 'Groups', 'Profile'][0],
+          currentScreen: BlocProvider<HomeViewModel>.value(
+            value: serviceLocator<HomeViewModel>(),
+            child: HomeView(),
+          ),
+          appBarTitle: 'Home',
         ),
       );
 
   void updateIndex(int index) {
     if (index >= 0 && index < _screens.length) {
+      // Dispatch the event when navigating to Groups tab
+      if (index == 3) {
+        // Groups tab
+        serviceLocator<GroupViewModel>().add(FetchAllGroupsEvent());
+      }
+
       emit(
         BottomNavigationState(
           currentIndex: index,

@@ -1,6 +1,7 @@
 // feature/user/data/data_source/user_remote_data_source.dart
 import 'package:dio/dio.dart';
 import 'package:trailmate_mobile_app_assignment/app/constant/remote/api_endpoints.dart';
+import 'package:trailmate_mobile_app_assignment/app/shared_pref/token_shared_prefs.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/user_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/model/user_api_model.dart';
@@ -8,9 +9,12 @@ import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_
 
 class UserRemoteDataSource implements IUserDataSource {
   final ApiService _apiService;
+  final TokenSharedPrefs tokenSharedPrefs;
 
-  UserRemoteDataSource({required ApiService apiService})
-    : _apiService = apiService;
+  UserRemoteDataSource({
+    required ApiService apiService,
+    required this.tokenSharedPrefs,
+  }) : _apiService = apiService;
 
   @override
   Future<String> loginUser(String email, String password) async {
@@ -23,7 +27,9 @@ class UserRemoteDataSource implements IUserDataSource {
       if (response.statusCode == 200) {
         // Assuming the token is in response.data['token']
         final String token = response.data['token'];
+
         if (token.isNotEmpty) {
+          tokenSharedPrefs.saveToken(token);
           return token;
         } else {
           throw Exception("Failed to login: Token is missing in response");

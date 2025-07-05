@@ -29,6 +29,8 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
     on<CreateGroupEvent>(_onCreateGroup);
     // on<DeleteGroupEvent>(_onDeleteGroup);
     on<RequestToJoinGroupEvent>(_onRequestToJoin);
+
+    add(FetchAllGroupsEvent());
   }
 
   /// Handler for fetching all groups.
@@ -38,7 +40,7 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
   ) async {
     emit(GroupLoading());
     final result = await _getAllGroupsUseCase();
-    print(result);
+
     result.fold(
       (failure) => emit(GroupFailure(message: failure.message)),
       (groups) => emit(GroupsLoaded(groups: groups)),
@@ -51,6 +53,7 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
     Emitter<GroupState> emit,
   ) async {
     emit(GroupLoading());
+    await Future.delayed(const Duration(seconds: 1));
     final result = await _createGroupUseCase(event.params);
     result.fold(
       (failure) => emit(GroupFailure(message: failure.message)),
@@ -58,6 +61,8 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
         const GroupActionSuccess(message: 'Group created successfully!'),
       ),
     );
+
+    add(FetchAllGroupsEvent());
   }
 
   /// Handler for requesting to join a group.

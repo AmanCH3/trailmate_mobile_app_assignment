@@ -8,17 +8,16 @@ import 'participant_entity.dart';
 class GroupEntity extends Equatable {
   final String id;
   final String title;
-  final TrailEnitiy? trail; // Keep nullable for robustness
+  final TrailEnitiy? trail;
   final DateTime date;
   final String description;
   final int maxSize;
-  final UserEntity? leader; // Keep nullable for robustness
+  final UserEntity? leader;
   final List<ParticipantEntity> participants;
   final String status;
   final String meetingPointDescription;
   final List<String> requirements;
   final String difficulty;
-  final DateTime createdAt;
   final List<String> photos;
   final List<CommentEntity> comments;
 
@@ -35,7 +34,6 @@ class GroupEntity extends Equatable {
     required this.meetingPointDescription,
     required this.requirements,
     required this.difficulty,
-    required this.createdAt,
     required this.photos,
     required this.comments,
   });

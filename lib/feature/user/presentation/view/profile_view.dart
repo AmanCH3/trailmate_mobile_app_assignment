@@ -269,7 +269,7 @@ class _ProfileTabState extends State<_ProfileTab> {
         ),
         const SizedBox(height: 16),
         Text(
-          user.name,
+          user.name.toString(),
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         if (user.hikerType != null)

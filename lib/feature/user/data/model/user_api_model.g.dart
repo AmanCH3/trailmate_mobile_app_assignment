@@ -8,11 +8,11 @@ part of 'user_api_model.dart';
 
 UserApiModel _$UserApiModelFromJson(Map<String, dynamic> json) => UserApiModel(
       id: json['_id'] as String?,
-      name: json['name'] as String,
-      phone: json['phone'] as String,
-      email: json['email'] as String,
-      password: json['password'] as String,
-      hikerType: json['hikerType'] as String?,
+      name: json['name'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      password: json['password'] as String? ?? '',
+      hikerType: json['hikerType'] as String? ?? '',
       ageGroup: json['ageGroup'] as String?,
       emergencyContact: json['emergencyContact'] == null
           ? null

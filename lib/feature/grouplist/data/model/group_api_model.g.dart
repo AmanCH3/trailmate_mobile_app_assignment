@@ -28,12 +28,6 @@ GroupApiModel _$GroupApiModelFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as String)
           .toList(),
       difficulty: json['difficulty'] as String?,
-      createdAt: json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
       photos:
           (json['photos'] as List<dynamic>?)?.map((e) => e as String).toList(),
       comments: (json['comments'] as List<dynamic>?)
@@ -55,8 +49,6 @@ Map<String, dynamic> _$GroupApiModelToJson(GroupApiModel instance) =>
       'meetingPoint': instance.meetingPoint,
       'requirements': instance.requirements,
       'difficulty': instance.difficulty,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
       'photos': instance.photos,
       'comments': instance.comments?.map((e) => e.toJson()).toList(),
     };
