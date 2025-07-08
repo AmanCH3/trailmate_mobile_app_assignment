@@ -24,7 +24,10 @@ class CreateGroupEvent extends GroupEvent {
 class RequestToJoinGroupEvent extends GroupEvent {
   final RequestToJoinGroupParams params;
 
-  const RequestToJoinGroupEvent({required this.params});
+  const RequestToJoinGroupEvent({
+    required this.params,
+    required String groupId,
+  });
 
   @override
   List<Object?> get props => [params];

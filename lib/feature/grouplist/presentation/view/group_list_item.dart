@@ -123,7 +123,7 @@ class GroupListItem extends StatelessWidget {
                   // Dispatch the event to join the group
                   final params = RequestToJoinGroupParams(groupId: group.id);
                   context.read<GroupViewModel>().add(
-                    RequestToJoinGroupEvent(params: params),
+                    RequestToJoinGroupEvent(params: params, groupId: ''),
                   );
                 },
               ),

@@ -16,7 +16,6 @@ class GroupRepositoryImpl implements IGroupRepository {
   Future<Either<Failure, List<GroupEntity>>> getAllGroups() async {
     try {
       final result = await remoteDataSource.getAllGroups();
-      print('Checking the repons of remote repository $result');
       return Right(result);
     } on ApiFailure catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: e.statusCode));
@@ -49,7 +48,6 @@ class GroupRepositoryImpl implements IGroupRepository {
     }
   }
 
-  // THE FIX #2: Implements the clean, non-redundant method signature from the interface.
   @override
   Future<Either<Failure, void>> requestToJoinGroup(
     RequestToJoinGroupParams params,

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
+import 'package:trailmate_mobile_app_assignment/feature/checklist/presentation/view_model/checklist_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view/group_list_page.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view/home_view.dart';
@@ -26,9 +27,19 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
       value: serviceLocator<TrailViewModel>(),
       child: const TrailsListView(),
     ),
-    const ChecklistView(),
-    BlocProvider<GroupViewModel>.value(
-      value: serviceLocator<GroupViewModel>(),
+    BlocProvider<ChecklistBloc>.value(
+      value: serviceLocator<ChecklistBloc>(),
+      child: const ChecklistBody(),
+    ),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<GroupViewModel>.value(
+          value: serviceLocator<GroupViewModel>(),
+        ),
+        BlocProvider<ProfileViewModel>.value(
+          value: serviceLocator<ProfileViewModel>(),
+        ),
+      ],
       child: const GroupListPage(),
     ),
     BlocProvider<ProfileViewModel>.value(
