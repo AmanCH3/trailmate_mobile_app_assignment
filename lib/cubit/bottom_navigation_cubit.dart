@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
+import 'package:trailmate_mobile_app_assignment/feature/checklist/presentation/view/checklist_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/checklist/presentation/view_model/checklist_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view/group_list_page.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
@@ -13,7 +14,6 @@ import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/profile_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
-import 'package:trailmate_mobile_app_assignment/view/checklist_view.dart';
 
 import '../feature/grouplist/presentation/view_model/group_event.dart';
 
