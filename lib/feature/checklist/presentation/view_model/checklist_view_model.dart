@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/feature/checklist/domain/entity/checklist_item_entity.dart';
 
 import '../../domain/usecase/generate_checklist_usecase.dart';
@@ -6,9 +6,9 @@ import 'checklist_event.dart';
 import 'checklist_state.dart';
 
 class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
-  final GenerateChecklist _generateChecklistUseCase;
+  final GenerateChecklistUsecase _generateChecklistUseCase;
 
-  ChecklistBloc({required GenerateChecklist generateChecklistUseCase})
+  ChecklistBloc({required GenerateChecklistUsecase generateChecklistUseCase})
     : _generateChecklistUseCase = generateChecklistUseCase,
       super(const ChecklistInitial()) {
     // Register event handlers

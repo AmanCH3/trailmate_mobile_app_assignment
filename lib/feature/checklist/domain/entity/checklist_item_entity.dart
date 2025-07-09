@@ -5,7 +5,7 @@ class CheckListEntity extends Equatable {
   final String name;
   final bool checked;
 
-  CheckListEntity({
+  const CheckListEntity({
     required this.id,
     required this.name,
     required this.checked,

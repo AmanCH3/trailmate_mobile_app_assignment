@@ -350,8 +350,8 @@ Future<void> _initChecklistModule() async {
 
   // ===================== Use Case ====================
   // Register the use case. It depends on the repository interface.
-  serviceLocator.registerFactory<GenerateChecklist>(
-    () => GenerateChecklist(serviceLocator<ICheckListRepository>()),
+  serviceLocator.registerFactory<GenerateChecklistUsecase>(
+    () => GenerateChecklistUsecase(serviceLocator<ICheckListRepository>()),
   );
 
   // ===================== BLoC (ViewModel) ====================
@@ -359,7 +359,7 @@ Future<void> _initChecklistModule() async {
   // Using registerFactory means a new instance is created every time it's requested.
   serviceLocator.registerFactory<ChecklistBloc>(
     () => ChecklistBloc(
-      generateChecklistUseCase: serviceLocator<GenerateChecklist>(),
+      generateChecklistUseCase: serviceLocator<GenerateChecklistUsecase>(),
     ),
   );
 }

@@ -21,7 +21,7 @@ class GenerateChecklistParams extends Equatable {
   List<Object?> get props => [experience, duration, weather];
 }
 
-class GenerateChecklist
+class GenerateChecklistUsecase
     implements
         UseCaseWithParams<
           Map<String, List<CheckListEntity>>,
@@ -29,7 +29,7 @@ class GenerateChecklist
         > {
   final ICheckListRepository repository;
 
-  GenerateChecklist(this.repository);
+  GenerateChecklistUsecase(this.repository);
 
   @override
   Future<Either<Failure, Map<String, List<CheckListEntity>>>> call(
