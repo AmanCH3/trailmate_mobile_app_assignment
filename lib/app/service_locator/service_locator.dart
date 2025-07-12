@@ -171,10 +171,7 @@ Future<void> _initAuthModule() async {
   // );
 
   serviceLocator.registerFactory(
-    () => LoginViewModel(
-      serviceLocator<UserLoginUseCase>(),
-      serviceLocator<SaveAuthTokenUseCase>(),
-    ),
+    () => LoginViewModel(serviceLocator<UserLoginUseCase>()),
   );
 
   serviceLocator.registerFactory(

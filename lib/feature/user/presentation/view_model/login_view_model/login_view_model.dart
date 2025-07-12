@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
-import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/save_auth_token_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/signup_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
@@ -14,10 +13,8 @@ import 'login_state.dart';
 
 class LoginViewModel extends Bloc<LoginEvent, LoginState> {
   final UserLoginUseCase _userLoginUseCase;
-  final SaveAuthTokenUseCase _saveAuthTokenUseCase;
 
-  LoginViewModel(this._userLoginUseCase, this._saveAuthTokenUseCase)
-    : super(LoginState.initial()) {
+  LoginViewModel(this._userLoginUseCase) : super(LoginState.initial()) {
     on<NavigateToRegisterView>(_onNavigateToRegisterView);
     on<NavigateToHomeView>(_onNavigateToHomeView);
     on<LoginWithEmailAndPassword>(_onLoginWithEmailAndPassword);
@@ -77,8 +74,8 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
           color: Colors.red,
         );
       },
-      (token) async {
-        final saveResult = await _saveAuthTokenUseCase(token);
+      (email) {
+        // Handle success case
         emit(state.copyWith(isLoading: false, isSuccess: true));
         add(NavigateToHomeView(context: event.context));
       },
