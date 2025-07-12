@@ -1,8 +1,8 @@
 class LoginState {
   final bool isLoading;
-  final bool isSuccess;
+  final bool? isSuccess;
 
-  LoginState({required this.isLoading, required this.isSuccess});
+  LoginState({required this.isLoading, this.isSuccess});
 
   LoginState.initial() : isLoading = false, isSuccess = false;
 

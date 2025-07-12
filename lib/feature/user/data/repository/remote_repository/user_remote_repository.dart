@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:trailmate_mobile_app_assignment/app/shared_pref/token_shared_prefs.dart';
 import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_entity.dart';
@@ -6,9 +7,13 @@ import 'package:trailmate_mobile_app_assignment/feature/user/domain/repository/u
 
 class UserRemoteRepository implements IUserRepository {
   final UserRemoteDataSource _userRemoteDataSource;
+  final TokenSharedPrefs _tokenSharedPrefs;
 
-  UserRemoteRepository({required UserRemoteDataSource userRemoteDataSource})
-    : _userRemoteDataSource = userRemoteDataSource;
+  UserRemoteRepository({
+    required UserRemoteDataSource userRemoteDataSource,
+    required TokenSharedPrefs tokenSharedPrefs,
+  }) : _userRemoteDataSource = userRemoteDataSource,
+       _tokenSharedPrefs = tokenSharedPrefs;
 
   @override
   Future<Either<Failure, void>> registerUser(UserEntity user) async {
@@ -63,6 +68,20 @@ class UserRemoteRepository implements IUserRepository {
       return Right(updateUser);
     } catch (e) {
       return Left(ApiFailure(statusCode: 500, message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> saveAuthToken(String token) async {
+    try {
+      await _tokenSharedPrefs.saveToken(token);
+      return const Right(
+        null,
+      ); // Right(null) is the convention for a void success
+    } catch (e) {
+      return Left(
+        ApiFailure(message: 'Failed to save auth token.', statusCode: null),
+      );
     }
   }
 }
