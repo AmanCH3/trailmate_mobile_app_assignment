@@ -1,3 +1,5 @@
+// feature/user/presentation/view/login_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
@@ -7,22 +9,15 @@ import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final myKey = GlobalKey<FormState>();
-  bool rememberMe = false;
-  bool _obscurePassword = true;
-
-  @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
     return BlocProvider(
       create: (_) => serviceLocator<LoginViewModel>(),
       child: BlocBuilder<LoginViewModel, LoginState>(
@@ -41,7 +36,7 @@ class _LoginViewState extends State<LoginView> {
                     vertical: 300,
                   ),
                   child: Form(
-                    key: myKey,
+                    key: formKey,
                     child: TrailMateLoading(
                       isLoading: state.isLoading,
                       child: Column(
@@ -68,7 +63,7 @@ class _LoginViewState extends State<LoginView> {
                           const SizedBox(height: 20),
                           TextFormField(
                             controller: passwordController,
-                            obscureText: _obscurePassword,
+                            obscureText: state.obscurePassword,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               filled: true,
@@ -79,15 +74,13 @@ class _LoginViewState extends State<LoginView> {
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword
+                                  state.obscurePassword
                                       ? Icons.visibility
                                       : Icons.visibility_off,
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
+                                  bloc.add(TogglePasswordVisibility());
                                 },
                               ),
                               labelText: "Password",
@@ -110,11 +103,11 @@ class _LoginViewState extends State<LoginView> {
                           Row(
                             children: [
                               Checkbox(
-                                value: rememberMe,
+                                value: state.rememberMe,
                                 onChanged: (val) {
-                                  setState(() {
-                                    rememberMe = val ?? false;
-                                  });
+                                  bloc.add(
+                                    ToggleRememberMe(value: val ?? false),
+                                  );
                                 },
                                 checkColor: Colors.black,
                                 activeColor: Colors.white,
@@ -125,9 +118,7 @@ class _LoginViewState extends State<LoginView> {
                               ),
                               const Spacer(),
                               TextButton(
-                                onPressed: () {
-                                  // Handle forgot password
-                                },
+                                onPressed: () {},
                                 child: const Text(
                                   "Forgot Password?",
                                   style: TextStyle(color: Color(0x8889C158)),
@@ -152,7 +143,7 @@ class _LoginViewState extends State<LoginView> {
                                   state.isLoading
                                       ? null
                                       : () {
-                                        if (myKey.currentState!.validate()) {
+                                        if (formKey.currentState!.validate()) {
                                           bloc.add(
                                             LoginWithEmailAndPassword(
                                               context: context,

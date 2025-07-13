@@ -75,10 +75,10 @@ class _ProfileViewState extends State<ProfileView> {
       padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       decoration: BoxDecoration(
         color: Colors.green[700],
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
+        // borderRadius: const BorderRadius.only(
+        //   bottomLeft: Radius.circular(24),
+        //   bottomRight: Radius.circular(24),
+        // ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

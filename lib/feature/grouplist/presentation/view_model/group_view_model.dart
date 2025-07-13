@@ -10,7 +10,6 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
   // Dependencies on all the use cases this BLoC will need.
   final GetAllGroupsUseCase _getAllGroupsUseCase;
   final CreateGroupUseCase _createGroupUseCase;
-
   // final DeleteGroupUseCase _deleteGroupUseCase;
   final RequestToJoinGroupUseCase _requestToJoinGroupUseCase;
 

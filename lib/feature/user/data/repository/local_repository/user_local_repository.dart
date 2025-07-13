@@ -53,4 +53,10 @@ class UserLocalRepository implements IUserRepository {
     // TODO: implement updateUser
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, void>> saveAuthToken(String token) {
+    // TODO: implement saveAuthToken
+    throw UnimplementedError();
+  }
 }

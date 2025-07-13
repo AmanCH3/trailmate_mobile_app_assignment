@@ -9,3 +9,7 @@ abstract interface class UseCaseWithParams<SuccessType, Params> {
 abstract interface class UseCaseWithoutParams<SuccessType> {
   Future<Either<Failure, SuccessType>> call();
 }
+
+abstract class UseCaseSyncWithoutParams<Type> {
+  Type call();
+}

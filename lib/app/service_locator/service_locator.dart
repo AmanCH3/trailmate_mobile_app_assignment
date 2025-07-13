@@ -2,13 +2,23 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
+import 'package:trailmate_mobile_app_assignment/feature/checklist/domain/repository/checklist_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/remote_data_source/chat_remote_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/chat_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/group_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/repository/chat_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/disconnect_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/get_message_history_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/listen_new_message_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/send_message_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/data_source/remote_data_source/trail_remote_datasource.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/repository/remote_repository/trail_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/trail_getall_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/save_auth_token_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_delete_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
@@ -19,6 +29,10 @@ import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
 import '../../cubit/bottom_navigation_cubit.dart';
+import '../../feature/checklist/data/data_source/remote_data_source/checklist_remote_data_source.dart';
+import '../../feature/checklist/data/repository/remote_repository/checklist_remote_repository.dart';
+import '../../feature/checklist/domain/usecase/generate_checklist_usecase.dart';
+import '../../feature/checklist/presentation/view_model/checklist_view_model.dart';
 import '../../feature/grouplist/data/data_source/remote_data_source/group_remote_data_source.dart';
 import '../../feature/grouplist/domain/repository/group_repository.dart';
 import '../../feature/grouplist/domain/usecase/GetAll_group_usecase.dart';
@@ -42,6 +56,8 @@ Future initDependencies() async {
   await _initAuthModule();
   await _initTrailModule();
   await _initGroupModule();
+  await _initChatModule();
+  await _initChecklistModule();
 
   // 3. ViewModels/Modules that depend on other Feature Modules
   // HomeViewModel depends on LoginViewModel, which is registered in _initAuthModule.
@@ -50,6 +66,7 @@ Future initDependencies() async {
   // 4. Other independent UI modules
   await _initSplashModule();
   await _initDashboardModules();
+
   ;
 }
 
@@ -100,6 +117,7 @@ Future<void> _initAuthModule() async {
   serviceLocator.registerFactory(
     () => UserRemoteRepository(
       userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
@@ -107,6 +125,12 @@ Future<void> _initAuthModule() async {
     () => UserLoginUseCase(
       userRepository: serviceLocator<UserRemoteRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => SaveAuthTokenUseCase(
+      userRepository: serviceLocator<UserRemoteRepository>(),
     ),
   );
 
@@ -142,6 +166,10 @@ Future<void> _initAuthModule() async {
   );
 
   // Register LoginViewModel WITHOUT HomeViewModel to avoid circular dependency
+  // serviceLocator.registerFactory(
+  //   () => LoginViewModel(serviceLocator<UserLoginUseCase>()),
+  // );
+
   serviceLocator.registerFactory(
     () => LoginViewModel(serviceLocator<UserLoginUseCase>()),
   );
@@ -259,6 +287,91 @@ Future<void> _initGroupModule() async {
       getAllGroupsUseCase: serviceLocator<GetAllGroupsUseCase>(),
       createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
       requestToJoinGroupUseCase: serviceLocator<RequestToJoinGroupUseCase>(),
+    ),
+  );
+}
+
+Future<void> _initChatModule() async {
+  // ===================== Data Source ====================
+  // Register the remote data source, which depends on ApiService.
+  serviceLocator.registerFactory<ChatRemoteDataSourceImpl>(
+    () => ChatRemoteDataSourceImpl(apiService: serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerFactory<IChatRepository>(
+    () => ChatRemoteRepository(
+      chatRemoteDataSourceImpl: serviceLocator<ChatRemoteDataSourceImpl>(),
+    ),
+  );
+
+  // ===================== Use Cases ====================
+  // Register each use case, which depends on the repository interface.
+  serviceLocator.registerFactory<GetMessageHistoryUseCase>(
+    () => GetMessageHistoryUseCase(serviceLocator<IChatRepository>()),
+  );
+
+  serviceLocator.registerFactory<ListenForNewMessageUseCase>(
+    () => ListenForNewMessageUseCase(serviceLocator<IChatRepository>()),
+  );
+
+  serviceLocator.registerFactory<SendMessageUseCase>(
+    () => SendMessageUseCase(serviceLocator<IChatRepository>()),
+  );
+
+  serviceLocator.registerFactory<DisconnectUseCase>(
+    () => DisconnectUseCase(serviceLocator<IChatRepository>()),
+  );
+
+  // serviceLocator.registerFactory<RequestToJoinGroupUseCase>(
+  //   () => RequestToJoinGroupUseCase(
+  //     groupRepository: serviceLocator<IGroupRepository>(),
+  //     tokenSharedPrefs:
+  //         serviceLocator<TokenSharedPrefs>(), // Requires token access
+  //   ),
+  // );
+
+  // serviceLocator.registerFactory<GroupViewModel>(
+  //   () => GroupViewModel(
+  //     getAllGroupsUseCase: serviceLocator<GetAllGroupsUseCase>(),
+  //     createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
+  //     requestToJoinGroupUseCase: serviceLocator<RequestToJoinGroupUseCase>(),
+  //   ),
+  // );
+
+  serviceLocator.registerFactory(
+    () => ChatViewModel(
+      getMessageHistory: serviceLocator<GetMessageHistoryUseCase>(),
+      sendMessage: serviceLocator<SendMessageUseCase>(),
+      listenForNewMessage: serviceLocator<ListenForNewMessageUseCase>(),
+      joinGroup: serviceLocator<RequestToJoinGroupUseCase>(),
+      disconnect: serviceLocator<DisconnectUseCase>(),
+    ),
+  );
+}
+
+Future<void> _initChecklistModule() async {
+  serviceLocator.registerFactory<ChecklistRemoteDataSource>(
+    () => ChecklistRemoteDataSource(apiService: serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerFactory<ICheckListRepository>(
+    () => ChecklistRepositoryImpl(
+      remoteDataSource: serviceLocator<ChecklistRemoteDataSource>(),
+    ),
+  );
+
+  // ===================== Use Case ====================
+  // Register the use case. It depends on the repository interface.
+  serviceLocator.registerFactory<GenerateChecklistUsecase>(
+    () => GenerateChecklistUsecase(serviceLocator<ICheckListRepository>()),
+  );
+
+  // ===================== BLoC (ViewModel) ====================
+  // Register the ChecklistBloc. It depends on the use case.
+  // Using registerFactory means a new instance is created every time it's requested.
+  serviceLocator.registerFactory<ChecklistBloc>(
+    () => ChecklistBloc(
+      generateChecklistUseCase: serviceLocator<GenerateChecklistUsecase>(),
     ),
   );
 }

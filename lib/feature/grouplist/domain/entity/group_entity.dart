@@ -19,7 +19,7 @@ class GroupEntity extends Equatable {
   final List<String> requirements;
   final String difficulty;
   final List<String> photos;
-  final List<CommentEntity> comments;
+  final List<CommentEntity>? comments;
 
   const GroupEntity({
     required this.id,
@@ -35,7 +35,7 @@ class GroupEntity extends Equatable {
     required this.requirements,
     required this.difficulty,
     required this.photos,
-    required this.comments,
+    this.comments,
   });
 
   @override

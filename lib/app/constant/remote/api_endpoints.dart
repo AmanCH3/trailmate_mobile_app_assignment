@@ -8,7 +8,7 @@ class ApiEndpoints {
   // http://10.0.2.2:3000 - for emulator
   // http://192.168.1.14 - for device
 
-  static const String serverAddress = "http://192.168.1.11:5050";
+  static const String serverAddress = "http://10.0.2.2:5050";
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress/uploads/";
@@ -44,4 +44,18 @@ class ApiEndpoints {
   static String denyRequest(String groupId, String requestId) =>
       "$groups/$groupId/requests/$requestId/deny";
   static String pendingRequests = "$groups/requests/pending";
+
+  // ================ Messages (HTTP) ================
+  // The base path for message-related endpoints.
+  static const String messages = "/messages";
+
+  static String getMessagesForGroup(String groupId) => "$messages/$groupId";
+
+  static const String socketJoinGroup = "joinGroup";
+  static const String socketLeaveGroup = "leaveGroup";
+  static const String socketSendMessage = "sendMessage";
+  static const String newMessage = "newMessage";
+
+  // ===============checklist ===============
+  static const String generateCheckList = 'checklist/generate';
 }

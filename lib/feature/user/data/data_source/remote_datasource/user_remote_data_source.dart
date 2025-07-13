@@ -24,6 +24,8 @@ class UserRemoteDataSource implements IUserDataSource {
         data: {'email': email, 'password': password},
       );
 
+      print('login response $response');
+
       if (response.statusCode == 200) {
         // Assuming the token is in response.data['token']
         final String token = response.data['token'];

@@ -16,4 +16,6 @@ abstract interface class IUserRepository {
   );
 
   Future<Either<Failure, void>> deleteUser(String? token);
+
+  Future<Either<Failure, void>> saveAuthToken(String token);
 }

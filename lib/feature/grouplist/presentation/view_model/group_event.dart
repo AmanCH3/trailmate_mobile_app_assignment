@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/group_entity.dart';
 
 import '../../domain/usecase/create_group_usecase.dart';
 import '../../domain/usecase/request_to_join_usecase.dart';
@@ -15,7 +16,7 @@ class FetchAllGroupsEvent extends GroupEvent {}
 class CreateGroupEvent extends GroupEvent {
   final CreateGroupParams params;
 
-  const CreateGroupEvent({required this.params});
+  const CreateGroupEvent(GroupEntity tGroup1, {required this.params});
 
   @override
   List<Object?> get props => [params];
@@ -24,7 +25,10 @@ class CreateGroupEvent extends GroupEvent {
 class RequestToJoinGroupEvent extends GroupEvent {
   final RequestToJoinGroupParams params;
 
-  const RequestToJoinGroupEvent({required this.params});
+  const RequestToJoinGroupEvent({
+    required this.params,
+    required String groupId,
+  });
 
   @override
   List<Object?> get props => [params];

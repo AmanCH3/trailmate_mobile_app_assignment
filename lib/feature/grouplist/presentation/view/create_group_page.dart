@@ -23,6 +23,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _maxSizeController = TextEditingController();
+  final _groupController = TextEditingController();
 
   DateTime? _selectedDate;
   String? _selectedTrailId;
@@ -84,7 +85,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
         photoPaths: _imagePaths,
       );
 
-      context.read<GroupViewModel>().add(CreateGroupEvent(params: params));
+      // context.read<GroupViewModel>().add(CreateGroupEvent(params: params));
     }
   }
 

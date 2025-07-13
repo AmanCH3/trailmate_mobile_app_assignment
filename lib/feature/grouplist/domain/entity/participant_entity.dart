@@ -5,13 +5,13 @@ class ParticipantEntity extends Equatable {
   final String id;
   final UserEntity? user; // Can be null if populate fails
   final String status;
-  final DateTime joinedAt;
+  final DateTime? joinedAt;
 
   const ParticipantEntity({
     required this.id,
     this.user,
     required this.status,
-    required this.joinedAt,
+    this.joinedAt,
   });
 
   @override
