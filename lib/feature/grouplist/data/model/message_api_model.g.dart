@@ -8,18 +8,22 @@ part of 'message_api_model.dart';
 
 MessageApiModel _$MessageApiModelFromJson(Map<String, dynamic> json) =>
     MessageApiModel(
-      messageId: json['_id'] as String,
-      text: json['text'] as String,
-      sender: SenderApiModel.fromJson(json['sender'] as Map<String, dynamic>),
-      groupId: json['group'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      messageId: json['_id'] as String?,
+      text: json['text'] as String?,
+      sender: json['sender'] == null
+          ? null
+          : SenderApiModel.fromJson(json['sender'] as Map<String, dynamic>),
+      groupId: json['group'] as String?,
+      timestamp: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$MessageApiModelToJson(MessageApiModel instance) =>
     <String, dynamic>{
       '_id': instance.messageId,
       'text': instance.text,
-      'sender': instance.sender.toJson(),
+      'sender': instance.sender?.toJson(),
       'group': instance.groupId,
-      'timestamp': instance.timestamp.toIso8601String(),
+      'createdAt': instance.timestamp?.toIso8601String(),
     };

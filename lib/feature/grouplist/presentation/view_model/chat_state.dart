@@ -14,7 +14,11 @@ abstract class ChatState extends Equatable {
 /// The initial state before any action is taken.
 class ChatInitial extends ChatState {}
 
-class ChatLoading extends ChatState {}
+// Remove the default empty messages from ChatLoading
+class ChatLoading extends ChatState {
+  const ChatLoading({List<MessageEntity> messages = const []})
+    : super(messages: messages);
+}
 
 class ChatSuccess extends ChatState {
   const ChatSuccess({required List<MessageEntity> messages})

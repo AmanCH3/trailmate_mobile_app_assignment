@@ -34,14 +34,43 @@ class ChatScreen extends StatelessWidget {
             Expanded(
               child: BlocBuilder<ChatViewModel, ChatState>(
                 builder: (context, state) {
+                  // Show loading indicator only when initially loading with no messages
                   if (state is ChatLoading && state.messages.isEmpty) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (state.messages.isEmpty) {
+
+                  // Show error state if there's an error
+                  if (state is ChatFailure && state.messages.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: ${state.error}'),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Retry loading
+                              context.read<ChatViewModel>().add(
+                                InitializeChat(
+                                  groupId: groupId,
+                                  currentUserId: currentUserId,
+                                ),
+                              );
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // Show empty state only when successfully loaded but no messages
+                  if (state is ChatSuccess && state.messages.isEmpty) {
                     return const Center(
                       child: Text('No messages yet. Say hi!'),
                     );
                   }
+
+                  // Show messages list
                   return ListView.builder(
                     reverse: true, // Shows latest messages at the bottom
                     padding: const EdgeInsets.all(8.0),

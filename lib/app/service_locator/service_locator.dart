@@ -296,7 +296,10 @@ Future<void> _initChatModule() async {
   // ===================== Data Source ====================
   // Register the remote data source, which depends on ApiService.
   serviceLocator.registerFactory<ChatRemoteDataSourceImpl>(
-    () => ChatRemoteDataSourceImpl(apiService: serviceLocator<ApiService>()),
+    () => ChatRemoteDataSourceImpl(
+      apiService: serviceLocator<ApiService>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
   );
 
   serviceLocator.registerFactory<IChatRepository>(

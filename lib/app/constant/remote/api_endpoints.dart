@@ -47,7 +47,7 @@ class ApiEndpoints {
 
   // ================ Messages (HTTP) ================
   // The base path for message-related endpoints.
-  static const String messages = "/messages";
+  static const String messages = "messages";
 
   static String getMessagesForGroup(String groupId) => "$messages/$groupId";
 

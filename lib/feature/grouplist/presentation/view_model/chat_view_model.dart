@@ -40,7 +40,8 @@ class ChatViewModel extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onInitializeChat(InitializeChat event, Emitter<ChatState> emit) async {
-    emit(ChatLoading());
+    // Preserve existing messages during loading
+    emit(ChatLoading(messages: state.messages));
 
     // Store IDs for later use (e.g., sending messages)
     _groupId = event.groupId;
@@ -57,7 +58,7 @@ class ChatViewModel extends Bloc<ChatEvent, ChatState> {
 
     historyResult.fold(
       (failure) =>
-          emit(ChatFailure(error: failure.message, messages: const [])),
+          emit(ChatFailure(error: failure.message, messages: state.messages)),
       (history) => emit(ChatSuccess(messages: history)),
     );
   }
