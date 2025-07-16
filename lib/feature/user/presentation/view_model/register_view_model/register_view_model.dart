@@ -15,6 +15,7 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     : super(RegisterState.initial()) {
     on<RegisterUserEvent>(_onRegisterUser);
     on<NavigateToLoginEvent>(_onNavigateToLoginEvent);
+    on<ShowHidePassword>(_onShowHidePassword);
   }
 
   Future<void> _onRegisterUser(
@@ -22,8 +23,6 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     Emitter<RegisterState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-
-    await Future.delayed(const Duration(seconds: 1));
 
     final result = await _userRegisterUseCase(
       RegisterUserParams(
@@ -34,38 +33,37 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
       ),
     );
 
+    // CORRECTED: fold((Failure), (Success))
     result.fold(
-      (r) async {
+      // Failure Case
+      (failure) async {
         emit(state.copyWith(isLoading: false));
-
         if (event.context.mounted) {
           await AppFlushbar.show(
+            message: 'Failed to register',
             context: event.context,
-            message: "Something went wrong!",
             icon: const Icon(Icons.error, color: Colors.white),
-            backgroundColor: Colors.red, // Change this line
+            backgroundColor: Colors.red,
           );
         }
       },
-      (l) async {
+      // Success Case
+      (success) async {
         emit(state.copyWith(isLoading: false, isSuccess: true));
-
         if (event.context.mounted) {
-          Navigator.push(
+          // Navigate first, then show snackbar on the new screen
+          Navigator.pushReplacement(
+            // Use pushReplacement to prevent going back
             event.context,
             MaterialPageRoute(
               builder:
                   (context) => BlocProvider.value(
                     value: serviceLocator<LoginViewModel>(),
-                    child: LoginView(),
+                    child: const LoginView(
+                      // Pass a flag to show a success message on the login pag
+                    ),
                   ),
             ),
-          );
-          await AppFlushbar.show(
-            context: event.context,
-            message: "Signup successful!",
-            icon: const Icon(Icons.check_circle, color: Colors.white),
-            backgroundColor: Colors.cyan,
           );
         }
       },
@@ -83,10 +81,18 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
           builder:
               (context) => BlocProvider.value(
                 value: serviceLocator<LoginViewModel>(),
-                child: LoginView(),
+                child: const LoginView(),
               ),
         ),
       );
     }
+  }
+
+  void _onShowHidePassword(
+    ShowHidePassword event,
+    Emitter<RegisterState> emit,
+  ) {
+    // This correctly toggles the state property
+    emit(state.copyWith(isPasswordVisible: event.isVisible));
   }
 }

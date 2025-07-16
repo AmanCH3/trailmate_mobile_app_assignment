@@ -39,7 +39,7 @@ class MessageBubble extends StatelessWidget {
                 isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               Text(
-                isMe ? 'You' : message.sender.senderId,
+                isMe ? 'You' : message.sender.name.toString(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: isMe ? Colors.white : Colors.black87,

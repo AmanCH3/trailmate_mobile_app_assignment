@@ -6,9 +6,7 @@ part 'get_user_dto.g.dart';
 @JsonSerializable()
 class GetUserDto {
   final bool success;
-
   final int count;
-
   final List<UserApiModel> data;
 
   const GetUserDto({

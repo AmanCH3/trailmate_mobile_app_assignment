@@ -4,7 +4,6 @@ import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_sour
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/message_entity.dart';
 
 import '../../../domain/repository/chat_repository.dart';
-import '../../model/message_api_model.dart';
 
 class ChatRemoteRepository implements IChatRepository {
   final ChatRemoteDataSourceImpl chatRemoteDataSourceImpl;
@@ -16,12 +15,12 @@ class ChatRemoteRepository implements IChatRepository {
     String groupId,
   ) async {
     try {
-      final List<MessageApiModel> messageModels = await chatRemoteDataSourceImpl
-          .getMessageHistory(groupId);
-      final List<MessageEntity> messageEntities = MessageApiModel.toEntityList(
-        messageModels,
+      final apiMessages = await chatRemoteDataSourceImpl.getMessageHistory(
+        groupId,
       );
-      return Right(messageEntities);
+      final domainMessages = apiMessages.map((m) => m.toEntity()).toList();
+
+      return Right(domainMessages);
     } catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: 500));
     }

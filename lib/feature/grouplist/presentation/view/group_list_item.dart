@@ -6,6 +6,7 @@ import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/v
 import '../../domain/entity/group_entity.dart';
 import '../../domain/usecase/request_to_join_usecase.dart';
 import '../view_model/group_event.dart';
+import 'chat_screen.dart';
 
 class GroupListItem extends StatelessWidget {
   final GroupEntity group;
@@ -14,6 +15,9 @@ class GroupListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = context.read<GroupViewModel>().currentUserId;
+    final isJoined = group.participants.any((p) => p.id == userId);
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -29,7 +33,7 @@ class GroupListItem extends StatelessWidget {
             child:
                 group.photos.isNotEmpty
                     ? Image.network(
-                      group.photos.first, // Using the first photo as a banner
+                      group.photos.first,
                       fit: BoxFit.cover,
                       errorBuilder:
                           (context, error, stackTrace) => const Icon(
@@ -110,8 +114,8 @@ class GroupListItem extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.add),
-                label: const Text('Request to Join'),
+                icon: Icon(isJoined ? Icons.chat : Icons.add),
+                label: Text(isJoined ? 'Go to Chat' : 'Request to Join'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
@@ -120,11 +124,22 @@ class GroupListItem extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Dispatch the event to join the group
-                  final params = RequestToJoinGroupParams(groupId: group.id);
-                  context.read<GroupViewModel>().add(
-                    RequestToJoinGroupEvent(params: params, groupId: ''),
-                  );
+                  if (isJoined) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (_) => ChatScreen(
+                              groupId: group.id,
+                              currentUserId: userId.toString(),
+                            ),
+                      ),
+                    );
+                  } else {
+                    final params = RequestToJoinGroupParams(groupId: group.id);
+                    context.read<GroupViewModel>().add(
+                      RequestToJoinGroupEvent(params: params, groupId: ''),
+                    );
+                  }
                 },
               ),
             ),

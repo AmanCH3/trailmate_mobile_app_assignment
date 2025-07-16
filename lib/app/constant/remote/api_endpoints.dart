@@ -8,7 +8,7 @@ class ApiEndpoints {
   // http://10.0.2.2:3000 - for emulator
   // http://192.168.1.14 - for device
 
-  static const String serverAddress = "http://10.0.2.2:5050";
+  static const String serverAddress = "http://192.168.1.13:5050";
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress/uploads/";
@@ -47,7 +47,7 @@ class ApiEndpoints {
 
   // ================ Messages (HTTP) ================
   // The base path for message-related endpoints.
-  static const String messages = "/messages";
+  static const String messages = "messages";
 
   static String getMessagesForGroup(String groupId) => "$messages/$groupId";
 
