@@ -25,3 +25,10 @@ class RegisterUserEvent extends RegisterEvent {
     required this.email,
   });
 }
+
+class ShowHidePassword extends RegisterEvent {
+  final BuildContext context;
+  final bool isVisible;
+
+  ShowHidePassword({required this.context, required this.isVisible});
+}

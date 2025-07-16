@@ -37,13 +37,11 @@ class ChatScreen extends StatelessWidget {
                   if (state is ChatLoading && state.messages.isEmpty) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
                   if (state.messages.isEmpty) {
                     return const Center(
                       child: Text('No messages yet. Say hi!'),
                     );
                   }
-
                   return ListView.builder(
                     reverse: true, // Shows latest messages at the bottom
                     padding: const EdgeInsets.all(8.0),

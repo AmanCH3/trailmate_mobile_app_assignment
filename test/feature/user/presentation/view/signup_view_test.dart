@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-
-// Import the necessary files from your project
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/common_textform_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/signup_view.dart';
@@ -12,19 +10,15 @@ import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
-// Use MockBloc for a streamlined mocking experience with BLoC.
 class MockRegisterViewModel extends MockBloc<RegisterEvent, RegisterState>
     implements RegisterViewModel {}
 
-// A simple mock for BuildContext, required for registering fallback values.
 class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   late MockRegisterViewModel mockRegisterViewModel;
 
-  // setUpAll runs once before all tests. It's a good place to register fallbacks.
   setUpAll(() {
-    // Mocktail requires fallback values for custom types used in matchers like `any()`.
     registerFallbackValue(
       RegisterUserEvent(
         context: MockBuildContext(),
@@ -36,9 +30,7 @@ void main() {
     );
   });
 
-  // setUp runs before each individual test.
   setUp(() {
-    // Create a new mock instance for each test to ensure isolation.
     mockRegisterViewModel = MockRegisterViewModel();
 
     // IMPORTANT: Since SignupView uses serviceLocator, we must override its
@@ -51,7 +43,6 @@ void main() {
     );
   });
 
-  // tearDown runs after each test, perfect for cleanup.
   tearDown(() {
     if (serviceLocator.isRegistered<RegisterViewModel>()) {
       serviceLocator.unregister<RegisterViewModel>();
@@ -60,7 +51,6 @@ void main() {
 
   Widget createWidgetUnderTest() {
     return MaterialApp(
-      // We use BlocProvider.value because we are providing an existing instance (our mock).
       home: BlocProvider<RegisterViewModel>.value(
         value: mockRegisterViewModel,
         child: const SignupView(),

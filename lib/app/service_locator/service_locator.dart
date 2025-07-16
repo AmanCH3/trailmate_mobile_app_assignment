@@ -287,6 +287,7 @@ Future<void> _initGroupModule() async {
       getAllGroupsUseCase: serviceLocator<GetAllGroupsUseCase>(),
       createGroupUseCase: serviceLocator<CreateGroupUseCase>(),
       requestToJoinGroupUseCase: serviceLocator<RequestToJoinGroupUseCase>(),
+      userGetUseCase: serviceLocator<UserGetUseCase>(),
     ),
   );
 }

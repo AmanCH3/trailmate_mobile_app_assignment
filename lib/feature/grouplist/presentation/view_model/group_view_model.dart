@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
 
 import '../../domain/usecase/GetAll_group_usecase.dart';
 import '../../domain/usecase/create_group_usecase.dart';
@@ -7,32 +8,43 @@ import 'group_event.dart';
 import 'group_state.dart';
 
 class GroupViewModel extends Bloc<GroupEvent, GroupState> {
-  // Dependencies on all the use cases this BLoC will need.
+  final UserGetUseCase _userGetUseCase;
   final GetAllGroupsUseCase _getAllGroupsUseCase;
   final CreateGroupUseCase _createGroupUseCase;
-  // final DeleteGroupUseCase _deleteGroupUseCase;
   final RequestToJoinGroupUseCase _requestToJoinGroupUseCase;
+
+  String? currentUserId;
 
   GroupViewModel({
     required GetAllGroupsUseCase getAllGroupsUseCase,
     required CreateGroupUseCase createGroupUseCase,
-    // required DeleteGroupUseCase deleteGroupUseCase,
     required RequestToJoinGroupUseCase requestToJoinGroupUseCase,
+    required UserGetUseCase userGetUseCase,
   }) : _getAllGroupsUseCase = getAllGroupsUseCase,
        _createGroupUseCase = createGroupUseCase,
-       // _deleteGroupUseCase = deleteGroupUseCase,
        _requestToJoinGroupUseCase = requestToJoinGroupUseCase,
+       _userGetUseCase = userGetUseCase,
        super(GroupInitial()) {
-    // Register event handlers
     on<FetchAllGroupsEvent>(_onFetchAllGroups);
     on<CreateGroupEvent>(_onCreateGroup);
-    // on<DeleteGroupEvent>(_onDeleteGroup);
     on<RequestToJoinGroupEvent>(_onRequestToJoin);
 
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    final userResult = await _userGetUseCase();
+    userResult.fold(
+      (failure) {
+        currentUserId = null;
+      },
+      (user) {
+        currentUserId = user.userId;
+      },
+    );
     add(FetchAllGroupsEvent());
   }
 
-  /// Handler for fetching all groups.
   Future<void> _onFetchAllGroups(
     FetchAllGroupsEvent event,
     Emitter<GroupState> emit,
@@ -46,7 +58,6 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
     );
   }
 
-  /// Handler for creating a new group.
   Future<void> _onCreateGroup(
     CreateGroupEvent event,
     Emitter<GroupState> emit,
@@ -64,7 +75,6 @@ class GroupViewModel extends Bloc<GroupEvent, GroupState> {
     add(FetchAllGroupsEvent());
   }
 
-  /// Handler for requesting to join a group.
   Future<void> _onRequestToJoin(
     RequestToJoinGroupEvent event,
     Emitter<GroupState> emit,

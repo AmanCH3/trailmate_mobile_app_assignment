@@ -15,7 +15,6 @@ class HomeViewModel extends Cubit<HomeState> {
   }
 
   void logout(BuildContext context) {
-    // Wait for 2 seconds
     Future.delayed(const Duration(seconds: 2), () async {
       if (context.mounted) {
         Navigator.pushReplacement(

@@ -316,7 +316,7 @@ class _SignupViewState extends State<SignupView> {
                             ),
                             icon: Image.asset(
                               "assets/images/google_image.png",
-                              height: 24,
+                              height: 23,
                               width: 24,
                               fit: BoxFit.contain,
                             ),

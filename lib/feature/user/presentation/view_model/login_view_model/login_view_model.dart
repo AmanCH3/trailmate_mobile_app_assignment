@@ -18,6 +18,7 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
     on<NavigateToRegisterView>(_onNavigateToRegisterView);
     on<NavigateToHomeView>(_onNavigateToHomeView);
     on<LoginWithEmailAndPassword>(_onLoginWithEmailAndPassword);
+    on<ShowHidePassword>(_onShowHidePassword);
   }
 
   void _onNavigateToRegisterView(
@@ -80,5 +81,9 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
         add(NavigateToHomeView(context: event.context));
       },
     );
+  }
+
+  void _onShowHidePassword(ShowHidePassword event, Emitter<LoginState> emit) {
+    emit(state.copyWith(isPasswordVisible: event.isVisible));
   }
 }

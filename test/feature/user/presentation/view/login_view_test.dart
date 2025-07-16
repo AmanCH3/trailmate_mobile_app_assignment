@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-
-// Import the necessary files from your project
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/trail_mate_loading.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/login_view.dart';
@@ -145,7 +143,7 @@ void main() {
         when(() => mockLoginViewModel.state).thenReturn(
           LoginState(
             isLoading: true,
-            obscurePassword: false,
+            isPasswordVisible: false,
             rememberMe: false,
           ),
         );

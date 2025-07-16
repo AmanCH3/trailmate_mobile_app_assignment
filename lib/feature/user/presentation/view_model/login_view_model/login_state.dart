@@ -7,13 +7,13 @@ import 'package:flutter/foundation.dart';
 class LoginState extends Equatable {
   final bool isLoading;
   final bool? isSuccess;
-  final bool obscurePassword;
+  final bool isPasswordVisible;
   final bool rememberMe;
 
   const LoginState({
     required this.isLoading,
     this.isSuccess,
-    required this.obscurePassword,
+    required this.isPasswordVisible,
     required this.rememberMe,
   });
 
@@ -21,7 +21,7 @@ class LoginState extends Equatable {
     return const LoginState(
       isLoading: false,
       isSuccess: null,
-      obscurePassword: true,
+      isPasswordVisible: true,
       rememberMe: false,
     );
   }
@@ -29,13 +29,13 @@ class LoginState extends Equatable {
   LoginState copyWith({
     bool? isLoading,
     bool? isSuccess,
-    bool? obscurePassword,
+    bool? isPasswordVisible,
     bool? rememberMe,
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess,
-      obscurePassword: obscurePassword ?? this.obscurePassword,
+      isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
       rememberMe: rememberMe ?? this.rememberMe,
     );
   }
@@ -44,7 +44,7 @@ class LoginState extends Equatable {
   List<Object?> get props => [
     isLoading,
     isSuccess,
-    obscurePassword,
+    isPasswordVisible,
     rememberMe,
   ];
 }

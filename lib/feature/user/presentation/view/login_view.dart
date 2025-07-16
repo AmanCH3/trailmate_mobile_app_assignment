@@ -63,7 +63,11 @@ class LoginView extends StatelessWidget {
                           const SizedBox(height: 20),
                           TextFormField(
                             controller: passwordController,
-                            obscureText: state.obscurePassword,
+                            obscureText:
+                                !context
+                                    .watch<LoginViewModel>()
+                                    .state
+                                    .isPasswordVisible,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               filled: true,
@@ -74,13 +78,26 @@ class LoginView extends StatelessWidget {
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  state.obscurePassword
+                                  context
+                                          .watch<LoginViewModel>()
+                                          .state
+                                          .isPasswordVisible
                                       ? Icons.visibility
                                       : Icons.visibility_off,
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
-                                  bloc.add(TogglePasswordVisibility());
+                                  final isVisible =
+                                      context
+                                          .read<LoginViewModel>()
+                                          .state
+                                          .isPasswordVisible;
+                                  context.read<LoginViewModel>().add(
+                                    ShowHidePassword(
+                                      context: context,
+                                      isVisible: !isVisible,
+                                    ),
+                                  );
                                 },
                               ),
                               labelText: "Password",

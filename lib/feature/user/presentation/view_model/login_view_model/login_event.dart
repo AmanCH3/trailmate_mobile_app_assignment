@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 @immutable
 sealed class LoginEvent extends Equatable {
   const LoginEvent();
+
   @override
   List<Object?> get props => [];
 }
@@ -13,12 +14,14 @@ sealed class LoginEvent extends Equatable {
 // Event for navigating to the register screen
 class NavigateToRegisterView extends LoginEvent {
   final BuildContext context;
+
   const NavigateToRegisterView({required this.context});
 }
 
 // Event for navigating to the home screen (internal to the BLoC)
 class NavigateToHomeView extends LoginEvent {
   final BuildContext context;
+
   const NavigateToHomeView({required this.context});
 }
 
@@ -39,11 +42,17 @@ class LoginWithEmailAndPassword extends LoginEvent {
 }
 
 // Event to toggle the password's visibility
-class TogglePasswordVisibility extends LoginEvent {}
+class ShowHidePassword extends LoginEvent {
+  final BuildContext context;
+  final bool isVisible;
+
+  const ShowHidePassword({required this.context, required this.isVisible});
+}
 
 // Event to update the "Remember Me" checkbox status
 class ToggleRememberMe extends LoginEvent {
   final bool value;
+
   const ToggleRememberMe({required this.value});
 
   @override
