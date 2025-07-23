@@ -9,6 +9,8 @@ class UserRemoteRepository implements IUserRepository {
   final UserRemoteDataSource _userRemoteDataSource;
   final TokenSharedPrefs _tokenSharedPrefs;
 
+  UserEntity? _currentUser;
+
   UserRemoteRepository({
     required UserRemoteDataSource userRemoteDataSource,
     required TokenSharedPrefs tokenSharedPrefs,
@@ -83,5 +85,10 @@ class UserRemoteRepository implements IUserRepository {
         ApiFailure(message: 'Failed to save auth token.', statusCode: null),
       );
     }
+  }
+
+  @override
+  UserEntity? getCurrentUser() {
+    return _currentUser;
   }
 }

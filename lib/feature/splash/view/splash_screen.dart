@@ -1,5 +1,10 @@
-import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
+import 'package:trailmate_mobile_app_assignment/feature/splash/view_model/splash_event.dart';
+import 'package:trailmate_mobile_app_assignment/feature/splash/view_model/splash_state.dart';
+import 'package:trailmate_mobile_app_assignment/feature/splash/view_model/splash_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/view/dashboard_view.dart';
 import 'package:trailmate_mobile_app_assignment/view/on_boarding_screen.dart';
 
 class SplashScreenView extends StatefulWidget {
@@ -10,31 +15,48 @@ class SplashScreenView extends StatefulWidget {
 }
 
 class _SplashScreenViewState extends State<SplashScreenView> {
-  late AnimationController _controller;
-
-  late Animation<double> _opacityAnimation;
-
-  late Animation<double> _progressAnimation;
-
-  double _progressValue = 0.0;
-
-  //Define theme colors
+  @override
+  void initState() {
+    super.initState();
+    // Instead of calling a function, we ADD an event to the BLoC.
+    context.read<SplashBloc>().add(CheckAuthenticationStatus());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSplashScreen(
-      // Shorter duration (2 seconds is enough)
-      duration: 2000,
-
-      // Simple splash content with error handling
-      splash: Image.asset(
-        'assets/images/splash_screen.png',
-        fit: BoxFit.contain,
+    // The BlocListener handles navigation based on state changes.
+    return BlocListener<SplashBloc, SplashState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.authenticated) {
+          // If authenticated, navigate to the Dashboard.
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (_) => BlocProvider(
+                    create: (_) => BottomNavigationCubit(),
+                    child: const DashboardView(showSnackbar: false),
+                  ),
+            ),
+            (route) => false,
+          );
+        } else if (state.status == AuthStatus.unauthenticated) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Image.asset(
+            'assets/images/splash_screen.png',
+            fit: BoxFit.contain,
+          ),
+        ),
       ),
-
-      nextScreen: const OnboardingScreen(),
-      splashTransition: SplashTransition.fadeTransition,
-      backgroundColor: Colors.white,
     );
   }
 }

@@ -11,7 +11,6 @@ class UserEntity extends Equatable {
   final String email;
   final String phone;
   final String password;
-
   final HikerType? hikerType;
   final AgeGroup? ageGroup;
   final EmergencyContactEntity? emergencyContact;

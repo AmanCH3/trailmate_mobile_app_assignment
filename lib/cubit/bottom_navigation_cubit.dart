@@ -23,6 +23,8 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
       value: serviceLocator<HomeViewModel>(),
       child: HomeView(),
     ),
+    // StepBloc is now provided at the DashboardView level to be accessible by all nested routes.
+    // We only need to provide the TrailViewModel here.
     BlocProvider<TrailViewModel>.value(
       value: serviceLocator<TrailViewModel>(),
       child: const TrailsListView(),
@@ -57,16 +59,16 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
   ];
 
   BottomNavigationCubit()
-    : super(
-        BottomNavigationState(
-          currentIndex: 0,
-          currentScreen: BlocProvider<HomeViewModel>.value(
-            value: serviceLocator<HomeViewModel>(),
-            child: HomeView(),
-          ),
-          appBarTitle: 'Home',
-        ),
-      );
+      : super(
+    BottomNavigationState(
+      currentIndex: 0,
+      currentScreen: BlocProvider<HomeViewModel>.value(
+        value: serviceLocator<HomeViewModel>(),
+        child: HomeView(),
+      ),
+      appBarTitle: 'Home',
+    ),
+  );
 
   void updateIndex(int index) {
     if (index >= 0 && index < _screens.length) {

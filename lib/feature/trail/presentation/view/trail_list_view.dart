@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_card.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_detail_view.dart';
 
+import '../../../user/domain/repository/user_repository.dart';
 import '../../domain/entity/trail_entity.dart';
 import '../view_model/trail_event.dart';
 import '../view_model/trail_state.dart';
@@ -214,19 +215,30 @@ class _TrailsListViewState extends State<TrailsListView> {
   }
 
   void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => TrailDetailsView(trail: trail)),
-    );
-  }
+    final userRepository = context.read<IUserRepository>();
 
-  // void _showFilterDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder:
-  //         (context) => BlocProvider.value(
-  //           value: context.read<TrailViewModel>(),
-  //           child: const FilterDialog(),
-  //         ),
-  //   );
-  // }
+    final currentUser = userRepository.getCurrentUser();
+
+    if (currentUser != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          // Assuming TrailDetailsView needs the trail entity and the user ID
+          builder:
+              (context) => TrailDetailsView(
+                trail: trail,
+                userId: currentUser.userId.toString(),
+              ),
+        ),
+      );
+    } else {
+      // Handle the case where the user is not logged in.
+      // Maybe show a dialog asking them to log in first.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please log in to view trail details.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 }

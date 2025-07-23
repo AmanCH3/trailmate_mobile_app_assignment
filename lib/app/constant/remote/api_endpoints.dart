@@ -8,7 +8,7 @@ class ApiEndpoints {
   // http://10.0.2.2:3000 - for emulator
   // http://192.168.1.14 - for device
 
-  static const String serverAddress = "http://192.168.1.13:5050";
+  static const String serverAddress = "http://192.168.101.9:5050";
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress/uploads/";
@@ -58,4 +58,8 @@ class ApiEndpoints {
 
   // ===============checklist ===============
   static const String generateCheckList = 'checklist/generate';
+
+  // ==============sensor for api to count the number of steps =======
+  static const String saveSteps = "/api/steps";
+  static const String totalSteps = "/api/steps/total";
 }

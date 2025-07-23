@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       title: "Trail Mate",
       theme: getApplicationTheme(),
       home: BlocProvider.value(
-        value: serviceLocator<SplashViewModel>(),
+        value: serviceLocator<SplashBloc>(),
         child: SplashScreenView(),
       ),
       debugShowCheckedModeBanner: false,
