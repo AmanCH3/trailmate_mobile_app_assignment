@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_card.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_detail_view.dart';
-
-import '../../../user/domain/repository/user_repository.dart';
 import '../../domain/entity/trail_entity.dart';
 import '../view_model/trail_event.dart';
 import '../view_model/trail_state.dart';
@@ -30,6 +30,23 @@ class _TrailsListViewState extends State<TrailsListView> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  // 2. CREATE A HELPER METHOD FOR NAVIGATION
+  void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        // The builder creates the destination screen's widget tree.
+        builder: (_) {
+          // Since TrailDetailsView needs a StepBloc, we provide it here.
+          // This creates a new StepBloc instance that is only alive for this screen.
+          return BlocProvider<StepBloc>(
+            create: (context) => serviceLocator<StepBloc>(),
+            child: TrailDetailsView(trail: trail),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -79,7 +96,6 @@ class _TrailsListViewState extends State<TrailsListView> {
                 ),
                 const SizedBox(width: 12),
                 IconButton(
-                  // onPressed: () => _showFilterDialog(context),
                   onPressed: () {},
                   icon: const Icon(Icons.tune, color: Colors.green),
                   style: IconButton.styleFrom(
@@ -192,13 +208,13 @@ class _TrailsListViewState extends State<TrailsListView> {
                         final trail = state.filteredTrails[index];
                         return TrailCard(
                           trail: trail,
+                          // 3. CALL THE HELPER METHOD ON TAP
                           onTap: () => _navigateToTrailDetails(context, trail),
                         );
                       },
                     ),
                   );
                 }
-
                 return const Center(child: Text('Something went wrong'));
               },
             ),
@@ -206,32 +222,5 @@ class _TrailsListViewState extends State<TrailsListView> {
         ],
       ),
     );
-  }
-
-  void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
-    final userRepository = context.read<IUserRepository>();
-    final currentUser = userRepository.getCurrentUser();
-
-    if (currentUser != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          // Assuming TrailDetailsView needs the trail entity and the user ID
-          builder:
-              (context) => TrailDetailsView(
-                trail: trail,
-                userId: currentUser.userId.toString(),
-              ),
-        ),
-      );
-    } else {
-      // Handle the case where the user is not logged in.
-      // Maybe show a dialog asking them to log in first.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please log in to view trail details.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
 }

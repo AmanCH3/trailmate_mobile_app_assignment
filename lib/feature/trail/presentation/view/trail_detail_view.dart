@@ -9,10 +9,8 @@ import '../../domain/entity/trail_entity.dart';
 
 class TrailDetailsView extends StatelessWidget {
   final TrailEnitiy trail;
-  final String userId; // You'll need to pass the current user ID
 
-  const TrailDetailsView({Key? key, required this.trail, required this.userId})
-    : super(key: key);
+  const TrailDetailsView({Key? key, required this.trail}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
