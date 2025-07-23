@@ -1,5 +1,3 @@
-// lib/cubit/bottom_navigation_cubit.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
@@ -18,13 +16,16 @@ import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.da
 import '../feature/grouplist/presentation/view_model/group_event.dart';
 
 class BottomNavigationCubit extends Cubit<BottomNavigationState> {
+  static final Widget _homeScreen = MultiBlocProvider(
+    providers: [
+      BlocProvider.value(value: serviceLocator<HomeViewModel>()),
+      BlocProvider.value(value: serviceLocator<TrailViewModel>()),
+    ],
+    child: HomeView(),
+  );
+
   final List<Widget> _screens = [
-    BlocProvider<HomeViewModel>.value(
-      value: serviceLocator<HomeViewModel>(),
-      child: HomeView(),
-    ),
-    // StepBloc is now provided at the DashboardView level to be accessible by all nested routes.
-    // We only need to provide the TrailViewModel here.
+    _homeScreen,
     BlocProvider<TrailViewModel>.value(
       value: serviceLocator<TrailViewModel>(),
       child: const TrailsListView(),
@@ -59,25 +60,19 @@ class BottomNavigationCubit extends Cubit<BottomNavigationState> {
   ];
 
   BottomNavigationCubit()
-      : super(
-    BottomNavigationState(
-      currentIndex: 0,
-      currentScreen: BlocProvider<HomeViewModel>.value(
-        value: serviceLocator<HomeViewModel>(),
-        child: HomeView(),
-      ),
-      appBarTitle: 'Home',
-    ),
-  );
+    : super(
+        BottomNavigationState(
+          currentIndex: 0,
+          currentScreen: _homeScreen,
+          appBarTitle: 'Home',
+        ),
+      );
 
   void updateIndex(int index) {
     if (index >= 0 && index < _screens.length) {
-      // Dispatch the event when navigating to Groups tab
       if (index == 3) {
-        // Groups tab
         serviceLocator<GroupViewModel>().add(FetchAllGroupsEvent());
       }
-
       emit(
         BottomNavigationState(
           currentIndex: index,

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
@@ -25,11 +26,13 @@ import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/tra
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/repository/user_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/check_auth_status_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/save_auth_token_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_delete_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_logout_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_register_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_update_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
@@ -132,6 +135,13 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  serviceLocator.registerFactory<IUserRepository>(
+    () => UserRemoteRepository(
+      userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
   serviceLocator.registerFactory(
     () => UserLoginUseCase(
       userRepository: serviceLocator<UserRemoteRepository>(),
@@ -143,6 +153,11 @@ Future<void> _initAuthModule() async {
     () => CheckAuthStatusUseCase(
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
+  );
+
+  serviceLocator.registerFactory(
+    () =>
+        UserLogoutUseCase(tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
   );
 
   serviceLocator.registerFactory(
@@ -202,7 +217,10 @@ Future<void> _initAuthModule() async {
 
 Future<void> _initHomeModule() async {
   serviceLocator.registerFactory(
-    () => HomeViewModel(loginViewModel: serviceLocator<LoginViewModel>()),
+    () => HomeViewModel(
+      loginViewModel: serviceLocator<LoginViewModel>(),
+      userLogoutUseCase: serviceLocator<UserLogoutUseCase>(),
+    ),
   );
 }
 

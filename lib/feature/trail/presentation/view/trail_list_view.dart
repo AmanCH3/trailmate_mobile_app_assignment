@@ -35,12 +35,6 @@ class _TrailsListViewState extends State<TrailsListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Trails'),
-      //   backgroundColor: Colors.green,
-      //   foregroundColor: Colors.white,
-      //   elevation: 0,
-      // ),
       body: Column(
         children: [
           // Search and Filter Section
@@ -216,7 +210,6 @@ class _TrailsListViewState extends State<TrailsListView> {
 
   void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
     final userRepository = context.read<IUserRepository>();
-
     final currentUser = userRepository.getCurrentUser();
 
     if (currentUser != null) {

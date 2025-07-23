@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_logout_usecase.dart';
 
 import '../../../user/presentation/view/login_view.dart';
 import '../../../user/presentation/view_model/login_view_model/login_view_model.dart';
 import 'home_state.dart';
 
 class HomeViewModel extends Cubit<HomeState> {
-  HomeViewModel({required this.loginViewModel}) : super(HomeState.initial());
+  final UserLogoutUseCase _userLogoutUseCase;
+  HomeViewModel({
+    required this.loginViewModel,
+    required UserLogoutUseCase userLogoutUseCase,
+  }) : _userLogoutUseCase = userLogoutUseCase,
+       super(HomeState.initial());
 
   final LoginViewModel loginViewModel;
 
@@ -14,20 +21,26 @@ class HomeViewModel extends Cubit<HomeState> {
     emit(state.copyWith(selectedIndex: index));
   }
 
-  void logout(BuildContext context) {
-    Future.delayed(const Duration(seconds: 2), () async {
-      if (context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BlocProvider.value(
-                  value: loginViewModel,
-                  child: LoginView(),
-                ),
-          ),
+  Future<void> logout(BuildContext context) async {
+    final result = await _userLogoutUseCase();
+
+    result.fold(
+      (failure) {
+        showMySnackBar(
+          context: context,
+          message: 'Logout failed. Please try again.',
+          color: Colors.red,
         );
-      }
-    });
+      },
+      (success) {
+        // 3. On success, navigate to the LoginView and remove all previous routes
+        // This prevents the user from pressing 'back' to get to the dashboard.
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginView()),
+          (Route<dynamic> route) => false,
+        );
+      },
+    );
   }
 }

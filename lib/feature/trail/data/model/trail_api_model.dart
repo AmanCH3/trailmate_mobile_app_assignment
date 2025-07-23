@@ -24,7 +24,7 @@ class TrailApiModel {
   final String location;
   final double elevation;
   final DurationApiModel duration;
-
+  final double? distance;
   @JsonKey(name: 'difficult')
   final String difficulty;
 
@@ -34,9 +34,11 @@ class TrailApiModel {
     required this.trailId,
     required this.name,
     required this.location,
+    this.distance,
     required this.duration,
     required this.elevation,
     required this.difficulty,
+
     this.images,
   });
 
@@ -54,6 +56,7 @@ class TrailApiModel {
       elevation: elevation,
       difficulty: difficulty,
       images: images?.isNotEmpty == true ? images!.first : '',
+      distance: distance,
     );
   }
 

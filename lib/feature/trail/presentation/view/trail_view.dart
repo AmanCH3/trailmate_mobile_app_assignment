@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_event.dart';
+import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart'
+    show TrailViewModel;
 
 class TrailView extends StatelessWidget {
   const TrailView({super.key});
@@ -30,7 +34,9 @@ class TrailView extends StatelessWidget {
                     ),
                     onChanged: (value) {
                       // Handle search through ViewModel event
-                      // context.read<TrailViewModel>().add(SearchTrailsEvent(query: value));
+                      context.read<TrailViewModel>().add(
+                        SearchTrailsEvent(value),
+                      );
                     },
                   ),
                 ),

@@ -27,6 +27,9 @@ class TrailHiveModel extends HiveObject {
   @HiveField(7)
   final String images;
 
+  @HiveField(8)
+  final double? distance;
+
   TrailHiveModel({
     String? trailId,
     required this.name,
@@ -34,6 +37,7 @@ class TrailHiveModel extends HiveObject {
     required this.duration,
     required this.elevation,
     required this.difficulty,
+    this.distance,
     required this.images,
   }) : trailId = trailId ?? const Uuid().v4();
 
@@ -43,6 +47,7 @@ class TrailHiveModel extends HiveObject {
       location = "",
       duration = 0,
       elevation = 0,
+      distance = 0,
       difficulty = 'moderate',
       images = '';
 
@@ -54,6 +59,7 @@ class TrailHiveModel extends HiveObject {
     elevation: elevation,
     difficulty: difficulty,
     images: images,
+    distance: distance,
   );
 
   factory TrailHiveModel.fromEntity(TrailEnitiy entity) => TrailHiveModel(
