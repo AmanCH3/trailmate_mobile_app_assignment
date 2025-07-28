@@ -1,32 +1,77 @@
+// lib/feature/dashboard/presentation/view/dashboard_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
 import 'package:trailmate_mobile_app_assignment/core/common/my_snackbar.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/shake_dectector.dart';
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
-import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 
-class DashboardView extends StatelessWidget {
+// 1. Convert to StatefulWidget
+class DashboardView extends StatefulWidget {
   final bool showSnackbar;
 
   const DashboardView({Key? key, this.showSnackbar = false}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    if (showSnackbar) {
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  // 2. Declare the ShakeDetector
+  late ShakeDetector _shakeDetector;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 3. Initialize and start the ShakeDetector
+    _shakeDetector = ShakeDetector(
+      onPhoneShake: () {
+        // Ensure the widget is still mounted before interacting with context
+        if (mounted) {
+          showMySnackBar(
+            context: context,
+            message: 'Shake detected! Logging out...',
+            color: Colors.red,
+          );
+          // Trigger the logout action from the ViewModel
+          context.read<HomeViewModel>().logout(context);
+        }
+      },
+    );
+    _shakeDetector.startListening();
+
+    // Handle the initial "Login Successful" snackbar
+    if (widget.showSnackbar) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showMySnackBar(context: context, message: "Login Successful !");
+        if (mounted) {
+          showMySnackBar(context: context, message: "Login Successful !");
+        }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    // 4. Stop the detector to prevent memory leaks
+    _shakeDetector.stopListening();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // The original build logic is now here
     return BlocProvider<StepBloc>.value(
       value: serviceLocator<StepBloc>(),
       child: BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
         builder: (context, state) {
           return Scaffold(
-            // Only show AppBar when not on Profile tab (index 4)
             appBar:
-                state.currentIndex != 4
+                state.currentIndex !=
+                        4 // Only show AppBar when not on Profile tab
                     ? AppBar(
                       title: Text(state.appBarTitle),
                       actions: [
