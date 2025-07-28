@@ -10,4 +10,5 @@ abstract interface class IUserDataSource {
   Future<UserEntity> updateUser(UserEntity user, String? token);
 
   Future<void> deleteUser(String? token);
+  Future<void> updateMyStats(int steps, String? token);
 }

@@ -65,4 +65,10 @@ class UserLocalRepository implements IUserRepository {
     // TODO: implement getCurrentUser
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, void>> updateMyStats(int steps, String? token) {
+    // TODO: implement updateMyStats
+    throw UnimplementedError();
+  }
 }

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
@@ -29,14 +28,17 @@ import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/rem
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/repository/user_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/check_auth_status_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/save_auth_token_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/update_stats_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_delete_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_logout_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_register_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_update_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/auth_view_model/auth_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/stats_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
 import '../../cubit/bottom_navigation_cubit.dart';
@@ -191,10 +193,28 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  serviceLocator.registerFactory(
+    () => UpdateMyStatsUseCase(
+      userRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => StatsViewModel(
+      saveStepsUseCase: serviceLocator<SaveSteps>(),
+      userGetUseCase: serviceLocator<UserGetUseCase>(),
+    ),
+  );
+
   // ===================== ViewModels ====================
 
   serviceLocator.registerFactory<RegisterViewModel>(
     () => RegisterViewModel(serviceLocator<UserRegisterUseCase>()),
+  );
+
+  serviceLocator.registerFactory<AuthBloc>(
+    () => AuthBloc(logoutUseCase: serviceLocator<UserLogoutUseCase>()),
   );
 
   // Register LoginViewModel WITHOUT HomeViewModel to avoid circular dependency

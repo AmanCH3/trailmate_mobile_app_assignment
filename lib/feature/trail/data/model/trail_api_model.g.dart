@@ -23,6 +23,7 @@ TrailApiModel _$TrailApiModelFromJson(Map<String, dynamic> json) =>
       trailId: json['_id'] as String,
       name: json['name'] as String,
       location: json['location'] as String,
+      distance: (json['distance'] as num?)?.toDouble(),
       duration:
           DurationApiModel.fromJson(json['duration'] as Map<String, dynamic>),
       elevation: (json['elevation'] as num).toDouble(),
@@ -38,6 +39,7 @@ Map<String, dynamic> _$TrailApiModelToJson(TrailApiModel instance) =>
       'location': instance.location,
       'elevation': instance.elevation,
       'duration': instance.duration.toJson(),
+      'distance': instance.distance,
       'difficult': instance.difficulty,
       'images': instance.images,
     };

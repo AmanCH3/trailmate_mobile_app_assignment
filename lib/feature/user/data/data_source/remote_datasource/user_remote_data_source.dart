@@ -136,4 +136,22 @@ class UserRemoteDataSource implements IUserDataSource {
       throw Exception('Deletion of user failed: $e');
     }
   }
+
+  @override
+  Future<void> updateMyStats(int steps, String? token) async {
+    try {
+      final data = {'steps': steps};
+      await _apiService.dio.patch(
+        ApiEndpoints.updateMyStats,
+        data: data,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } on DioException catch (e) {
+      throw Exception(
+        "Failed to update stats: ${e.response?.data['message'] ?? e.message}",
+      );
+    } catch (e) {
+      throw Exception("An unexpected error occurred: $e");
+    }
+  }
 }

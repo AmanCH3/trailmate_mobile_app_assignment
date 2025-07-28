@@ -22,6 +22,7 @@ class UserEntity extends Equatable {
   final StatsEntity? stats;
   final List<String>? achievements; // List of Achievement IDs
   final List<CompletedTrailEntity>? completedTrails;
+  final bool? isInAGroup;
 
   /// Password is intentionally omitted from the entity.
   // It should only be handled during sign-up/login and not stored in the app state.
@@ -43,6 +44,7 @@ class UserEntity extends Equatable {
     this.stats,
     this.achievements,
     this.completedTrails,
+    this.isInAGroup,
   });
 
   @override

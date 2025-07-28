@@ -91,4 +91,14 @@ class UserRemoteRepository implements IUserRepository {
   UserEntity? getCurrentUser() {
     return _currentUser;
   }
+
+  @override
+  Future<Either<Failure, void>> updateMyStats(int steps, String? token) async {
+    try {
+      await _userRemoteDataSource.updateMyStats(steps, token);
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString(), statusCode: 500));
+    }
+  }
 }

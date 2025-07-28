@@ -50,4 +50,10 @@ class UserLocalDataSource implements IUserDataSource {
     // TODO: implement updateUser
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> updateMyStats(int steps, String? token) {
+    // TODO: implement updateMyStats
+    throw UnimplementedError();
+  }
 }

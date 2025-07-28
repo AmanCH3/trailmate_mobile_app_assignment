@@ -1,10 +1,15 @@
+// lib/feature/user/presentation/view/profile_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_entity.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_enum.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/hiking_stats_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_event.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/stats_state.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/stats_view_model.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
@@ -27,42 +32,70 @@ class _ProfileViewState extends State<ProfileView> {
       length: 2,
       child: Scaffold(
         backgroundColor: Colors.grey[50],
-        body: BlocConsumer<ProfileViewModel, ProfileState>(
-          listener: (context, state) {
-            if (state.onError != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.onError!),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<ProfileViewModel, ProfileState>(
+              listener: (context, state) {
+                if (state.onError != null && state.onError!.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.onError!),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+            ),
+            BlocListener<StatsViewModel, StatsState>(
+              listener: (context, state) {
+                if (state.status == StatsStatus.failure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.errorMessage ?? 'An error occurred'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else if (state.status == StatsStatus.success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Hike saved successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  context.read<ProfileViewModel>().add(LoadProfileEvent());
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<ProfileViewModel, ProfileState>(
+            builder: (context, state) {
+              if (state.isLoading && state.userEntity == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (state.userEntity == null) {
-              return const Center(child: Text('No user data available'));
-            }
+              if (state.userEntity == null) {
+                return const Center(child: Text('No user data available'));
+              }
 
-            return Column(
-              children: [
-                _buildCustomHeader(context, state),
-                _buildTabBar(context),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      // Assign the key to the _ProfileTab widget
-                      _ProfileTab(key: _profileTabKey, user: state.userEntity!),
-                      _AchievementsTab(user: state.userEntity!),
-                    ],
+              return Column(
+                children: [
+                  _buildCustomHeader(context, state),
+                  _buildTabBar(context),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        _ProfileTab(
+                          key: _profileTabKey,
+                          user: state.userEntity!,
+                        ),
+                        _AchievementsTab(user: state.userEntity!),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -73,13 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
-      decoration: BoxDecoration(
-        color: Colors.green[700],
-        // borderRadius: const BorderRadius.only(
-        //   bottomLeft: Radius.circular(24),
-        //   bottomRight: Radius.circular(24),
-        // ),
-      ),
+      decoration: BoxDecoration(color: Colors.green[700]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -93,6 +120,18 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           Row(
             children: [
+              if (state.isLoading)
+                const Padding(
+                  padding: EdgeInsets.only(right: 12.0),
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               if (!isEditing)
                 IconButton(
                   onPressed:
@@ -114,7 +153,6 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  // Call the correctly implemented save method
                   onPressed: _saveProfile,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -135,7 +173,6 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildTabBar(BuildContext context) {
-    // The invalid nested function has been removed.
     return Container(
       color: Colors.green[700],
       child: const TabBar(
@@ -177,6 +214,14 @@ class _ProfileTabState extends State<_ProfileTab> {
     _initializeControllers();
   }
 
+  @override
+  void didUpdateWidget(covariant _ProfileTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.user != oldWidget.user) {
+      _initializeControllers();
+    }
+  }
+
   void _initializeControllers() {
     _nameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
@@ -211,7 +256,8 @@ class _ProfileTabState extends State<_ProfileTab> {
               const SizedBox(height: 16),
               _buildHikingInfoCard(context, widget.user, isEditing),
               const SizedBox(height: 16),
-              _buildStatsCard(widget.user),
+              // This now works because the import was added
+              HikingStatsCard(user: widget.user, isEditing: isEditing),
               if (isEditing) ...[
                 const SizedBox(height: 24),
                 _buildActionButtons(context),
@@ -236,11 +282,11 @@ class _ProfileTabState extends State<_ProfileTab> {
               radius: 60,
               backgroundColor: Colors.green[100],
               backgroundImage:
-                  user.profileImage != null
+                  user.profileImage != null && user.profileImage!.isNotEmpty
                       ? NetworkImage(user.profileImage!)
                       : null,
               child:
-                  user.profileImage == null
+                  (user.profileImage == null || user.profileImage!.isEmpty)
                       ? Icon(Icons.person, size: 60, color: Colors.green[700])
                       : null,
             ),
@@ -259,9 +305,7 @@ class _ProfileTabState extends State<_ProfileTab> {
                       color: Colors.white,
                       size: 20,
                     ),
-                    onPressed: () {
-                      // Handle image picker
-                    },
+                    onPressed: () {},
                   ),
                 ),
               ),
@@ -269,7 +313,7 @@ class _ProfileTabState extends State<_ProfileTab> {
         ),
         const SizedBox(height: 16),
         Text(
-          user.name.toString(),
+          user.name ?? 'No Name',
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         if (user.hikerType != null)
@@ -316,14 +360,12 @@ class _ProfileTabState extends State<_ProfileTab> {
                 icon: Icons.email,
                 isEditing: isEditing,
                 keyboardType: TextInputType.emailAddress,
-                // CORRECTED VALIDATOR
                 validator: (value) {
                   if (value?.isEmpty == true) return 'Email is required';
                   if (!RegExp(
                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                  ).hasMatch(value!)) {
+                  ).hasMatch(value!))
                     return 'Enter a valid email';
-                  }
                   return null;
                 },
               ),
@@ -393,95 +435,6 @@ class _ProfileTabState extends State<_ProfileTab> {
     );
   }
 
-  Widget _buildStatsCard(UserEntity user) {
-    final stats = user.stats;
-    if (stats == null) return const SizedBox.shrink();
-
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Hiking Stats',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    'Trails Completed',
-                    '${user.completedTrails?.length ?? 0}',
-                    Icons.landscape,
-                  ),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    'Total Distance',
-                    '${stats.totalDistance ?? 0} km',
-                    Icons.straighten,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    'Total Time',
-                    '${stats.totalHikes ?? 0} hrs',
-                    // Assuming totalHikes is time
-                    Icons.timer,
-                  ),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    'Achievements',
-                    '${user.achievements?.length ?? 0}',
-                    Icons.emoji_events,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.green[700], size: 24),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.green[700],
-            ),
-          ),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFormField({
     required String label,
     required TextEditingController controller,
@@ -525,12 +478,14 @@ class _ProfileTabState extends State<_ProfileTab> {
         fillColor: Colors.grey[100],
       ),
       items:
-          items.map((item) {
-            return DropdownMenuItem<T>(
-              value: item,
-              child: Text(displayText(item)),
-            );
-          }).toList(),
+          items
+              .map(
+                (item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(displayText(item)),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -583,10 +538,10 @@ class _ProfileTabState extends State<_ProfileTab> {
     );
   }
 
-  // RENAMED TO be public for access via GlobalKey
   void saveProfile(BuildContext context) {
     if (_formKey.currentState?.validate() == true) {
       final updatedUser = UserEntity(
+        // ✨ FIX 2: Changed `userId` to `id` to match UserEntity definition
         userId: widget.user.userId,
         name: _nameController.text,
         email: _emailController.text,
@@ -603,6 +558,7 @@ class _ProfileTabState extends State<_ProfileTab> {
         stats: widget.user.stats,
         achievements: widget.user.achievements,
         completedTrails: widget.user.completedTrails,
+        isInAGroup: widget.user.isInAGroup,
       );
 
       context.read<ProfileViewModel>().add(
@@ -614,26 +570,26 @@ class _ProfileTabState extends State<_ProfileTab> {
   String _getHikerTypeText(HikerType type) {
     switch (type) {
       case HikerType.newbie:
-        return 'Beginner';
+        return 'Newbie';
       case HikerType.experienced:
-        return 'Intermediate';
+        return 'Experienced';
     }
   }
 
   String _getAgeGroupText(AgeGroup age) {
     switch (age) {
       case AgeGroup.age18to24:
-        return 'Youth (18-25)';
+        return '18-24';
       case AgeGroup.age24to35:
-        return 'Young Adult (24-35)';
+        return '24-35';
       case AgeGroup.age35to44:
-        return 'Adult (35-44)';
+        return '35-44';
+      case AgeGroup.age45to54:
+        return '45-54';
       case AgeGroup.age55to64:
-        return 'Middle Aged (55-64)';
+        return '55-64';
       case AgeGroup.age65plus:
-        return 'Senior (60+)';
-      default:
-        return age.toString().split('.').last;
+        return '65+';
     }
   }
 }
@@ -684,12 +640,10 @@ class _AchievementsTab extends StatelessWidget {
           backgroundColor: Colors.amber[100],
           child: Icon(Icons.emoji_events, color: Colors.amber[700]),
         ),
-        title: Text('Achievement ${achievementId.substring(0, 8)}'),
+        title: Text('Achievement #${achievementId.substring(0, 6)}...'),
         subtitle: const Text('Earned for completing a challenging trail'),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          // Navigate to achievement details
-        },
+        onTap: () {},
       ),
     );
   }

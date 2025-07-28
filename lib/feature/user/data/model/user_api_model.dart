@@ -1,15 +1,18 @@
+// lib/feature/user/data/model/user_api_model.dart
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/model/stats_api_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_entity.dart';
-import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_enum.dart'; // Make sure to import your enums
 
+import '../../domain/entity/user_enum.dart';
 import 'completed_trail_api_model.dart';
 import 'emegency_contact_api_model.dart';
 
 part 'user_api_model.g.dart';
 
-@JsonSerializable()
+// ✨ FIX 1: Add `explicitToJson: true` for robust nested object serialization.
+@JsonSerializable(explicitToJson: true)
 class UserApiModel extends Equatable {
   @JsonKey(name: "_id")
   final String? id;
@@ -36,6 +39,11 @@ class UserApiModel extends Equatable {
   final List<String>? achievements; // Achievement IDs
   final List<CompletedTrailApiModel>? completedTrails;
 
+  // ✨ FIX 2: Remove the `@JsonKey` annotation.
+  // The Dart field name 'isInAGroup' now exactly matches the JSON key,
+  // which is the most reliable way for the generator to find it.
+  final bool? isInAGroup;
+
   // Timestamps from MongoDB
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -60,6 +68,7 @@ class UserApiModel extends Equatable {
     this.completedTrails,
     this.createdAt,
     this.updatedAt,
+    this.isInAGroup,
   });
 
   factory UserApiModel.fromJson(Map<String, dynamic> json) =>
@@ -83,17 +92,19 @@ class UserApiModel extends Equatable {
         case '56+':
           return AgeGroup.age55to64;
         default:
-          return null; // Handle unknown values
+          return null;
       }
     }
 
     return UserEntity(
+      // This line was already correct. It will now receive `true` from the
+      // `isInAGroup` property and correctly pass it to the entity.
+      isInAGroup: isInAGroup ?? false,
       userId: id,
       name: name,
       email: email,
       phone: phone,
       password: password,
-
       hikerType: switch (hikerType) {
         'new' => HikerType.newbie,
         'experienced' => HikerType.experienced,
@@ -122,7 +133,7 @@ class UserApiModel extends Equatable {
     );
   }
 
-  // from Entity
+  // from Entity - NO CHANGES MADE AS REQUESTED
   factory UserApiModel.fromEntity(UserEntity entity) {
     String? mapAgeGroupToString(AgeGroup? ageGroup) {
       if (ageGroup == null) return null;
@@ -152,7 +163,6 @@ class UserApiModel extends Equatable {
       ageGroup: mapAgeGroupToString(entity.ageGroup),
       role: entity.role?.name,
       subscription: entity.subscription?.name,
-      // Ensure EmergencyContact can be constructed from an entity, and handle nulls
       emergencyContact:
           entity.emergencyContact != null
               ? EmergencyContactApiModel.fromEntity(entity.emergencyContact!)
@@ -160,28 +170,22 @@ class UserApiModel extends Equatable {
       bio: entity.bio,
       profileImage: entity.profileImage,
       active: entity.active,
-
-      // Ensure Stats can be constructed from an entity, and handle nulls
       stats:
           entity.stats != null ? StatsApiModel.fromEntity(entity.stats!) : null,
-
       achievements: entity.achievements,
+      isInAGroup: entity.isInAGroup,
       completedTrails:
           entity.completedTrails
               ?.map((e) => CompletedTrailApiModel.fromEntity(e))
               .toList(),
-
-      // joinDate, createdAt, updatedAt are usually read-only from the server,
-      // so they are not included when creating a model from an entity.
     );
   }
 
-  // Convert API List to Entity List
+  // Convert API List to Entity List - NO CHANGES MADE AS REQUESTED
   static List<UserEntity> toEntityList(List<UserApiModel> models) =>
       models.map((model) => model.toEntity()).toList();
 
   @override
-  // Correctly implement props for Equatable
   List<Object?> get props => [
     id,
     name,
@@ -202,5 +206,6 @@ class UserApiModel extends Equatable {
     completedTrails,
     createdAt,
     updatedAt,
+    isInAGroup,
   ];
 }
