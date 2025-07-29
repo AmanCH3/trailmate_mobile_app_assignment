@@ -17,3 +17,4 @@ class CheckAuthStatusUseCase implements UseCaseWithoutParams<String?> {
     return await _tokenSharedPrefs.getToken();
   }
 }
+  
