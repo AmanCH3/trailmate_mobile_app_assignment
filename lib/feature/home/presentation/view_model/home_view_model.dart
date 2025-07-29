@@ -33,8 +33,6 @@ class HomeViewModel extends Cubit<HomeState> {
         );
       },
       (success) {
-        // 3. On success, navigate to the LoginView and remove all previous routes
-        // This prevents the user from pressing 'back' to get to the dashboard.
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginView()),

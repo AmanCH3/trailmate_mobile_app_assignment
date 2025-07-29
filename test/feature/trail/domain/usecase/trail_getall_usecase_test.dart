@@ -22,6 +22,7 @@ void main() {
     elevation: 00,
     difficulty: 'test difficulty',
     images: 'Test image',
+    distance: 00,
   );
 
   final tTrail2 = TrailEnitiy(
@@ -31,6 +32,7 @@ void main() {
     elevation: 11,
     difficulty: 'test difficulty 2 ',
     images: 'Test image 2',
+    distance: 00,
   );
 
   final tTrails = [tTrail, tTrail2];
