@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/core/service/pedometer_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/checklist/domain/repository/checklist_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/chat_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/remote_data_source/chat_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/chat_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/group_remote_repository.dart';
@@ -357,7 +358,20 @@ Future<void> _initChatModule() async {
     ),
   );
 
-  serviceLocator.registerFactory<IChatRepository>(
+  serviceLocator.registerLazySingleton<IChatDataSource>(
+    () => ChatRemoteDataSourceImpl(
+      apiService: serviceLocator<ApiService>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  // serviceLocator.registerFactory<IChatRepository>(
+  //   () => ChatRemoteRepository(
+  //     chatRemoteDataSourceImpl: serviceLocator<ChatRemoteDataSourceImpl>(),
+  //   ),
+  // );
+
+  serviceLocator.registerLazySingleton<IChatRepository>(
     () => ChatRemoteRepository(
       chatRemoteDataSourceImpl: serviceLocator<ChatRemoteDataSourceImpl>(),
     ),

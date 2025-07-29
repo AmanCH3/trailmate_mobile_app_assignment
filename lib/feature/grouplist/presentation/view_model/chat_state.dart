@@ -1,39 +1,40 @@
-import 'package:equatable/equatable.dart';
+// FILE: chat_state.dart
 
-import '../../domain/entity/message_entity.dart';
+import 'package:equatable/equatable.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/message_entity.dart';
+
+enum ConnectionStatus { disconnected, connecting, connected, failed }
 
 abstract class ChatState extends Equatable {
   final List<MessageEntity> messages;
+  final ConnectionStatus connectionStatus;
 
-  const ChatState({this.messages = const []});
+  const ChatState({required this.messages, required this.connectionStatus});
 
   @override
-  List<Object> get props => [messages];
+  List<Object> get props => [messages, connectionStatus];
 }
 
-/// The initial state before any action is taken.
-class ChatInitial extends ChatState {}
+class ChatInitial extends ChatState {
+  ChatInitial()
+    : super(messages: [], connectionStatus: ConnectionStatus.disconnected);
+}
 
-// Remove the default empty messages from ChatLoading
+// Add connectionStatus to all your states
 class ChatLoading extends ChatState {
-  const ChatLoading({List<MessageEntity> messages = const []})
-    : super(messages: messages);
+  const ChatLoading({required super.messages, required super.connectionStatus});
 }
 
 class ChatSuccess extends ChatState {
-  const ChatSuccess({required List<MessageEntity> messages})
-    : super(messages: messages);
+  const ChatSuccess({required super.messages})
+    : super(connectionStatus: ConnectionStatus.connected);
 }
 
-/// The state when an error occurs.
 class ChatFailure extends ChatState {
   final String error;
-
-  const ChatFailure({
-    required this.error,
-    required List<MessageEntity> messages,
-  }) : super(messages: messages);
+  const ChatFailure({required this.error, required super.messages})
+    : super(connectionStatus: ConnectionStatus.failed);
 
   @override
-  List<Object> get props => [error, messages];
+  List<Object> get props => [messages, connectionStatus, error];
 }

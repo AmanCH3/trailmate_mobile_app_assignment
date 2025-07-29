@@ -1,4 +1,5 @@
-// lib/feature/dashboard/presentation/view/dashboard_view.dart
+// FILE: lib/feature/dashboard/presentation/view/dashboard_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
@@ -9,7 +10,6 @@ import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_m
 import 'package:trailmate_mobile_app_assignment/state/bottom_navigation_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 
-// 1. Convert to StatefulWidget
 class DashboardView extends StatefulWidget {
   final bool showSnackbar;
 
@@ -20,26 +20,20 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
-  // 2. Declare the ShakeDetector
   late ShakeDetector _shakeDetector;
 
   @override
   void initState() {
     super.initState();
 
-    // 3. Initialize and start the ShakeDetector
+    // Initialize ShakeDetector and pass the confirmation dialog function
     _shakeDetector = ShakeDetector(
       onPhoneShake: () {
-        // Ensure the widget is still mounted before interacting with context
-        if (mounted) {
-          showMySnackBar(
-            context: context,
-            message: 'Shake detected! Logging out...',
-            color: Colors.red,
-          );
-          // Trigger the logout action from the ViewModel
-          context.read<HomeViewModel>().logout(context);
-        }
+        // Use our new confirmation dialog function
+        _showLogoutConfirmationDialog(
+          context,
+          'Shake detected! Do you want to log out?',
+        );
       },
     );
     _shakeDetector.startListening();
@@ -54,59 +48,88 @@ class _DashboardViewState extends State<DashboardView> {
     }
   }
 
+  // --- 1. CREATE THE REUSABLE DIALOG FUNCTION ---
+  Future<void> _showLogoutConfirmationDialog(
+    BuildContext buildContext,
+    String title,
+  ) async {
+    // Show the dialog
+    return showDialog<void>(
+      context: buildContext,
+      barrierDismissible: false, // User must tap a button
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text('This action cannot be undone.')],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Logout', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                // Close the dialog first
+                Navigator.of(dialogContext).pop();
+                // Then, show snackbar and perform logout
+                showMySnackBar(
+                  context: buildContext, // Use the original buildContext
+                  message: 'Logging out...',
+                  color: Colors.red,
+                );
+                // Trigger the logout from the ViewModel
+                buildContext.read<HomeViewModel>().logout(buildContext);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
-    // 4. Stop the detector to prevent memory leaks
     _shakeDetector.stopListening();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // The original build logic is now here
     return BlocProvider<StepBloc>.value(
       value: serviceLocator<StepBloc>(),
       child: BlocBuilder<BottomNavigationCubit, BottomNavigationState>(
         builder: (context, state) {
           return Scaffold(
             appBar:
-                state.currentIndex !=
-                        4 // Only show AppBar when not on Profile tab
+                state.currentIndex != 4
                     ? AppBar(
                       title: Text(state.appBarTitle),
                       actions: [
-                        if (state.currentIndex == 3)
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline),
-                            tooltip: 'Create Group',
-                            onPressed: () {
-                              // Navigator.of(context).push(
-                              //   MaterialPageRoute(
-                              //     builder:
-                              //         (_) => BlocProvider.value(
-                              //           value: BlocProvider.of<GroupViewModel>(context),
-                              //           child: const CreateGroupPage(),
-                              //         ),
-                              //   ),
-                              // );
-                            },
-                          ),
+                        // ... your other actions
+                        // --- 2. UPDATE THE LOGOUT BUTTON'S onPressed ---
                         IconButton(
                           icon: const Icon(Icons.logout),
                           onPressed: () {
-                            showMySnackBar(
-                              context: context,
-                              message: 'Logging out...',
-                              color: Colors.red,
+                            // Call the new confirmation dialog function
+                            _showLogoutConfirmationDialog(
+                              context,
+                              'Are you sure you want to log out?',
                             );
-                            context.read<HomeViewModel>().logout(context);
                           },
                         ),
                       ],
                     )
-                    : null, // No AppBar for Profile tab
+                    : null,
             body: state.currentScreen,
             bottomNavigationBar: BottomNavigationBar(
+              // ... your bottom navigation bar properties
               currentIndex: state.currentIndex,
               selectedItemColor: Colors.green,
               unselectedItemColor: Colors.grey,
