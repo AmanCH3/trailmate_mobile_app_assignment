@@ -1,7 +1,5 @@
-// FILE: lib/feature/grouplist/data/data_source/remote/chat_remote_data_source_impl.dart
-// (Or wherever this file is located)
-
 import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:trailmate_mobile_app_assignment/app/constant/remote/api_endpoints.dart';
@@ -10,16 +8,19 @@ import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/chat_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/model/message_api_model.dart';
-import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/message_entity.dart';
+
+import '../../../domain/entity/message_entity.dart';
 
 class ChatRemoteDataSourceImpl implements IChatDataSource {
   final ApiService _apiService;
   final TokenSharedPrefs _tokenSharedPrefs;
 
-  late IO.Socket _socket;
+  // Use IO.Socket? to make it nullable. We will create and destroy it as needed.
+  IO.Socket? _socket;
+
+  // Make the StreamController private, only expose the stream.
   final StreamController<MessageApiModel> _messageStreamController =
       StreamController.broadcast();
-  bool _isInitialized = false;
 
   ChatRemoteDataSourceImpl({
     required ApiService apiService,
@@ -28,83 +29,87 @@ class ChatRemoteDataSourceImpl implements IChatDataSource {
        _tokenSharedPrefs = tokenSharedPrefs;
 
   @override
-  Stream<MessageApiModel> get newMessageStream =>
-      _messageStreamController.stream;
+  Stream<MessageEntity> get newMessagesStream {
+    return _messageStreamController.stream.map(
+      (messageApiModel) => messageApiModel.toEntity(),
+    );
+  }
 
+  // --- FIX 2: REMOVE THE `_isInitialized` LOGIC FOR ROBUSTNESS ---
   @override
   void connectAndListen(String groupId) {
-    if (_isInitialized) {
-      print('Socket already initialized. Re-joining group: $groupId');
-      joinGroup(groupId);
-      return;
+    // If a socket already exists, dispose of it first to ensure a clean slate.
+    if (_socket != null) {
+      _socket!.dispose();
     }
 
+    // Create a new socket instance every time.
     _socket = IO.io(ApiEndpoints.serverAddress, <String, dynamic>{
       'transports': ['websocket'],
-      'autoConnect': false,
+      'autoConnect': false, // We connect manually
     });
-    _isInitialized = true;
 
-    _socket.onConnectError((data) => print('❗️ Connection Error: $data'));
-    _socket.onConnect((_) {
-      print('✅ Socket connected: ${_socket.id}');
+    // Attach all listeners to the new socket instance.
+    _socket!.onConnectError((data) => print('❗️ Connection Error: $data'));
+    _socket!.onConnect((_) {
+      print('✅ Socket connected: ${_socket!.id}');
+      // It's safe to call joinGroup here.
       joinGroup(groupId);
     });
-    _socket.on(ApiEndpoints.newMessage, (data) {
+    _socket!.on(ApiEndpoints.newMessage, (data) {
       print('📩 New message received: $data');
-      _messageStreamController.add(MessageApiModel.fromJson(data));
+      try {
+        _messageStreamController.add(MessageApiModel.fromJson(data));
+      } catch (e) {
+        print('Error parsing message from socket: $e');
+      }
     });
-    _socket.onDisconnect((_) => print('❌ Socket disconnected'));
+    _socket!.onDisconnect((_) => print('❌ Socket disconnected'));
 
-    _socket.connect();
+    // Manually trigger the connection attempt.
+    _socket!.connect();
   }
 
   @override
   void joinGroup(String groupId) {
-    if (!_isInitialized) {
-      print('⚠️ Cannot join group, socket has not been initialized.');
-      return;
-    }
-    if (_socket.connected) {
-      _socket.emit(ApiEndpoints.socketJoinGroup, groupId);
+    // The check now is simple: is the socket instance not null and connected?
+    if (_socket != null && _socket!.connected) {
+      _socket!.emit(ApiEndpoints.socketJoinGroup, groupId);
       print('🤝 Emitted joinGroup event for: $groupId');
     } else {
       print(
-        '⚠️ Cannot join group, socket is not connected. Waiting for connect event.',
+        '⚠️ Cannot join group, socket is not connected. Waiting for onConnect callback.',
       );
-      // The onConnect handler will automatically call joinGroup.
+      // The onConnect handler will automatically call joinGroup, so this is fine.
     }
   }
 
   @override
   Future<void> sendMessage(Map<String, dynamic> messageData) async {
-    // This safety check is now robust.
-    if (!_isInitialized || !_socket.connected) {
-      final errorMessage =
-          'Cannot send message. Socket is not initialized or not connected.';
+    if (_socket == null || !_socket!.connected) {
+      final errorMessage = 'Cannot send message. Socket is not connected.';
       print('⚠️ ERROR: $errorMessage');
       throw ApiFailure(message: errorMessage, statusCode: 503);
     }
-
     print('🚀 Emitting sendMessage event with data: $messageData');
-    _socket.emit(ApiEndpoints.socketSendMessage, messageData);
+    _socket!.emit(ApiEndpoints.socketSendMessage, messageData);
   }
 
   @override
   void dispose() {
     print('Disposing ChatDataSource...');
-    if (_isInitialized) {
-      _socket.dispose();
-      _isInitialized = false; // Reset for next time (if app stays alive)
-    }
-    _messageStreamController.close();
+    _socket?.dispose(); // Safely dispose if it exists
+    _socket = null; // Set to null
+    // It's generally better to not close the broadcast controller if the app might reuse it.
+    // However, if the DataSource is disposed for good, closing is correct.
+    // _messageStreamController.close();
     print('ChatDataSource disposed.');
   }
 
   // --- No changes needed for getMessageHistory ---
   @override
   Future<List<MessageApiModel>> getMessageHistory(String groupId) async {
-    // Your existing implementation is fine
+    // ... your existing implementation is fine
     try {
       final token = (await _tokenSharedPrefs.getToken()).getOrElse(
         () =>
@@ -131,8 +136,4 @@ class ChatRemoteDataSourceImpl implements IChatDataSource {
       throw ApiFailure(message: e.toString(), statusCode: 500);
     }
   }
-
-  @override
-  // TODO: implement newMessagesStream
-  Stream<MessageEntity> get newMessagesStream => throw UnimplementedError();
 }

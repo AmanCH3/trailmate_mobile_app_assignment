@@ -1,25 +1,22 @@
 import 'package:dartz/dartz.dart';
 import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
-import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/remote_data_source/chat_remote_data_source.dart';
+// Good practice: Depend on the interface (IChatDataSource), not the implementation.
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/chat_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/message_entity.dart';
-
-import '../../../domain/repository/chat_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/repository/chat_repository.dart';
 
 class ChatRemoteRepository implements IChatRepository {
-  final ChatRemoteDataSourceImpl chatRemoteDataSourceImpl;
+  final IChatDataSource chatDataSource;
 
-  ChatRemoteRepository({required this.chatRemoteDataSourceImpl});
+  ChatRemoteRepository({required this.chatDataSource});
 
   @override
   Future<Either<Failure, List<MessageEntity>>> getMessageHistory(
     String groupId,
   ) async {
     try {
-      final apiMessages = await chatRemoteDataSourceImpl.getMessageHistory(
-        groupId,
-      );
+      final apiMessages = await chatDataSource.getMessageHistory(groupId);
       final domainMessages = apiMessages.map((m) => m.toEntity()).toList();
-
       return Right(domainMessages);
     } catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: 500));
@@ -27,19 +24,16 @@ class ChatRemoteRepository implements IChatRepository {
   }
 
   @override
-  void joinGroup(String groupId) {
-    chatRemoteDataSourceImpl.connectAndListen(groupId);
-  }
-
-  @override
-  Either<Failure, Stream<MessageEntity>> listenForNewMessage() {
+  Either<Failure, Stream<MessageEntity>> listenForNewMessage(String groupId) {
     try {
-      final streamOfModels = chatRemoteDataSourceImpl.newMessageStream;
-      final streamOfEntities = streamOfModels.map((model) => model.toEntity());
-      return Right(streamOfEntities);
+      chatDataSource.connectAndListen(groupId);
+      return Right(chatDataSource.newMessagesStream);
     } catch (e) {
       return Left(
-        ApiFailure(message: 'Failed to listen for message $e', statusCode: 500),
+        ApiFailure(
+          message: 'Failed to listen for messages: $e',
+          statusCode: 500,
+        ),
       );
     }
   }
@@ -53,13 +47,16 @@ class ChatRemoteRepository implements IChatRepository {
     try {
       final messageData = {
         'text': text,
-        'groudId': groupId,
+        'groupId': groupId,
         'senderId': senderId,
       };
 
-      await chatRemoteDataSourceImpl.sendMessage(messageData);
+      await chatDataSource.sendMessage(messageData);
       return const Right(null); // Success
     } catch (e) {
+      if (e is Failure) {
+        return Left(e);
+      }
       return Left(ApiFailure(message: e.toString(), statusCode: 500));
     }
   }
@@ -67,8 +64,8 @@ class ChatRemoteRepository implements IChatRepository {
   @override
   Future<Either<Failure, void>> disconnect() async {
     try {
-      chatRemoteDataSourceImpl.dispose();
-      return Right(null);
+      chatDataSource.dispose();
+      return const Right(null);
     } catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: 500));
     }

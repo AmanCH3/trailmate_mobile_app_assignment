@@ -55,9 +55,9 @@ class TrailDetailsView extends StatelessWidget {
                   ),
                 ),
                 background:
-                    trail.images.isNotEmpty
+                    trail.image.isNotEmpty
                         ? Image.network(
-                          trail.images,
+                          trail.image,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
@@ -179,28 +179,28 @@ class TrailDetailsView extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: _getDifficultyColor(
-                          trail.difficulty,
+                          trail.difficult,
                         ).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _getDifficultyColor(trail.difficulty),
+                          color: _getDifficultyColor(trail.difficult),
                           width: 1,
                         ),
                       ),
                       child: Column(
                         children: [
                           Icon(
-                            _getDifficultyIcon(trail.difficulty),
-                            color: _getDifficultyColor(trail.difficulty),
+                            _getDifficultyIcon(trail.difficult),
+                            color: _getDifficultyColor(trail.difficult),
                             size: 32,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Difficulty: ${trail.difficulty}',
+                            'Difficulty: ${trail.difficult}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: _getDifficultyColor(trail.difficulty),
+                              color: _getDifficultyColor(trail.difficult),
                             ),
                           ),
                         ],

@@ -25,21 +25,24 @@ class TrailApiModel {
   final double elevation;
   final DurationApiModel duration;
   final double? distance;
-  @JsonKey(name: 'difficult')
-  final String difficulty;
-
+  final String? difficult;
+  final String? description;
   final List<String>? images;
+  final List<String>? features;
+  final List<String>? seasons;
 
   TrailApiModel({
     required this.trailId,
     required this.name,
     required this.location,
-    this.distance,
+    required this.distance,
     required this.duration,
     required this.elevation,
-    required this.difficulty,
-
+    this.difficult,
+    this.description,
     this.images,
+    this.features,
+    this.seasons,
   });
 
   factory TrailApiModel.fromJson(Map<String, dynamic> json) =>
@@ -54,9 +57,10 @@ class TrailApiModel {
       location: location,
       duration: duration.max.toDouble(),
       elevation: elevation,
-      difficulty: difficulty,
-      images: images?.isNotEmpty == true ? images!.first : '',
+      difficult: difficult ?? 'Unknown',
+      image: images?.isNotEmpty == true ? images!.first : '',
       distance: distance,
+      description: description ?? 'No description available.',
     );
   }
 

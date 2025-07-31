@@ -42,7 +42,7 @@ class TrailViewModel extends Bloc<TrailEvent, TrailState> {
       final filteredTrails = _applyFilters(
         trails: currentState.trails,
         searchTerm: event.searchTerm,
-        difficulty: currentState.currentDifficulty,
+        difficult: currentState.currentDifficulty,
         maxDuration: currentState.currentMaxDuration,
         maxElevation: currentState.currentMaxElevation,
       );
@@ -81,7 +81,7 @@ class TrailViewModel extends Bloc<TrailEvent, TrailState> {
   List<TrailEnitiy> _applyFilters({
     required List<TrailEnitiy> trails,
     String searchTerm = '',
-    String? difficulty,
+    String? difficult,
     double? maxDuration,
     double? maxElevation,
   }) {
@@ -94,9 +94,9 @@ class TrailViewModel extends Bloc<TrailEvent, TrailState> {
       }
 
       // Difficulty filter
-      if (difficulty != null &&
-          difficulty != 'All' &&
-          trail.difficulty.toLowerCase() != difficulty.toLowerCase()) {
+      if (difficult != null &&
+          difficult != 'All' &&
+          trail.difficult.toLowerCase() != difficult.toLowerCase()) {
         return false;
       }
 

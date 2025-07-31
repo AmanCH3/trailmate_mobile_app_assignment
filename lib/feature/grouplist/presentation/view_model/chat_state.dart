@@ -32,6 +32,7 @@ class ChatSuccess extends ChatState {
 
 class ChatFailure extends ChatState {
   final String error;
+
   const ChatFailure({required this.error, required super.messages})
     : super(connectionStatus: ConnectionStatus.failed);
 

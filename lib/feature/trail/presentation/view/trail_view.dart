@@ -33,7 +33,6 @@ class TrailView extends StatelessWidget {
                       ),
                     ),
                     onChanged: (value) {
-                      // Handle search through ViewModel event
                       context.read<TrailViewModel>().add(
                         SearchTrailsEvent(value),
                       );
@@ -48,21 +47,12 @@ class TrailView extends StatelessWidget {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.tune, color: Colors.white),
-                    onPressed: () {
-                      // Handle filter through ViewModel event
-                      // context.read<TrailViewModel>().add(OpenFilterEvent());
-                    },
+                    onPressed: () {},
                   ),
                 ),
               ],
             ),
           ),
-          // You can add BlocBuilder here to listen to state changes
-          // BlocBuilder<TrailViewModel, TrailState>(
-          //   builder: (context, state) {
-          //     // Return appropriate widget based on state
-          //   },
-          // ),
         ],
       ),
     );

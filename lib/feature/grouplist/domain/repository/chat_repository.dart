@@ -13,9 +13,7 @@ abstract interface class IChatRepository {
     required String senderId,
   });
 
-  Either<Failure, Stream<MessageEntity>> listenForNewMessage();
-
-  void joinGroup(String groupId);
+  Either<Failure, Stream<MessageEntity>> listenForNewMessage(String groupId);
 
   Future<Either<Failure, void>> disconnect();
 }

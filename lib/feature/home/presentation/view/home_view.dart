@@ -405,7 +405,7 @@ class HomeView extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final trail = featuredTrails[index];
                             final isEasy =
-                                trail.difficulty.toLowerCase() == 'easy';
+                                trail.difficult.toLowerCase() == 'easy';
 
                             return Container(
                               width: 180,
@@ -429,7 +429,7 @@ class HomeView extends StatelessWidget {
                                       top: Radius.circular(16),
                                     ),
                                     child: Image.network(
-                                      trail.images,
+                                      trail.image,
                                       height: 120,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
@@ -482,7 +482,7 @@ class HomeView extends StatelessWidget {
                                                     BorderRadius.circular(8),
                                               ),
                                               child: Text(
-                                                trail.difficulty,
+                                                trail.difficult,
                                                 style: TextStyle(
                                                   color:
                                                       isEasy

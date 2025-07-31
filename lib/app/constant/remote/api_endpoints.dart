@@ -8,7 +8,7 @@ class ApiEndpoints {
   // http://10.0.2.2:3000 - for emulator
   // http://192.168.1.14 - for device
 
-  static const String serverAddress = "http://10.15.139.149:5050";
+  static const String serverAddress = "http://10.84.77.122:5050";
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress/uploads/";
@@ -25,6 +25,9 @@ class ApiEndpoints {
   // ========== trails =======
   static const String getAllTrails = "/trail";
   static const String createTrail = '/trail';
+  static const String completeTrail = "/trail/joined/:joinedTrailId/complete";
+  static const String cancelTrail = "/trail/joined/:joinedTrailId/cancel";
+  static const String joinedTrailDate = '/trail/:id/join-with-date';
 
   // ===groups ===============
   // Group Endpoints

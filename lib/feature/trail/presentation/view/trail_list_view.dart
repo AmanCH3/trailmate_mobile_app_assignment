@@ -22,7 +22,6 @@ class _TrailsListViewState extends State<TrailsListView> {
   @override
   void initState() {
     super.initState();
-    // Load trails when the view initializes
     context.read<TrailViewModel>().add(const LoadAllTrailsEvent());
   }
 
@@ -32,14 +31,10 @@ class _TrailsListViewState extends State<TrailsListView> {
     super.dispose();
   }
 
-  // 2. CREATE A HELPER METHOD FOR NAVIGATION
   void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        // The builder creates the destination screen's widget tree.
         builder: (_) {
-          // Since TrailDetailsView needs a StepBloc, we provide it here.
-          // This creates a new StepBloc instance that is only alive for this screen.
           return BlocProvider<StepBloc>(
             create: (context) => serviceLocator<StepBloc>(),
             child: TrailDetailsView(trail: trail),

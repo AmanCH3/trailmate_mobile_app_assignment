@@ -24,6 +24,7 @@ class TrailHiveModelAdapter extends TypeAdapter<TrailHiveModel> {
       elevation: fields[5] as double,
       difficulty: fields[6] as String,
       distance: fields[8] as double?,
+      description: fields[9] as String?,
       images: fields[7] as String,
     );
   }
@@ -31,7 +32,7 @@ class TrailHiveModelAdapter extends TypeAdapter<TrailHiveModel> {
   @override
   void write(BinaryWriter writer, TrailHiveModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.trailId)
       ..writeByte(2)
@@ -47,7 +48,9 @@ class TrailHiveModelAdapter extends TypeAdapter<TrailHiveModel> {
       ..writeByte(7)
       ..write(obj.images)
       ..writeByte(8)
-      ..write(obj.distance);
+      ..write(obj.distance)
+      ..writeByte(9)
+      ..write(obj.description);
   }
 
   @override

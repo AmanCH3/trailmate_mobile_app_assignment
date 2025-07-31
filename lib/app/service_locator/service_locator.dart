@@ -373,7 +373,7 @@ Future<void> _initChatModule() async {
 
   serviceLocator.registerLazySingleton<IChatRepository>(
     () => ChatRemoteRepository(
-      chatRemoteDataSourceImpl: serviceLocator<ChatRemoteDataSourceImpl>(),
+      chatDataSource: serviceLocator<ChatRemoteDataSourceImpl>(),
     ),
   );
 
@@ -416,7 +416,6 @@ Future<void> _initChatModule() async {
       getMessageHistory: serviceLocator<GetMessageHistoryUseCase>(),
       sendMessage: serviceLocator<SendMessageUseCase>(),
       listenForNewMessage: serviceLocator<ListenForNewMessageUseCase>(),
-      joinGroup: serviceLocator<RequestToJoinGroupUseCase>(),
       disconnect: serviceLocator<DisconnectUseCase>(),
     ),
   );
