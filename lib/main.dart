@@ -7,6 +7,7 @@ import 'package:trailmate_mobile_app_assignment/core/network/local/hive_service.
 import 'package:trailmate_mobile_app_assignment/cubit/bottom_navigation_cubit.dart';
 import 'package:trailmate_mobile_app_assignment/feature/checklist/presentation/view_model/checklist_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/group_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/bot_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
@@ -60,6 +61,8 @@ void main() async {
           create: (context) => serviceLocator<StatsViewModel>(),
         ),
         BlocProvider<StepBloc>(create: (context) => serviceLocator<StepBloc>()),
+
+        BlocProvider<ChatBloc>(create: (context) => serviceLocator<ChatBloc>()),
       ],
       child: App(), // Your main App widget
     ),

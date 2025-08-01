@@ -6,10 +6,10 @@ import 'package:trailmate_mobile_app_assignment/feature/home/data/model/bot_mode
 import 'package:trailmate_mobile_app_assignment/feature/home/data/model/bot_model_response.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/domain/entity/bot_entity.dart';
 
-class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
+class BotRemoteDataSource implements BotDataSource {
   final ApiService _apiService;
 
-  ChatRemoteDataSourceImpl({required ApiService apiService})
+  BotRemoteDataSource({required ApiService apiService})
     : _apiService = apiService;
 
   @override

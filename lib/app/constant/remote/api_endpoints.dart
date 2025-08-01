@@ -67,7 +67,7 @@ class ApiEndpoints {
   static const String totalSteps = "steps/total";
 
   // ==== chatbot API endpoints ====
-  static const String chatQuery = '/api/v1/chatbot/query';
+  static const String chatQuery = '/v1/chatbot/query';
 
   static const String updateMyStats = 'users/me/stats';
 }

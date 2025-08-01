@@ -14,6 +14,12 @@ import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/listen_new_message_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/send_message_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/data/data_source/bot_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/data/data_source/bot_remote_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/data/repository/bot_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/domain/repository/bot_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/domain/usecase/get_chat_reply_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/bot_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/data/data_source/step_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/data/repository/step_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/domain/repository/step_repository.dart';
@@ -72,6 +78,7 @@ Future initDependencies() async {
   await _initGroupModule();
   await _initChatModule();
   await _initChecklistModule();
+  await _initAIBotModule();
 
   // 3. ViewModels/Modules that depend on other Feature Modules
   // HomeViewModel depends on LoginViewModel, which is registered in _initAuthModule.
@@ -484,5 +491,29 @@ Future<void> _initStepModule() async {
       userGetUseCase: serviceLocator<UserGetUseCase>(),
       getAllTrailUseCase: serviceLocator<GetAllTrailUseCase>(),
     ),
+  );
+}
+
+Future<void> _initAIBotModule() async {
+  // This module is for the AI Chatbot feature (Gemini)
+
+  // ===================== Data Source ====================
+  serviceLocator.registerFactory<BotDataSource>(
+    () => BotRemoteDataSource(apiService: serviceLocator<ApiService>()),
+  );
+
+  // ===================== Repository ====================
+  // Registers the AI Bot repository.
+  serviceLocator.registerLazySingleton<BotRepository>(
+    () => BotRepositoryImpl(remoteDataSource: serviceLocator<BotDataSource>()),
+  );
+
+  // ===================== Use Case ====================
+  // Registers the AI Bot use case.
+  serviceLocator.registerLazySingleton<GetChatReplyUsecase>(
+    () => GetChatReplyUsecase(serviceLocator<BotRepository>()),
+  );
+  serviceLocator.registerFactory<ChatBloc>(
+    () => ChatBloc(getChatReplyUsecase: serviceLocator<GetChatReplyUsecase>()),
   );
 }
