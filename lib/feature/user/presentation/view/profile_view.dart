@@ -73,7 +73,7 @@ class _ProfileViewState extends State<ProfileView> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state.userEntity == null) {
+              if (state?.userEntity == null) {
                 return const Center(child: Text('No user data available'));
               }
 

@@ -69,14 +69,14 @@ class UserRemoteDataSource implements IUserDataSource {
   @override
   Future<UserEntity> getUser(String? token) async {
     try {
-      // An endpoint to get a specific user should include the token
       final response = await _apiService.dio.get(
         ApiEndpoints.getUser,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
+      print('get user response $response');
+
       if (response.statusCode == 200) {
-        // Assuming the API returns the user object directly or nested under a 'data' key
         final userJson = response.data['data'] ?? response.data;
         final userApiModel = UserApiModel.fromJson(userJson);
         return userApiModel.toEntity();
