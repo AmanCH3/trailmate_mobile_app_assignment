@@ -4,6 +4,7 @@ import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/chat_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/message_entity.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/repository/chat_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_state.dart';
 
 class ChatRemoteRepository implements IChatRepository {
   final IChatDataSource chatDataSource;
@@ -68,6 +69,20 @@ class ChatRemoteRepository implements IChatRepository {
       return const Right(null);
     } catch (e) {
       return Left(ApiFailure(message: e.toString(), statusCode: 500));
+    }
+  }
+
+  @override
+  Either<Failure, Stream<ConnectionStatus>> listenForConnectionStatus() {
+    try {
+      return Right(chatDataSource.connectionStatusStream);
+    } catch (e) {
+      return Left(
+        ApiFailure(
+          message: 'Failed to listen for connection status: $e',
+          statusCode: 500,
+        ),
+      );
     }
   }
 }

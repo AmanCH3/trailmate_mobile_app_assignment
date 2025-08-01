@@ -1,3 +1,5 @@
+// lib/feature/grouplist/presentation/view_model/chat_view_model.dart
+
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
@@ -28,14 +30,13 @@ class ChatViewModel extends Bloc<ChatEvent, ChatState> {
        _listenForNewMessage = listenForNewMessage,
        _disconnect = disconnect,
        super(ChatInitial()) {
-    // Start with your ChatInitial state
     on<InitializeChat>(_onInitializeChat);
     on<SendMessage>(_onSendMessage);
     on<NewMessageReceived>(_onNewMessageReceived);
   }
 
   void _onInitializeChat(InitializeChat event, Emitter<ChatState> emit) async {
-    // 1. Immediately emit your ChatLoading state.
+    // 1. Emit loading state.
     emit(
       const ChatLoading(
         messages: [],
@@ -51,22 +52,42 @@ class ChatViewModel extends Bloc<ChatEvent, ChatState> {
       ListenForNewMessageParams(groupId: event.groupId),
     );
 
-    streamResult.fold(
-      (failure) {
-        // If we can't even start listening, emit ChatFailure.
+    // This variable will hold the loaded history.
+    List<MessageEntity> messageHistory = [];
+
+    // 4. Fetch the message history IN PARALLEL.
+    final historyFuture = _getMessageHistory(
+      GetMessageHistoryParams(groupId: event.groupId),
+    ).then((result) {
+      result.fold(
+        (failure) {
+          // If history fails, we'll handle it later. For now, just log or store error.
+          // We don't emit a failure state yet, because the connection might still be good.
+          print("Failed to load history: ${failure.message}");
+        },
+        (history) {
+          messageHistory = history;
+        },
+      );
+    });
+
+    // 5. Handle the stream connection result.
+    await streamResult.fold(
+      (failure) async {
+        // If the connection itself fails, emit a failure state.
         emit(ChatFailure(error: failure.message, messages: state.messages));
       },
-      (stream) {
-        // 4. Subscribe to the stream of new messages.
+      (stream) async {
+        // SUCCESS! The stream is ready. We are "connected".
+        // Now wait for the history to finish loading before we emit the final success state.
+        await historyFuture;
+
+        // 6. Emit the SUCCESS state with history and a CONNECTED status.
+        emit(ChatSuccess(messages: messageHistory));
+
+        // 7. Now, subscribe to the stream for any NEW messages.
         _messageSubscription = stream.listen(
           (newMessage) {
-            // The first message proves the connection is live.
-            if (state.connectionStatus != ConnectionStatus.connected) {
-              // Once connected, transition to the ChatSuccess state.
-              // We pass the current messages so they don't disappear from the UI.
-              emit(ChatSuccess(messages: state.messages));
-            }
-            // Trigger the event to add the new message to the list.
             add(NewMessageReceived(message: newMessage));
           },
           onError: (error) {
@@ -80,40 +101,13 @@ class ChatViewModel extends Bloc<ChatEvent, ChatState> {
         );
       },
     );
-
-    // 5. In parallel, fetch the message history.
-    final historyResult = await _getMessageHistory(
-      GetMessageHistoryParams(groupId: event.groupId),
-    );
-
-    historyResult.fold(
-      (failure) {
-        // If history fails, emit a failure state.
-        emit(ChatFailure(error: failure.message, messages: state.messages));
-      },
-      (history) {
-        // History loaded successfully. Now update the state with the new messages.
-        // We must check the current state to emit the correct subclass.
-        if (state.connectionStatus == ConnectionStatus.connected) {
-          // If we are already connected, emit a new ChatSuccess state.
-          emit(ChatSuccess(messages: history));
-        } else {
-          // If we are still connecting, emit a new ChatLoading state.
-          emit(
-            ChatLoading(
-              messages: history,
-              connectionStatus: ConnectionStatus.connecting,
-            ),
-          );
-        }
-      },
-    );
   }
 
   void _onSendMessage(SendMessage event, Emitter<ChatState> emit) async {
     if (event.content.trim().isEmpty) return;
 
-    if (state.connectionStatus != ConnectionStatus.connected) {
+    // Check against ChatSuccess state type, not connectionStatus, for robustness.
+    if (state is! ChatSuccess) {
       print("Cannot send message, not connected.");
       return;
     }
@@ -132,11 +126,11 @@ class ChatViewModel extends Bloc<ChatEvent, ChatState> {
     NewMessageReceived event,
     Emitter<ChatState> emit,
   ) {
-    // Add the new message to the beginning of the list.
-    final updatedMessages = [event.message, ...state.messages];
-    // Emit the ChatSuccess state with the updated list.
-    // This assumes that if we are receiving messages, the connection is successful.
-    emit(ChatSuccess(messages: updatedMessages));
+    // We only add new messages if the state is already successful.
+    if (state is ChatSuccess) {
+      final updatedMessages = [event.message, ...state.messages];
+      emit(ChatSuccess(messages: updatedMessages));
+    }
   }
 
   @override

@@ -8,6 +8,7 @@ import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/chat_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/model/message_api_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_state.dart';
 
 import '../../../domain/entity/message_entity.dart';
 
@@ -15,11 +16,12 @@ class ChatRemoteDataSourceImpl implements IChatDataSource {
   final ApiService _apiService;
   final TokenSharedPrefs _tokenSharedPrefs;
 
-  // Use IO.Socket? to make it nullable. We will create and destroy it as needed.
   IO.Socket? _socket;
 
-  // Make the StreamController private, only expose the stream.
   final StreamController<MessageApiModel> _messageStreamController =
+      StreamController.broadcast();
+
+  final StreamController<ConnectionStatus> _connectionStatusController =
       StreamController.broadcast();
 
   ChatRemoteDataSourceImpl({
@@ -35,13 +37,18 @@ class ChatRemoteDataSourceImpl implements IChatDataSource {
     );
   }
 
-  // --- FIX 2: REMOVE THE `_isInitialized` LOGIC FOR ROBUSTNESS ---
+  @override
+  Stream<ConnectionStatus> get connectionStatusStream =>
+      _connectionStatusController.stream;
+
   @override
   void connectAndListen(String groupId) {
-    // If a socket already exists, dispose of it first to ensure a clean slate.
     if (_socket != null) {
       _socket!.dispose();
     }
+
+    _connectionStatusController.add(ConnectionStatus.connecting);
+    print('🔌 Emitting ConnectionStatus.connecting');
 
     // Create a new socket instance every time.
     _socket = IO.io(ApiEndpoints.serverAddress, <String, dynamic>{
@@ -49,13 +56,19 @@ class ChatRemoteDataSourceImpl implements IChatDataSource {
       'autoConnect': false, // We connect manually
     });
 
-    // Attach all listeners to the new socket instance.
-    _socket!.onConnectError((data) => print('❗️ Connection Error: $data'));
+    _socket!.onConnectError((data) {
+      print('❗️ Connection Error: $data');
+
+      _connectionStatusController.add(ConnectionStatus.failed);
+    });
+
     _socket!.onConnect((_) {
       print('✅ Socket connected: ${_socket!.id}');
-      // It's safe to call joinGroup here.
+      _connectionStatusController.add(ConnectionStatus.connected);
+      print('🔌 Emitting ConnectionStatus.connected');
       joinGroup(groupId);
     });
+
     _socket!.on(ApiEndpoints.newMessage, (data) {
       print('📩 New message received: $data');
       try {
@@ -64,7 +77,11 @@ class ChatRemoteDataSourceImpl implements IChatDataSource {
         print('Error parsing message from socket: $e');
       }
     });
-    _socket!.onDisconnect((_) => print('❌ Socket disconnected'));
+
+    _socket!.onDisconnect((_) {
+      print('❌ Socket disconnected');
+      _connectionStatusController.add(ConnectionStatus.disconnected);
+    });
 
     // Manually trigger the connection attempt.
     _socket!.connect();

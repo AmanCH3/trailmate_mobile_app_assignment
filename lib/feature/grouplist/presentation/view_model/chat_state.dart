@@ -20,7 +20,7 @@ class ChatInitial extends ChatState {
     : super(messages: [], connectionStatus: ConnectionStatus.disconnected);
 }
 
-// Add connectionStatus to all your states
+// Add connectionStatus tzzo all your states
 class ChatLoading extends ChatState {
   const ChatLoading({required super.messages, required super.connectionStatus});
 }

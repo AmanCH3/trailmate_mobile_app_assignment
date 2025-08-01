@@ -1,9 +1,7 @@
-// FILE: lib/feature/grouplist/presentation/view/message_input.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_event.dart';
-import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_state.dart'; // 1. IMPORT CHAT_STATE
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_view_model.dart';
 
 class MessageInput extends StatefulWidget {
@@ -40,22 +38,28 @@ class _MessageInputState extends State<MessageInput> {
         ),
       );
       _controller.clear();
+      // Keep the keyboard focus after sending for a better user experience
       FocusScope.of(context).requestFocus();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 2. USE BlocBuilder to react to state changes.
-    //    This is more efficient than context.watch as it rebuilds only this small part.
+    // BlocBuilder listens to state changes in the ChatViewModel and rebuilds the UI.
     return BlocBuilder<ChatViewModel, ChatState>(
+      // We only want this widget to rebuild if the connectionStatus changes.
+      // This is an optimization to prevent unnecessary rebuilds when new messages arrive.
+      buildWhen:
+          (previous, current) =>
+              previous.connectionStatus != current.connectionStatus,
       builder: (context, state) {
-        // 3. DETERMINE if the UI should be enabled.
+        // This is the core logic: determine if the UI should be enabled.
+        // It's true only when the state's status is 'connected'.
         final bool isEnabled =
             state.connectionStatus == ConnectionStatus.connected;
 
         return Container(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             boxShadow: const [
@@ -71,21 +75,24 @@ class _MessageInputState extends State<MessageInput> {
               Expanded(
                 child: TextField(
                   controller: _controller,
-                  // 4. ENABLE/DISABLE the text field based on the state.
                   enabled: isEnabled,
                   decoration: InputDecoration(
-                    // 5. CHANGE the hint text to give user feedback.
                     hintText: isEnabled ? 'Type a message...' : 'Connecting...',
                     border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                   ),
-                  // 6. ONLY allow submitting if enabled.
                   onSubmitted: isEnabled ? (_) => _sendMessage() : null,
+                  textCapitalization: TextCapitalization.sentences,
                 ),
               ),
+              const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.send),
-                // 7. SET onPressed to null to automatically disable the button and change its color.
                 onPressed: isEnabled ? _sendMessage : null,
+                color:
+                    isEnabled
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).disabledColor,
               ),
             ],
           ),
