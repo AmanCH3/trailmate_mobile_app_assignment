@@ -96,6 +96,10 @@ Future<void> _initSplashModule() async {
   serviceLocator.registerFactory(
     () => SplashBloc(serviceLocator<CheckAuthStatusUseCase>()),
   );
+
+  serviceLocator.registerFactory<CheckAuthStatusUseCase>(
+    () => serviceLocator<CheckAuthStatusUseCase>(),
+  );
 }
 
 // Future _initHiveService() async {
@@ -511,7 +515,10 @@ Future<void> _initAIBotModule() async {
   // ===================== Use Case ====================
   // Registers the AI Bot use case.
   serviceLocator.registerLazySingleton<GetChatReplyUsecase>(
-    () => GetChatReplyUsecase(serviceLocator<BotRepository>()),
+    () => GetChatReplyUsecase(
+      serviceLocator<BotRepository>(),
+      serviceLocator<TokenSharedPrefs>(),
+    ),
   );
   serviceLocator.registerFactory<ChatBloc>(
     () => ChatBloc(getChatReplyUsecase: serviceLocator<GetChatReplyUsecase>()),

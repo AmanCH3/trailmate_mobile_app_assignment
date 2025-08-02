@@ -6,5 +6,6 @@ abstract interface class BotRepository {
   Future<Either<Failure, ChatMessageEntity>> getChatReply({
     required String query,
     required List<ChatMessageEntity> history,
+    String? token,
   });
 }

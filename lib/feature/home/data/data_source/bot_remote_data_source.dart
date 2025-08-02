@@ -16,6 +16,7 @@ class BotRemoteDataSource implements BotDataSource {
   Future<ChatResponseModel> getChatReply({
     required String query,
     required List<ChatMessageEntity> history,
+    String? token,
   }) async {
     try {
       final requestModel = ChatRequestModel.fromEntities(
@@ -25,6 +26,7 @@ class BotRemoteDataSource implements BotDataSource {
       final response = await _apiService.dio.post(
         ApiEndpoints.chatQuery,
         data: requestModel.toJson(),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200) {

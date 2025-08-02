@@ -13,11 +13,13 @@ class BotRepositoryImpl implements BotRepository {
   Future<Either<Failure, ChatMessageEntity>> getChatReply({
     required String query,
     required List<ChatMessageEntity> history,
+    String? token,
   }) async {
     try {
       final responseModel = await remoteDataSource.getChatReply(
         query: query,
         history: history,
+        token: token,
       );
 
       // The backend API returns the reply as a single string.

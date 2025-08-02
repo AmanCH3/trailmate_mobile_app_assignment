@@ -9,8 +9,6 @@ import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
 import 'package:trailmate_mobile_app_assignment/app/shared_pref/token_shared_prefs.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/check_auth_status_usecase.dart'; // Adjust path if needed
 
-// --- MOCK CLASS ---
-// We only need to mock the dependency of the use case.
 class MockTokenSharedPrefs extends Mock implements TokenSharedPrefs {}
 
 void main() {

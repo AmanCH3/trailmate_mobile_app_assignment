@@ -1,47 +1,50 @@
-// import 'package:dartz/dartz.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:mocktail/mocktail.dart';
-// import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_entity.dart';
-// import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/trail_getall_usecase.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:trailmate_mobile_app_assignment/feature/trail/domain/entity/trail_entity.dart';
+import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/trail_getall_usecase.dart';
 
-// import 'repository_mock.dart';
+import 'repository_mock.dart';
 
-// void main() {
-//   late MockTrailRepository repository;
-//   late GetAllTrailUseCase usecase;
+void main() {
+  late MockTrailRepository repository;
+  late GetAllTrailUseCase usecase;
 
-//   setUp(() {
-//     repository = MockTrailRepository();
-//     usecase = GetAllTrailUseCase(trailRepository: repository);
-//   });
+  setUp(() {
+    repository = MockTrailRepository();
+    usecase = GetAllTrailUseCase(trailRepository: repository);
+  });
 
-//   final tTrail = TrailEnitiy(
-//     name: 'Test trail 1',
-//     location: 'Trail Location',
-//     duration: 00,
-//     elevation: 00,
-//     distance: 00,
-//     difficult: '', image: '', description: '',
-//   );
+  final tTrail = TrailEnitiy(
+    name: 'Test trail 1',
+    location: 'Trail Location',
+    duration: 00,
+    elevation: 00,
+    distance: 00,
+    difficult: '',
+    image: '',
+    description: '',
+  );
 
-//   final tTrail2 = TrailEnitiy(
-//     name: 'Test trail 2',
-//     location: 'Trail Location 2 ',
-//     duration: 11,
-//     elevation: 11,
-//     difficulty: 'test difficulty 2 ',
-//     images: 'Test image 2',
-//     distance: 00,
-//   );
+  final tTrail2 = TrailEnitiy(
+    name: 'Test trail 2',
+    location: 'Trail Location 2 ',
+    duration: 11,
+    elevation: 11,
+    difficult: 'test difficulty 2 ',
+    image: 'Test image 2',
+    distance: 00,
+    description: 'test  description 2',
+  );
 
-//   final tTrails = [tTrail, tTrail2];
+  final tTrails = [tTrail, tTrail2];
 
-//   test('should get trails from repository', () async {
-//     when(() => repository.getTrails()).thenAnswer((_) async => Right(tTrails));
-//     final result = await usecase();
-//     expect(result, Right(tTrails));
+  test('should get trails from repository', () async {
+    when(() => repository.getTrails()).thenAnswer((_) async => Right(tTrails));
+    final result = await usecase();
+    expect(result, Right(tTrails));
 
-//     verify(() => repository.getTrails()).called(1);
-//     verifyNoMoreInteractions(repository);
-//   });
-// }
+    verify(() => repository.getTrails()).called(1);
+    verifyNoMoreInteractions(repository);
+  });
+}

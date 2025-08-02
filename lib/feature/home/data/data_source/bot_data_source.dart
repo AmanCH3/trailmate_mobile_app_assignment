@@ -5,5 +5,6 @@ abstract interface class BotDataSource {
   Future<ChatResponseModel> getChatReply({
     required String query,
     required List<ChatMessageEntity> history,
+    String? token,
   });
 }
