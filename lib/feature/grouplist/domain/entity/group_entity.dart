@@ -9,7 +9,7 @@ class GroupEntity extends Equatable {
   final String id;
   final String title;
   final TrailEnitiy? trail;
-  final DateTime date;
+  final DateTime? date;
   final String description;
   final int maxSize;
   final UserEntity? leader;
@@ -25,7 +25,7 @@ class GroupEntity extends Equatable {
     required this.id,
     required this.title,
     this.trail,
-    required this.date,
+    this.date,
     required this.description,
     required this.maxSize,
     this.leader,
