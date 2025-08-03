@@ -21,8 +21,10 @@ void main() {
     location: 'Mountain Range',
     duration: 120,
     elevation: 500,
-    difficulty: 'Hard',
-    images: 'Test image 1',
+    difficult: 'Hard',
+    image: 'Test image 1',
+    distance: 00,
+    description: 'A challenging trail with snowy peaks.',
   );
 
   final tTrail2 = TrailEnitiy(
@@ -30,8 +32,10 @@ void main() {
     location: 'Valley Region',
     duration: 60,
     elevation: 100,
-    difficulty: 'Easy',
-    images: 'Test image 2',
+    distance: 00,
+    difficult: 'Easy',
+    image: 'Test image 2',
+    description: 'A relaxing walk through sunny valleys.',
   );
 
   final tTrailList = [tTrail1, tTrail2];
@@ -137,51 +141,4 @@ void main() {
           ],
     );
   });
-
-  // BONUS: Added tests for your filter logic
-  // group('FilterTrailsEvent', () {
-  //   // This test demonstrates how to check multiple filters at once
-  //   blocTest<TrailViewModel, TrailState>(
-  //     'emits a filtered list based on difficulty and an existing search term',
-  //     // Start with a loaded state that already has a search term applied
-  //     seed:
-  //         () => TrailLoadedState(
-  //           trails: tTrailList,
-  //           filteredTrails: [
-  //             tTrail2,
-  //           ], // Pretend user already searched for "Valley"
-  //           currentSearchTerm: 'Valley',
-  //         ),
-  //     build: () => trailViewModel,
-  //     // Now, the user applies a difficulty filter
-  //     act: (bloc) => bloc.add(const FilterTrailsEvent(difficulty: 'Easy')),
-  //     expect:
-  //         () => <TrailState>[
-  //           TrailLoadedState(
-  //             trails: tTrailList,
-  //             filteredTrails: [tTrail2], // Should still be just tTrail2
-  //             currentSearchTerm: 'Valley', // Search term should persist
-  //             currentDifficulty: 'Easy', // New difficulty is applied
-  //           ),
-  //         ],
-  //   );
-
-  //   blocTest<TrailViewModel, TrailState>(
-  //     'emits an empty list if no trails match the new filter',
-  //     seed:
-  //         () =>
-  //             TrailLoadedState(trails: tTrailList, filteredTrails: tTrailList),
-  //     build: () => trailViewModel,
-  //     act:
-  //         (bloc) => bloc.add(const FilterTrailsEvent(difficulty: 'Impossible')),
-  //     expect:
-  //         () => <TrailState>[
-  //           TrailLoadedState(
-  //             trails: tTrailList,
-  //             filteredTrails: [], // The list should now be empty
-  //             currentDifficulty: 'Impossible', // The filter is still set
-  //           ),
-  //         ],
-  //   );
-  // });
 }

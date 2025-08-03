@@ -7,6 +7,7 @@ part 'stats_api_model.g.dart';
 
 @JsonSerializable()
 class StatsApiModel extends Equatable {
+  final int totalSteps;
   final int totalHikes;
   final double totalDistance;
   final double totalElevation;
@@ -15,6 +16,7 @@ class StatsApiModel extends Equatable {
   final int hikesLed;
 
   const StatsApiModel({
+    this.totalSteps = 0,
     this.totalHikes = 0,
     this.totalDistance = 0.0,
     this.totalElevation = 0.0,
@@ -30,6 +32,7 @@ class StatsApiModel extends Equatable {
 
   StatsEntity toEntity() {
     return StatsEntity(
+      totalSteps: totalSteps,
       totalHikes: totalHikes,
       totalDistance: totalDistance,
       totalElevation: totalElevation,
@@ -41,6 +44,7 @@ class StatsApiModel extends Equatable {
 
   factory StatsApiModel.fromEntity(StatsEntity entity) {
     return StatsApiModel(
+      totalSteps: entity.totalSteps,
       totalHikes: entity.totalHikes,
       totalDistance: entity.totalDistance,
       totalElevation: entity.totalElevation,
@@ -52,6 +56,7 @@ class StatsApiModel extends Equatable {
 
   @override
   List<Object?> get props => [
+    totalSteps,
     totalHikes,
     totalDistance,
     totalElevation,

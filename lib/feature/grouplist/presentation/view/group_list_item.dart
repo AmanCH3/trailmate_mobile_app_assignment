@@ -92,7 +92,7 @@ class GroupListItem extends StatelessWidget {
                       color: Colors.grey.shade600,
                     ),
                     const SizedBox(width: 4),
-                    Text(DateFormat.yMMMd().format(group.date)),
+                    Text(DateFormat.yMMMd().format(group.date!)),
                     const Spacer(),
                     Icon(
                       Icons.people_alt,

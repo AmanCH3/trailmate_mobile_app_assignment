@@ -1,6 +1,7 @@
-import 'package:equatable/equatable.dart';
+// FILE: lib/feature/grouplist/presentation/view_model/chat_event.dart
 
-import '../../domain/entity/message_entity.dart';
+import 'package:equatable/equatable.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/entity/message_entity.dart';
 
 abstract class ChatEvent extends Equatable {
   const ChatEvent();
@@ -22,14 +23,21 @@ class InitializeChat extends ChatEvent {
 
 /// Event triggered when the user sends a new message.
 class SendMessage extends ChatEvent {
-  final String text;
+  final String groupId;
+  final String senderId;
+  final String content;
 
-  const SendMessage({required this.text});
+  const SendMessage({
+    required this.groupId,
+    required this.senderId,
+    required this.content,
+  });
 
   @override
-  List<Object> get props => [text];
+  List<Object> get props => [groupId, senderId, content];
 }
 
+/// Event triggered internally when a new message is received from the socket.
 class NewMessageReceived extends ChatEvent {
   final MessageEntity message;
 

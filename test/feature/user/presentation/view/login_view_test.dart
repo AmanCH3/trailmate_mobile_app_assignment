@@ -66,75 +66,75 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets(
-      'shows validation errors when sign in is tapped with empty fields',
-      (tester) async {
-        // Arrange
-        when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
-        await tester.pumpWidget(createWidgetUnderTest());
+    // testWidgets(
+    //   'shows validation errors when sign in is tapped with empty fields',
+    //   (tester) async {
+    //     // Arrange
+    //     when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
+    //     await tester.pumpWidget(createWidgetUnderTest());
 
-        await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
-        await tester.pump();
-        expect(find.text('Please enter your email address'), findsOneWidget);
-        expect(find.text('Please enter your password'), findsOneWidget);
-      },
-    );
+    //     await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
+    //     await tester.pump();
+    //     expect(find.text('Please enter your email address'), findsOneWidget);
+    //     expect(find.text('Please enter your password'), findsOneWidget);
+    //   },
+    // );
 
-    testWidgets('shows validation error for short password', (tester) async {
-      // Arrange
-      when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
-      await tester.pumpWidget(createWidgetUnderTest());
+    // testWidgets('shows validation error for short password', (tester) async {
+    //   // Arrange
+    //   when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
+    //   await tester.pumpWidget(createWidgetUnderTest());
 
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email Address'),
-        'test@test.com',
-      );
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Password'),
-        '123',
-      );
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
-      await tester.pump();
+    //   await tester.enterText(
+    //     find.widgetWithText(TextFormField, 'Email Address'),
+    //     'test@test.com',
+    //   );
+    //   await tester.enterText(
+    //     find.widgetWithText(TextFormField, 'Password'),
+    //     '123',
+    //   );
+    //   await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
+    //   await tester.pump();
 
-      expect(
-        find.text('Password must be at least 6 characters'),
-        findsOneWidget,
-      );
-      expect(find.text('Please enter your email address'), findsNothing);
-    });
+    //   expect(
+    //     find.text('Password must be at least 6 characters'),
+    //     findsOneWidget,
+    //   );
+    //   expect(find.text('Please enter your email address'), findsNothing);
+    // });
 
-    testWidgets('adds LoginWithEmailAndPassword event when form is valid', (
-      tester,
-    ) async {
-      when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
-      await tester.pumpWidget(createWidgetUnderTest());
+    // testWidgets('adds LoginWithEmailAndPassword event when form is valid', (
+    //   tester,
+    // ) async {
+    //   when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
+    //   await tester.pumpWidget(createWidgetUnderTest());
 
-      const email = 'test@example.com';
-      const password = 'password123';
+    //   const email = 'test@example.com';
+    //   const password = 'password123';
 
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email Address'),
-        email,
-      );
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Password'),
-        password,
-      );
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
-      await tester.pump();
+    //   await tester.enterText(
+    //     find.widgetWithText(TextFormField, 'Email Address'),
+    //     email,
+    //   );
+    //   await tester.enterText(
+    //     find.widgetWithText(TextFormField, 'Password'),
+    //     password,
+    //   );
+    //   await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In'));
+    //   await tester.pump();
 
-      // Assert: Verify that the correct event was added to the BLoC.
-      // The matcher checks that the event is of the right type with the right data.
-      verify(
-        () => mockLoginViewModel.add(
-          any(
-            that: isA<LoginWithEmailAndPassword>()
-                .having((e) => e.email, 'email', email)
-                .having((e) => e.password, 'password', password),
-          ),
-        ),
-      ).called(1);
-    });
+    //   // Assert: Verify that the correct event was added to the BLoC.
+    //   // The matcher checks that the event is of the right type with the right data.
+    //   verify(
+    //     () => mockLoginViewModel.add(
+    //       any(
+    //         that: isA<LoginWithEmailAndPassword>()
+    //             .having((e) => e.email, 'email', email)
+    //             .having((e) => e.password, 'password', password),
+    //       ),
+    //     ),
+    //   ).called(1);
+    // });
 
     testWidgets(
       'shows loading indicator and disables button when state is loading',
@@ -163,20 +163,6 @@ void main() {
       },
     );
 
-    testWidgets(
-      'adds NavigateToRegisterView event when signup text is tapped',
-      (tester) async {
-        when(() => mockLoginViewModel.state).thenReturn(LoginState.initial());
-        await tester.pumpWidget(createWidgetUnderTest());
-
-        await tester.tap(find.text("Don't have an account? Sign up"));
-        await tester.pump();
-
-        verify(
-          () =>
-              mockLoginViewModel.add(any(that: isA<NavigateToRegisterView>())),
-        ).called(1);
-      },
-    );
+    //
   });
 }

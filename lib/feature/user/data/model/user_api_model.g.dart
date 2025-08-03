@@ -42,6 +42,7 @@ UserApiModel _$UserApiModelFromJson(Map<String, dynamic> json) => UserApiModel(
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
+      isInAGroup: json['isInAGroup'] as bool?,
     );
 
 Map<String, dynamic> _$UserApiModelToJson(UserApiModel instance) =>
@@ -53,16 +54,18 @@ Map<String, dynamic> _$UserApiModelToJson(UserApiModel instance) =>
       'password': instance.password,
       'hikerType': instance.hikerType,
       'ageGroup': instance.ageGroup,
-      'emergencyContact': instance.emergencyContact,
+      'emergencyContact': instance.emergencyContact?.toJson(),
       'bio': instance.bio,
       'profileImage': instance.profileImage,
       'joinDate': instance.joinDate?.toIso8601String(),
       'role': instance.role,
       'subscription': instance.subscription,
       'active': instance.active,
-      'stats': instance.stats,
+      'stats': instance.stats?.toJson(),
       'achievements': instance.achievements,
-      'completedTrails': instance.completedTrails,
+      'completedTrails':
+          instance.completedTrails?.map((e) => e.toJson()).toList(),
+      'isInAGroup': instance.isInAGroup,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };

@@ -31,9 +31,9 @@ class TrailCard extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(color: Colors.grey.shade200),
                 child:
-                    trail.images.isNotEmpty
+                    trail.image.isNotEmpty
                         ? Image.network(
-                          trail.images,
+                          trail.image,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
@@ -110,11 +110,11 @@ class TrailCard extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: _getDifficultyColor(trail.difficulty),
+                          color: _getDifficultyColor(trail.difficult),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          trail.difficulty,
+                          trail.difficult,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,

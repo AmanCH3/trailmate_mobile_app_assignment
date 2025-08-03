@@ -69,14 +69,14 @@ class UserRemoteDataSource implements IUserDataSource {
   @override
   Future<UserEntity> getUser(String? token) async {
     try {
-      // An endpoint to get a specific user should include the token
       final response = await _apiService.dio.get(
         ApiEndpoints.getUser,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
+      print('get user response $response');
+
       if (response.statusCode == 200) {
-        // Assuming the API returns the user object directly or nested under a 'data' key
         final userJson = response.data['data'] ?? response.data;
         final userApiModel = UserApiModel.fromJson(userJson);
         return userApiModel.toEntity();
@@ -134,6 +134,24 @@ class UserRemoteDataSource implements IUserDataSource {
       );
     } catch (e) {
       throw Exception('Deletion of user failed: $e');
+    }
+  }
+
+  @override
+  Future<void> updateMyStats(int steps, String? token) async {
+    try {
+      final data = {'steps': steps};
+      await _apiService.dio.patch(
+        ApiEndpoints.updateMyStats,
+        data: data,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } on DioException catch (e) {
+      throw Exception(
+        "Failed to update stats: ${e.response?.data['message'] ?? e.message}",
+      );
+    } catch (e) {
+      throw Exception("An unexpected error occurred: $e");
     }
   }
 }

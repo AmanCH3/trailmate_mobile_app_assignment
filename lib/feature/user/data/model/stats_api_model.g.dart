@@ -8,6 +8,7 @@ part of 'stats_api_model.dart';
 
 StatsApiModel _$StatsApiModelFromJson(Map<String, dynamic> json) =>
     StatsApiModel(
+      totalSteps: (json['totalSteps'] as num?)?.toInt() ?? 0,
       totalHikes: (json['totalHikes'] as num?)?.toInt() ?? 0,
       totalDistance: (json['totalDistance'] as num?)?.toDouble() ?? 0.0,
       totalElevation: (json['totalElevation'] as num?)?.toDouble() ?? 0.0,
@@ -18,6 +19,7 @@ StatsApiModel _$StatsApiModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$StatsApiModelToJson(StatsApiModel instance) =>
     <String, dynamic>{
+      'totalSteps': instance.totalSteps,
       'totalHikes': instance.totalHikes,
       'totalDistance': instance.totalDistance,
       'totalElevation': instance.totalElevation,

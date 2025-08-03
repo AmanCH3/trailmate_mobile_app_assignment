@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_card.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view/trail_detail_view.dart';
-
 import '../../domain/entity/trail_entity.dart';
 import '../view_model/trail_event.dart';
 import '../view_model/trail_state.dart';
@@ -21,7 +22,6 @@ class _TrailsListViewState extends State<TrailsListView> {
   @override
   void initState() {
     super.initState();
-    // Load trails when the view initializes
     context.read<TrailViewModel>().add(const LoadAllTrailsEvent());
   }
 
@@ -31,15 +31,22 @@ class _TrailsListViewState extends State<TrailsListView> {
     super.dispose();
   }
 
+  void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return BlocProvider<StepBloc>(
+            create: (context) => serviceLocator<StepBloc>(),
+            child: TrailDetailsView(trail: trail),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Trails'),
-      //   backgroundColor: Colors.green,
-      //   foregroundColor: Colors.white,
-      //   elevation: 0,
-      // ),
       body: Column(
         children: [
           // Search and Filter Section
@@ -84,7 +91,6 @@ class _TrailsListViewState extends State<TrailsListView> {
                 ),
                 const SizedBox(width: 12),
                 IconButton(
-                  // onPressed: () => _showFilterDialog(context),
                   onPressed: () {},
                   icon: const Icon(Icons.tune, color: Colors.green),
                   style: IconButton.styleFrom(
@@ -197,13 +203,13 @@ class _TrailsListViewState extends State<TrailsListView> {
                         final trail = state.filteredTrails[index];
                         return TrailCard(
                           trail: trail,
+                          // 3. CALL THE HELPER METHOD ON TAP
                           onTap: () => _navigateToTrailDetails(context, trail),
                         );
                       },
                     ),
                   );
                 }
-
                 return const Center(child: Text('Something went wrong'));
               },
             ),
@@ -212,21 +218,4 @@ class _TrailsListViewState extends State<TrailsListView> {
       ),
     );
   }
-
-  void _navigateToTrailDetails(BuildContext context, TrailEnitiy trail) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => TrailDetailsView(trail: trail)),
-    );
-  }
-
-  // void _showFilterDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder:
-  //         (context) => BlocProvider.value(
-  //           value: context.read<TrailViewModel>(),
-  //           child: const FilterDialog(),
-  //         ),
-  //   );
-  // }
 }

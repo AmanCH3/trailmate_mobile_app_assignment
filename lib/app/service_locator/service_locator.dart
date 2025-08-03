@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
+import 'package:trailmate_mobile_app_assignment/core/service/pedometer_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/checklist/domain/repository/checklist_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/chat_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/data_source/remote_data_source/chat_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/chat_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/data/repository/remote_repository/group_remote_repository.dart';
@@ -12,20 +14,38 @@ import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/listen_new_message_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/domain/usecase/send_message_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/grouplist/presentation/view_model/chat_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/data/data_source/bot_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/data/data_source/bot_remote_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/data/repository/bot_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/domain/repository/bot_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/domain/usecase/get_chat_reply_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/bot_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/data/data_source/step_remote_data_source.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/data/repository/step_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/domain/repository/step_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/domain/usecase/get_all_total_steps_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/domain/usecase/save_step_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/steps_sensor/presentation/view_model/step_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/data_source/remote_data_source/trail_remote_datasource.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/repository/remote_repository/trail_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/trail_getall_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/repository/user_repository.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/check_auth_status_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/save_auth_token_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/update_stats_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_delete_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_login_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_logout_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_register_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_update_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/auth_view_model/auth_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/stats_view_model.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/register_view_model/register_view_model.dart';
 
 import '../../cubit/bottom_navigation_cubit.dart';
@@ -58,10 +78,12 @@ Future initDependencies() async {
   await _initGroupModule();
   await _initChatModule();
   await _initChecklistModule();
+  await _initAIBotModule();
 
   // 3. ViewModels/Modules that depend on other Feature Modules
   // HomeViewModel depends on LoginViewModel, which is registered in _initAuthModule.
   await _initHomeModule();
+  await _initStepModule();
 
   // 4. Other independent UI modules
   await _initSplashModule();
@@ -71,7 +93,13 @@ Future initDependencies() async {
 }
 
 Future<void> _initSplashModule() async {
-  serviceLocator.registerFactory(() => SplashViewModel());
+  serviceLocator.registerFactory(
+    () => SplashBloc(serviceLocator<CheckAuthStatusUseCase>()),
+  );
+
+  serviceLocator.registerFactory<CheckAuthStatusUseCase>(
+    () => serviceLocator<CheckAuthStatusUseCase>(),
+  );
 }
 
 // Future _initHiveService() async {
@@ -121,11 +149,29 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  serviceLocator.registerFactory<IUserRepository>(
+    () => UserRemoteRepository(
+      userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
   serviceLocator.registerFactory(
     () => UserLoginUseCase(
       userRepository: serviceLocator<UserRemoteRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
+  );
+
+  serviceLocator.registerFactory(
+    () => CheckAuthStatusUseCase(
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () =>
+        UserLogoutUseCase(tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
   );
 
   serviceLocator.registerFactory(
@@ -159,10 +205,28 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  serviceLocator.registerFactory(
+    () => UpdateMyStatsUseCase(
+      userRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => StatsViewModel(
+      saveStepsUseCase: serviceLocator<SaveSteps>(),
+      userGetUseCase: serviceLocator<UserGetUseCase>(),
+    ),
+  );
+
   // ===================== ViewModels ====================
 
   serviceLocator.registerFactory<RegisterViewModel>(
     () => RegisterViewModel(serviceLocator<UserRegisterUseCase>()),
+  );
+
+  serviceLocator.registerFactory<AuthBloc>(
+    () => AuthBloc(logoutUseCase: serviceLocator<UserLogoutUseCase>()),
   );
 
   // Register LoginViewModel WITHOUT HomeViewModel to avoid circular dependency
@@ -185,7 +249,10 @@ Future<void> _initAuthModule() async {
 
 Future<void> _initHomeModule() async {
   serviceLocator.registerFactory(
-    () => HomeViewModel(loginViewModel: serviceLocator<LoginViewModel>()),
+    () => HomeViewModel(
+      loginViewModel: serviceLocator<LoginViewModel>(),
+      userLogoutUseCase: serviceLocator<UserLogoutUseCase>(),
+    ),
   );
 }
 
@@ -302,9 +369,22 @@ Future<void> _initChatModule() async {
     ),
   );
 
-  serviceLocator.registerFactory<IChatRepository>(
+  serviceLocator.registerLazySingleton<IChatDataSource>(
+    () => ChatRemoteDataSourceImpl(
+      apiService: serviceLocator<ApiService>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  // serviceLocator.registerFactory<IChatRepository>(
+  //   () => ChatRemoteRepository(
+  //     chatRemoteDataSourceImpl: serviceLocator<ChatRemoteDataSourceImpl>(),
+  //   ),
+  // );
+
+  serviceLocator.registerLazySingleton<IChatRepository>(
     () => ChatRemoteRepository(
-      chatRemoteDataSourceImpl: serviceLocator<ChatRemoteDataSourceImpl>(),
+      chatDataSource: serviceLocator<ChatRemoteDataSourceImpl>(),
     ),
   );
 
@@ -347,7 +427,6 @@ Future<void> _initChatModule() async {
       getMessageHistory: serviceLocator<GetMessageHistoryUseCase>(),
       sendMessage: serviceLocator<SendMessageUseCase>(),
       listenForNewMessage: serviceLocator<ListenForNewMessageUseCase>(),
-      joinGroup: serviceLocator<RequestToJoinGroupUseCase>(),
       disconnect: serviceLocator<DisconnectUseCase>(),
     ),
   );
@@ -377,5 +456,71 @@ Future<void> _initChecklistModule() async {
     () => ChecklistBloc(
       generateChecklistUseCase: serviceLocator<GenerateChecklistUsecase>(),
     ),
+  );
+}
+
+Future<void> _initStepModule() async {
+  serviceLocator.registerFactory<StepRemoteDataSource>(
+    () => StepRemoteDataSource(apiService: serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerFactory<StepRepository>(
+    () => StepRemoteRepository(
+      stepRemoteDataSource: serviceLocator<StepRemoteDataSource>(),
+    ),
+  );
+
+  // ===================== Use Case ====================
+  // Register the use case. It depends on the repository interface.
+  serviceLocator.registerFactory<GetAllTotalStepsUsecase>(
+    () => GetAllTotalStepsUsecase(
+      stepRepository: serviceLocator<StepRepository>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<SaveSteps>(
+    () => SaveSteps(serviceLocator<StepRepository>()),
+  );
+
+  serviceLocator.registerFactory<PedometerService>(() => PedometerService());
+
+  // ===================== BLoC (ViewModel) ====================
+  // Register the ChecklistBloc. It depends on the use case.
+  // Using registerFactory means a new instance is created every time it's requested.
+  serviceLocator.registerFactory<StepBloc>(
+    () => StepBloc(
+      getAllTotalStepsUsecase: serviceLocator<GetAllTotalStepsUsecase>(),
+      saveStepsUseCase: serviceLocator<SaveSteps>(),
+      pedometerService: serviceLocator<PedometerService>(),
+      userGetUseCase: serviceLocator<UserGetUseCase>(),
+      getAllTrailUseCase: serviceLocator<GetAllTrailUseCase>(),
+    ),
+  );
+}
+
+Future<void> _initAIBotModule() async {
+  // This module is for the AI Chatbot feature (Gemini)
+
+  // ===================== Data Source ====================
+  serviceLocator.registerFactory<BotDataSource>(
+    () => BotRemoteDataSource(apiService: serviceLocator<ApiService>()),
+  );
+
+  // ===================== Repository ====================
+  // Registers the AI Bot repository.
+  serviceLocator.registerLazySingleton<BotRepository>(
+    () => BotRepositoryImpl(remoteDataSource: serviceLocator<BotDataSource>()),
+  );
+
+  // ===================== Use Case ====================
+  // Registers the AI Bot use case.
+  serviceLocator.registerLazySingleton<GetChatReplyUsecase>(
+    () => GetChatReplyUsecase(
+      serviceLocator<BotRepository>(),
+      serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+  serviceLocator.registerFactory<ChatBloc>(
+    () => ChatBloc(getChatReplyUsecase: serviceLocator<GetChatReplyUsecase>()),
   );
 }
