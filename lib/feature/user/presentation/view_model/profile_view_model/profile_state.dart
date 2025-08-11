@@ -5,25 +5,31 @@ class ProfileState extends Equatable {
   final bool isLoading;
   final bool? isEditing;
   final bool? isProfileDeleted;
+  final bool isLoggedOut; // ✨ Added to track logout status
+  final bool isUpdateSuccessful;
 
   final UserEntity? userEntity;
   final String? onError;
 
-  ProfileState({
+  const ProfileState({
     required this.isLoading,
     this.isEditing,
     this.isProfileDeleted,
-    required this.userEntity,
+    this.isLoggedOut = false, // ✨ Default to false
+    this.userEntity,
     this.onError,
+    this.isUpdateSuccessful = false, // ✨ Added to track update success
   });
 
   factory ProfileState.initial() {
-    return ProfileState(
+    return const ProfileState(
       isLoading: false,
       userEntity: null,
       onError: '',
       isEditing: false,
       isProfileDeleted: false,
+      isLoggedOut: false,
+      isUpdateSuccessful: false, // ✨ Default to false
     );
   }
 
@@ -33,6 +39,8 @@ class ProfileState extends Equatable {
     String? onError,
     bool? isEditing,
     bool? isProfileDeleted,
+    bool? isLoggedOut, // ✨ Added to copyWith
+    bool? isUpdateSuccessful, // ✨ Added to copyWith
   }) {
     return ProfileState(
       isLoading: isLoading ?? this.isLoading,
@@ -40,16 +48,20 @@ class ProfileState extends Equatable {
       onError: onError ?? this.onError,
       isEditing: isEditing ?? this.isEditing,
       isProfileDeleted: isProfileDeleted ?? this.isProfileDeleted,
+      isLoggedOut: isLoggedOut ?? this.isLoggedOut,
+      isUpdateSuccessful: isUpdateSuccessful ?? this.isUpdateSuccessful,
     );
   }
 
   @override
-  // TODO: implement props
+  // ✨ Corrected the props list
   List<Object?> get props => [
     isLoading,
     userEntity,
     onError,
     isEditing,
-    isLoading,
+    isProfileDeleted,
+    isLoggedOut,
+    isUpdateSuccessful,
   ];
 }

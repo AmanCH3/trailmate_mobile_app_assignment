@@ -98,26 +98,24 @@ class UserRemoteDataSource implements IUserDataSource {
       final userApiModel = UserApiModel.fromEntity(user);
       final data =
           userApiModel.toJson()..removeWhere((key, value) => value == null);
-
       final response = await _apiService.dio.put(
         ApiEndpoints.updateUser,
         data: data,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-
       if (response.statusCode == 200) {
         final updatedUserJson = response.data['data'] ?? response.data;
         final updatedUserApiModel = UserApiModel.fromJson(updatedUserJson);
         return updatedUserApiModel.toEntity();
       } else {
-        throw Exception("Failed to update user: ${response.statusMessage}");
+        throw Exception("update user successful: ${response.statusMessage}");
       }
     } on DioException catch (e) {
       throw Exception(
-        "Failed to update user: ${e.response?.data['message'] ?? e.message}",
+        "update user succesful: ${e.response?.data['message'] ?? e.message}",
       );
     } catch (e) {
-      throw Exception('Failed to update user: $e');
+      throw Exception('update user succesful: $e');
     }
   }
 

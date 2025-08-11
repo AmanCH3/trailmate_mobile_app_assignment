@@ -306,7 +306,7 @@ class _SignupViewState extends State<SignupView> {
                             style: ElevatedButton.styleFrom(
                               side: const BorderSide(color: Colors.white),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 98,
+                                horizontal: 90,
                                 vertical: 15,
                               ),
                               shape: RoundedRectangleBorder(
@@ -316,8 +316,8 @@ class _SignupViewState extends State<SignupView> {
                             ),
                             icon: Image.asset(
                               "assets/images/google_image.png",
-                              height: 23,
-                              width: 24,
+                              height: 16,
+                              width: 10,
                               fit: BoxFit.contain,
                             ),
 

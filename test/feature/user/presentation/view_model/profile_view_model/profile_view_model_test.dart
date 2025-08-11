@@ -6,6 +6,7 @@ import 'package:trailmate_mobile_app_assignment/core/error/failure.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_entity.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_delete_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_get_usecase.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_logout_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/usecase/user_update_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_event.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_state.dart';
@@ -17,6 +18,8 @@ class MockUserGetUseCase extends Mock implements UserGetUseCase {}
 class MockUserUpdateUsecase extends Mock implements UserUpdateUsecase {}
 
 class MockUserDeleteUsecase extends Mock implements UserDeleteUsecase {}
+
+class MockUserLogoutUsecase extends Mock implements UserLogoutUseCase {}
 
 // Mock for the data entity
 class MockUserEntity extends Mock implements UserEntity {}
@@ -33,6 +36,7 @@ void main() {
   late MockUserGetUseCase mockUserGetUseCase;
   late MockUserUpdateUsecase mockUserUpdateUsecase;
   late MockUserDeleteUsecase mockUserDeleteUsecase;
+  late MockUserLogoutUsecase mockUserLogoutUsecase;
 
   // Test data
   final tUser = MockUserEntity();
@@ -49,6 +53,7 @@ void main() {
     mockUserGetUseCase = MockUserGetUseCase();
     mockUserUpdateUsecase = MockUserUpdateUsecase();
     mockUserDeleteUsecase = MockUserDeleteUsecase();
+    mockUserLogoutUsecase = MockUserLogoutUsecase();
   });
 
   group('ProfileViewModel', () {
@@ -61,6 +66,7 @@ void main() {
         userGetUseCase: mockUserGetUseCase,
         userUpdateUseCase: mockUserUpdateUsecase,
         userDeleteUsecase: mockUserDeleteUsecase,
+        userLogoutUseCase: mockUserLogoutUsecase,
       );
 
       expect(bloc.state, ProfileState.initial());
@@ -80,6 +86,7 @@ void main() {
               userGetUseCase: mockUserGetUseCase,
               userUpdateUseCase: mockUserUpdateUsecase,
               userDeleteUsecase: mockUserDeleteUsecase,
+              userLogoutUseCase: mockUserLogoutUsecase,
             ),
         // The event is added by the constructor, no need for an `act` block here.
         expect:
@@ -104,6 +111,7 @@ void main() {
               userGetUseCase: mockUserGetUseCase,
               userUpdateUseCase: mockUserUpdateUsecase,
               userDeleteUsecase: mockUserDeleteUsecase,
+              userLogoutUseCase: mockUserLogoutUsecase,
             ),
         expect:
             () => [

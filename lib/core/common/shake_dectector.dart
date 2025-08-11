@@ -13,7 +13,7 @@ class ShakeDetector {
 
   ShakeDetector({
     required this.onPhoneShake,
-    this.shakeThreshold = 11.0,
+    this.shakeThreshold = 20.0,
     this.minTimeBetweenShakes = 1000,
   });
 

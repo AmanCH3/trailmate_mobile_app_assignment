@@ -7,7 +7,7 @@ import 'package:trailmate_mobile_app_assignment/feature/user/domain/repository/u
 class SaveAuthTokenUseCase implements UseCaseWithParams<void, String> {
   final IUserRepository _userRepository;
 
-  SaveAuthTokenUseCase({required UserRemoteRepository userRepository})
+  SaveAuthTokenUseCase({required IUserRepository userRepository})
     : _userRepository = userRepository;
 
   @override

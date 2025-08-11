@@ -9,6 +9,7 @@ import 'home_state.dart';
 
 class HomeViewModel extends Cubit<HomeState> {
   final UserLogoutUseCase _userLogoutUseCase;
+
   HomeViewModel({
     required this.loginViewModel,
     required UserLogoutUseCase userLogoutUseCase,
@@ -23,7 +24,6 @@ class HomeViewModel extends Cubit<HomeState> {
 
   Future<void> logout(BuildContext context) async {
     final result = await _userLogoutUseCase();
-
     result.fold(
       (failure) {
         showMySnackBar(

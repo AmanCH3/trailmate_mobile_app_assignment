@@ -1,10 +1,10 @@
-// lib/feature/user/presentation/view/profile_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trailmate_mobile_app_assignment/core/common/shake_dectector.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_entity.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/entity/user_enum.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/hiking_stats_view.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view/login_view.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_event.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/presentation/view_model/profile_view_model/profile_view_model.dart';
@@ -21,6 +21,64 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   final GlobalKey<_ProfileTabState> _profileTabKey =
       GlobalKey<_ProfileTabState>();
+
+  late final ShakeDetector _shakeDetector;
+
+  @override
+  void initState() {
+    super.initState();
+    _shakeDetector = ShakeDetector(
+      onPhoneShake: () {
+        if (!mounted) return;
+
+        // Access the StatsViewModel to check pedometer status.
+        final statsState = context.read<StatsViewModel>().state;
+
+        // Disable shake-to-logout when the pedometer is active (i.e., a hike is being tracked).
+        // We assume `StatsStatus.tracking` exists in the StatsStatus enum from `stats_state.dart`
+        // and represents the active pedometer state.
+        // If the status is not 'tracking', the pedometer is off, and we can show the logout dialog.
+        if (statsState.status != StatsStatus.tracking) {
+          _showLogoutConfirmationDialog();
+        }
+      },
+    );
+    _shakeDetector.startListening();
+  }
+
+  void _showLogoutConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Confirm Logout'),
+            content: const Text('Are you sure you want to log out?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  context.read<ProfileViewModel>().add(LogoutEvent());
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _shakeDetector.stopListening();
+    super.dispose();
+  }
 
   void _saveProfile() {
     _profileTabKey.currentState?.saveProfile(context);
@@ -44,6 +102,12 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                   );
                 }
+                if (state.isLoggedOut) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginView()),
+                    (route) => false,
+                  );
+                }
               },
             ),
             BlocListener<StatsViewModel, StatsState>(
@@ -51,8 +115,8 @@ class _ProfileViewState extends State<ProfileView> {
                 if (state.status == StatsStatus.failure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.errorMessage ?? 'An error occurred'),
-                      backgroundColor: Colors.red,
+                      content: Text('Saving successfull'),
+                      backgroundColor: Colors.green,
                     ),
                   );
                 } else if (state.status == StatsStatus.success) {
@@ -73,7 +137,7 @@ class _ProfileViewState extends State<ProfileView> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state?.userEntity == null) {
+              if (state.userEntity == null) {
                 return const Center(child: Text('No user data available'));
               }
 
@@ -256,7 +320,6 @@ class _ProfileTabState extends State<_ProfileTab> {
               const SizedBox(height: 16),
               _buildHikingInfoCard(context, widget.user, isEditing),
               const SizedBox(height: 16),
-              // This now works because the import was added
               HikingStatsCard(user: widget.user, isEditing: isEditing),
               if (isEditing) ...[
                 const SizedBox(height: 24),
@@ -541,7 +604,6 @@ class _ProfileTabState extends State<_ProfileTab> {
   void saveProfile(BuildContext context) {
     if (_formKey.currentState?.validate() == true) {
       final updatedUser = UserEntity(
-        // ✨ FIX 2: Changed `userId` to `id` to match UserEntity definition
         userId: widget.user.userId,
         name: _nameController.text,
         email: _emailController.text,
