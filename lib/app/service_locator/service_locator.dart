@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trailmate_mobile_app_assignment/core/network/local/hive_service.dart';
 import 'package:trailmate_mobile_app_assignment/core/network/remote/api_service.dart';
 import 'package:trailmate_mobile_app_assignment/core/service/pedometer_service.dart';
 import 'package:trailmate_mobile_app_assignment/feature/checklist/domain/repository/checklist_repository.dart';
@@ -30,6 +31,7 @@ import 'package:trailmate_mobile_app_assignment/feature/trail/data/data_source/r
 import 'package:trailmate_mobile_app_assignment/feature/trail/data/repository/remote_repository/trail_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/domain/usecase/trail_getall_usecase.dart';
 import 'package:trailmate_mobile_app_assignment/feature/trail/presentation/view_model/trail_view_model.dart';
+import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/local_datasource/user_local_datasource.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/data_source/remote_datasource/user_remote_data_source.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/data/repository/remote_repository/user_remote_repository.dart';
 import 'package:trailmate_mobile_app_assignment/feature/user/domain/repository/user_repository.dart';
@@ -70,6 +72,7 @@ Future initDependencies() async {
   // These have no dependencies on other parts of our app.
   await _initApiService();
   await _initSharedPrefs();
+  await _initHiveService();
 
   // 2. Feature Modules that depend on Core Services
   // These modules require ApiService and/or TokenSharedPrefs to be registered.
@@ -97,9 +100,9 @@ Future<void> _initSplashModule() async {
     () => SplashBloc(serviceLocator<CheckAuthStatusUseCase>()),
   );
 
-  serviceLocator.registerFactory<CheckAuthStatusUseCase>(
-    () => serviceLocator<CheckAuthStatusUseCase>(),
-  );
+  // serviceLocator.registerFactory<CheckAuthStatusUseCase>(
+  //   () => serviceLocator<CheckAuthStatusUseCase>(),
+  // );
 }
 
 // Future _initHiveService() async {
@@ -108,6 +111,10 @@ Future<void> _initSplashModule() async {
 
 Future _initApiService() async {
   serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
+}
+
+Future _initHiveService() async {
+  serviceLocator.registerLazySingleton<HiveService>(() => HiveService());
 }
 
 Future<void> _initSharedPrefs() async {
@@ -123,11 +130,13 @@ Future<void> _initSharedPrefs() async {
 
 Future<void> _initAuthModule() async {
   // ===================== Data Source ====================
-  // serviceLocator.registerFactory(
-  //   () => UserLocalDataSource(hiveService: serviceLocator<HiveService>()),
-  // );
+  // 1. UNCOMMENT and register UserLocalDataSource. We need it now.
+  serviceLocator.registerFactory<UserLocalDataSource>(
+    () => UserLocalDataSource(hiveService: serviceLocator<HiveService>()),
+  );
 
-  serviceLocator.registerFactory(
+  // 2. Register UserRemoteDataSource (this is correct, no change needed)
+  serviceLocator.registerFactory<UserRemoteDataSource>(
     () => UserRemoteDataSource(
       apiService: serviceLocator<ApiService>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
@@ -136,39 +145,48 @@ Future<void> _initAuthModule() async {
 
   // ===================== Repository ====================
 
-  // serviceLocator.registerFactory(
-  //   () => UserLocalRepository(
-  //     userLocalDataSource: serviceLocator<UserLocalDataSource>(),
-  //   ),
-  // );
-
+  // 3. DELETE all old, separate repository registrations.
+  // We no longer need UserLocalRepository or UserRemoteRepository.
+  /*
   serviceLocator.registerFactory(
-    () => UserRemoteRepository(
-      userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
+    () => UserLocalRepository(...),
+  );
+  serviceLocator.registerFactory(
+    () => UserRemoteRepository(...),
+  );
+  */
+
+  // 4. THE MOST IMPORTANT CHANGE: Register your new UserRepositoryImpl
+  // as the one and only implementation for the IUserRepository interface.
+  serviceLocator.registerFactory<IUserRepository>(
+    () => UserRepositoryImpl(
+      remoteDataSource: serviceLocator<UserRemoteDataSource>(),
+      localDataSource:
+          serviceLocator<UserLocalDataSource>(), // Pass in the local source
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
-  serviceLocator.registerFactory<IUserRepository>(
-    () => UserRemoteRepository(
-      userRemoteDataSource: serviceLocator<UserRemoteDataSource>(),
-      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
-    ),
-  );
+  // ===================== Use Cases ====================
+  // 5. UPDATE all use cases to depend on the IUserRepository interface,
+  // not a specific implementation like UserRemoteRepository.
 
   serviceLocator.registerFactory(
     () => UserLoginUseCase(
-      userRepository: serviceLocator<UserRemoteRepository>(),
+      // Change this to the interface
+      userRepository: serviceLocator<IUserRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
+  // This use case is fine as it only needs shared prefs
   serviceLocator.registerFactory(
     () => CheckAuthStatusUseCase(
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
+  // You might want to update this to use the repository's logout method for consistency
   serviceLocator.registerFactory(
     () =>
         UserLogoutUseCase(tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
@@ -176,42 +194,53 @@ Future<void> _initAuthModule() async {
 
   serviceLocator.registerFactory(
     () => SaveAuthTokenUseCase(
-      userRepository: serviceLocator<UserRemoteRepository>(),
+      // Change this to the interface
+      userRepository: serviceLocator<IUserRepository>(),
     ),
   );
 
   serviceLocator.registerFactory(
     () => UserRegisterUseCase(
-      userRepository: serviceLocator<UserRemoteRepository>(),
+      // Change this to the interface
+      userRepository: serviceLocator<IUserRepository>(),
+    ),
+  );
+
+  // Note: Your use cases should not need TokenSharedPrefs if the repository handles the token.
+  // I'll assume you update them to only take the repository.
+  serviceLocator.registerFactory(
+    () => UserGetUseCase(
+      // Change this to the interface and remove tokenSharedPrefs if not needed
+      iUserRepository: serviceLocator<IUserRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
   serviceLocator.registerFactory(
-    () => UserGetUseCase(
-      iUserRepository: serviceLocator<UserRemoteRepository>(),
-      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
-    ),
-  );
-  serviceLocator.registerFactory(
     () => UserUpdateUsecase(
-      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      // Change this to the interface
+      iUserRepository: serviceLocator<IUserRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
+
   serviceLocator.registerFactory(
     () => UserDeleteUsecase(
-      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      // Change this to the interface
+      iUserRepository: serviceLocator<IUserRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
   serviceLocator.registerFactory(
     () => UpdateMyStatsUseCase(
-      userRepository: serviceLocator<UserRemoteRepository>(),
+      // Change this to the interface
+      userRepository: serviceLocator<IUserRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
+  // This one seems to have a mix of dependencies, assuming it's correct
   serviceLocator.registerFactory(
     () => StatsViewModel(
       saveStepsUseCase: serviceLocator<SaveSteps>(),
@@ -219,20 +248,18 @@ Future<void> _initAuthModule() async {
     ),
   );
 
-  // ===================== ViewModels ====================
+  // ===================== ViewModels / BLoCs ====================
+  // NO CHANGES needed here, because they already depend on the use cases,
+  // which is the correct architecture. They are shielded from the data layer changes.
 
   serviceLocator.registerFactory<RegisterViewModel>(
     () => RegisterViewModel(serviceLocator<UserRegisterUseCase>()),
   );
 
+  // If you updated UserLogoutUseCase to use the repository:
   serviceLocator.registerFactory<AuthBloc>(
     () => AuthBloc(logoutUseCase: serviceLocator<UserLogoutUseCase>()),
   );
-
-  // Register LoginViewModel WITHOUT HomeViewModel to avoid circular dependency
-  // serviceLocator.registerFactory(
-  //   () => LoginViewModel(serviceLocator<UserLoginUseCase>()),
-  // );
 
   serviceLocator.registerFactory(
     () => LoginViewModel(serviceLocator<UserLoginUseCase>()),
@@ -243,6 +270,7 @@ Future<void> _initAuthModule() async {
       userGetUseCase: serviceLocator<UserGetUseCase>(),
       userUpdateUseCase: serviceLocator<UserUpdateUsecase>(),
       userDeleteUsecase: serviceLocator<UserDeleteUsecase>(),
+      userLogoutUseCase: serviceLocator<UserLogoutUseCase>(),
     ),
   );
 }

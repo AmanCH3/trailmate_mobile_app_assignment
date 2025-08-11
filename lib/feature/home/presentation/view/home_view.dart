@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// --- ADDED: Imports for Bot View and Service Locator ---
+import 'package:trailmate_mobile_app_assignment/app/service_locator/service_locator.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view/bot_view.dart';
+import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/bot_view_model.dart';
+// --- End of Added Imports ---
 import 'package:trailmate_mobile_app_assignment/core/common/tab_button.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_state.dart';
 import 'package:trailmate_mobile_app_assignment/feature/home/presentation/view_model/home_view_model.dart';
@@ -249,6 +254,29 @@ class HomeView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: const Color(0xFFFAFAFA),
+          // --- ADDED: Floating Action Button to launch the Bot View ---
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // Provide the ChatBloc to the BotView screen
+                  builder:
+                      (_) => BlocProvider(
+                        create: (context) => serviceLocator<ChatBloc>(),
+                        child: const BotView(),
+                      ),
+                ),
+              );
+            },
+            backgroundColor: _forestGreen,
+            shape: const CircleBorder(),
+            child: const Icon(
+              Icons.support_agent_outlined,
+              color: Colors.white,
+            ),
+            tooltip: 'Trail Assistant',
+          ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Column(
